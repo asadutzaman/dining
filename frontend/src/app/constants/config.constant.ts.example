@@ -6,7 +6,7 @@ export const LOG_ENABLED = true;
 
 // Local Server
 export const BASE_URL = 'http://localhost:3000';
-export const API_SERVER_URL = 'http://api.dmp.lims.test/';
-export const MEDIA_SOURCE = 'http://api.dmp.lims.test/api/file/';
+export const API_SERVER_URL = 'http://127.0.0.1:8000/api/';
+export const MEDIA_SOURCE = 'http://127.0.0.1:8000/api/api/file/';
 
 export const SERVER_PREFIX = "api";

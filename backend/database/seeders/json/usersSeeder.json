@@ -9,7 +9,7 @@
                 "first_name": "Support",
                 "last_name": "Admin",
                 "email": "admin@gmail.com",
-                "phone": "01517170810",
+                "phone": "01516123934",
                 "password": "123456",
                 "user_type": "SERVICE_PROVIDER"
             }
@@ -21,11 +21,11 @@
         "description": "User Role",
         "users": [
             {
-                "name": "Rafikul Islam",
-                "first_name": "Rafikul",
-                "last_name": "Islam",
-                "email": "rafikul.islam@btracsl.com",
-                "phone": "01517170110",
+                "name": "Asadut Zaman",
+                "first_name": "Asadut",
+                "last_name": "Zaman",
+                "email": "asad@gmail.com",
+                "phone": "01715491647",
                 "password": "123456",
                 "user_type": "SERVICE_PROVIDER"
             }
