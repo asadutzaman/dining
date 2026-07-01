@@ -47,7 +47,6 @@ class AuthSeeder extends Seeder
         $this->call(OauthAuthClientsTableSeeder::class);
         $this->call(PermissionsSeeder::class);
         $this->call(CodeSequenceSeeder::class);
-        $this->call(WorkflowSeeder::class);
 
         $this->enableForeignKeys();
     }

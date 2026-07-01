@@ -5,7 +5,6 @@ import DeleteAction from 'src/app/components/Actions/DeleteAction'
 import {StatusEnum} from 'src/app/utils/enums'
 import ViewTabList from 'src/app/components/Tab/ViewTabList'
 import {useLang} from 'src/app/hooks/useLang'
-import RequisitionTimelineViewTab from './Tabs/RequisitionTimelineView.tab'
 import RequisitionViewTab from './Tabs/RequisitionView.tab'
 import RequisitionItemViewTab from './Tabs/RequisitionItemView.tab'
 
@@ -16,12 +15,6 @@ const RequisitionView: FC<any> = (props) => {
   const viewTabListData: any = [
     {
       tabIndex: 1,
-      label: t('Timeline'),
-      permission: '',
-      component: <RequisitionTimelineViewTab itemData={itemData} />,
-    },
-    {
-      tabIndex: 2,
       label: t('Requisition Info'),
       permission: '',
       component: <RequisitionViewTab itemData={itemData} />,

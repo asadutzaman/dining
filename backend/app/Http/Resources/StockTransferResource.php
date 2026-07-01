@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Repositories\StockTransferItemRepository;
-use App\Repositories\WorkflowRepository;
 
 class StockTransferResource extends BaseResource
 {
@@ -70,14 +69,6 @@ class StockTransferResource extends BaseResource
                         $item->code = $item->itemInfo->code ?? null;
                         return $item;
                     });
-
-                $workflowData = (new WorkflowRepository())
-                    ->newQuery()
-                    ->with(['workflowSteps:id,workflow_id,step_key,step_name,step_code,step_type,status'])
-                    ->where('type', 'STOCK_TRANSFER')
-                    ->first();
-
-                $includesData['workflowData'] = $workflowData;
             }
 
             return array_merge($data, $includesData);

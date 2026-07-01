@@ -10,7 +10,6 @@ import { useForm } from 'src/app/hooks/useForm';
 import { ReportInvApi } from 'src/app/api';
 import { Message } from 'src/app/utils';
 import download from 'downloadjs';
-import { useWorkflow } from 'src/app/hooks/workflow/useWorkflow';
 import { useCrudListService } from 'src/app/hooks/crud/useCrudListService';
 import RequisitionViewController from '../RequisitionView/RequisitionView.controller';
 
@@ -143,10 +142,6 @@ const RequisitionAnalyticListController: FC = (props) => {
 
   const { handleErrorMessage, handleSuccessMessage, showErrorMessage } =
     useErrorHandler();
-  const { workflowData, workflowLoading } = useWorkflow(
-    'Requisition',
-    'REQUISITION_APPROVAL'
-  );
 
   useEffect(() => {
     // if (filters.step_code) {
@@ -409,8 +404,6 @@ const RequisitionAnalyticListController: FC = (props) => {
           itemInfo={itemInfo}
           branchInfo={branchInfo}
           loading={loading}
-          workflowSteps={workflowData?.workflow_steps || []}
-          workflowLoading={workflowLoading}
           exportLoading={exportLoading}
           ListingComponent={ListingComponent}
           handleCallbackFunc={handleCallbackFunc}

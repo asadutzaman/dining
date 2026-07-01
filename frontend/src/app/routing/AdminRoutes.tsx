@@ -15,8 +15,6 @@ const AdminRoutes = () => {
   const InventoryRoutes = lazy(
     () => import('../modules/inventory/InventoryRoutes')
   );
-  const PatientRoutes = lazy(() => import('../modules/patient/PatientRoutes'));
-
   return (
     <Routes>
       <Route element={<MasterLayout />}>
@@ -54,15 +52,6 @@ const AdminRoutes = () => {
             </SuspensedView>
           }
         />
-        <Route
-          path={'/patient/*'}
-          element={
-            <SuspensedView>
-              <PatientRoutes />
-            </SuspensedView>
-          }
-        />
-
         {/* Redirect to Dashboard after success login/registartion */}
         <Route path="auth/*" element={<Navigate to="/admin/dashboard" />} />
         {/* Pages */}

@@ -24,8 +24,6 @@ const RequisitionAnalyticListFilter: FC<any> = (props) => {
     params,
     handleOnChanged,
     handleCallbackFunc,
-    workflowSteps,
-    workflowLoading,
     ...restProps
   } = props
   const {t} = useLang()
@@ -74,18 +72,6 @@ const RequisitionAnalyticListFilter: FC<any> = (props) => {
                       <Option key={`approval-step-disbursed`} value={'DISBURSED'}>
                         {t('Disbursed')}
                       </Option>
-                      {/* {workflowLoading === false &&
-                        workflowSteps.length &&
-                        workflowSteps.map((step) => (
-                          <Option key={`approval-step-${step.step_code}`} value={step.step_code}>
-                            {t(step.step_name)}
-                          </Option>
-                        ))} */}
-                      {/* {workflowLoading === true && (
-                        <Option key={`approval-step`} value={''}>
-                          Select Approval Step
-                        </Option>
-                      )} */}
                     </>
                   </Select>
                 </Form.Item>

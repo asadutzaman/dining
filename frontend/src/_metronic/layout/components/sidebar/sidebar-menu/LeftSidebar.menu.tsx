@@ -59,28 +59,6 @@ export const LeftSidebarMenu = [
           },
           {
             type: 'item',
-            title: 'Workflow Configuration',
-            permission: 'auth:workflow:menuAccess',
-            link: {
-              to: '/admin/setting/company/workflow-configuration',
-              exactMatch: true,
-              externalUrl: false,
-              openInNewTab: false,
-            },
-          },
-          {
-            type: 'item',
-            title: 'Workflow Approver Group',
-            permission: 'auth:approverGroup:menuAccess',
-            link: {
-              to: '/admin/setting/company/approver-group',
-              exactMatch: true,
-              externalUrl: false,
-              openInNewTab: false,
-            },
-          },
-          {
-            type: 'item',
             title: 'Weekends and Holidays',
             permission: 'auth:govtHoliday:menuAccess',
             link: {
@@ -168,28 +146,6 @@ export const LeftSidebarMenu = [
             },
           },
         ],
-      },
-    ],
-  },
-
-  {
-    type: 'group',
-    title: 'Patient Management',
-    hidden: false,
-    children: [
-      {
-        type: 'item',
-        title: 'Patients',
-        permission: 'auth:patient:menuAccess',
-        link: {
-          to: '/admin/patient/list',
-          exactMatch: true,
-          externalUrl: false,
-          openInNewTab: false,
-        },
-        icon: 'people',
-        subParent: false,
-        subChildren: [],
       },
     ],
   },
@@ -409,59 +365,6 @@ export const LeftSidebarMenu = [
   //       subChildren: [],
   //     },
 
-  //     {
-  //       type: 'item',
-  //       title: 'Approvals',
-  //       link: { to: '/' },
-  //       icon: 'double-down',
-  //       subParent: true,
-  //       subChildren: [
-  //         {
-  //           type: 'item',
-  //           title: 'Requisition Approval',
-  //           permission: 'auth:requisitionApproval:menuAccess',
-  //           link: {
-  //             to: '/admin/inventory/requisition-approval',
-  //             exactMatch: true,
-  //             externalUrl: false,
-  //             openInNewTab: false,
-  //           },
-  //         },
-  //         {
-  //           type: 'item',
-  //           title: 'Goods Receive Note Approval',
-  //           permission: 'auth:goodsReceiveNoteApproval:menuAccess',
-  //           link: {
-  //             to: '/admin/inventory/goods-receive-note-approval',
-  //             exactMatch: true,
-  //             externalUrl: false,
-  //             openInNewTab: false,
-  //           },
-  //         },
-  //         {
-  //           type: 'item',
-  //           title: 'Stock Adjustment Approval',
-  //           permission: 'auth:stockAdjustmentApproval:menuAccess',
-  //           link: {
-  //             to: '/admin/inventory/stock-adjustment-approval',
-  //             exactMatch: true,
-  //             externalUrl: false,
-  //             openInNewTab: false,
-  //           },
-  //         },
-  //         {
-  //           type: 'item',
-  //           title: 'Stock Transfer Approval',
-  //           permission: 'auth:stockTransferApproval:menuAccess',
-  //           link: {
-  //             to: '/admin/inventory/stock-transfer-approval',
-  //             exactMatch: true,
-  //             externalUrl: false,
-  //             openInNewTab: false,
-  //           },
-  //         },
-  //       ],
-  //     },
   //     // REPORTS
   //     {
   //       type: 'item',

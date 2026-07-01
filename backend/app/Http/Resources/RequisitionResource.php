@@ -5,7 +5,6 @@ namespace App\Http\Resources;
 use App\Repositories\DisbursementSlotAssignRepository;
 use App\Repositories\ItemStockRepository;
 use App\Repositories\RequisitionItemRepository;
-use App\Repositories\WorkflowRepository;
 
 class RequisitionResource extends BaseResource
 {
@@ -74,15 +73,6 @@ class RequisitionResource extends BaseResource
                         ->where('created_at', '<=', now()->subMonth()->endOfMonth()->format('Y-m-d'))
                         ->sum('quantity') ?? 0;
                 }
-
-                // GET WORKFLOW DATA
-                $workflowData = (new WorkflowRepository())
-                    ->newQuery()
-                    ->with(['workflowSteps:id,workflow_id,step_key,step_name,step_code,step_type,status'])
-                    ->where('type', 'Requisition')
-                    ->first();
-
-                $includesData['workflowData'] = $workflowData;
 
                 // GET DISBURSEMENT SLOT ASSIGN
                 if ($this->id && $this->process_status == 'APPROVED' || $this->process_status == 'DISBURSED') {

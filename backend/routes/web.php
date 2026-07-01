@@ -358,49 +358,6 @@ Route::prefix('api')->group(function () {
         Route::delete('/{id}', [App\Http\Controllers\RequestAccessController::class, 'destroy']);
     });
 
-    Route::group(['prefix' => 'employee', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        // Get By user Id
-        Route::get('/getByUserId/{id}', [App\Http\Controllers\EmployeeController::class, 'getByUserId']);
-        // Drop Down List
-        Route::get('/dropdown', [App\Http\Controllers\EmployeeController::class, 'dropdown']);
-        // Get All
-        Route::get('/', [App\Http\Controllers\EmployeeController::class, 'index']);
-        // Get One
-        Route::get('/{id}', [App\Http\Controllers\EmployeeController::class, 'show']);
-        // Create
-        Route::post('/', [App\Http\Controllers\EmployeeController::class, 'store']);
-        // Update (Check Validation)
-        Route::put('/{id}', [App\Http\Controllers\EmployeeController::class, 'update']);
-        // Update Partial (Without Validation)
-        Route::patch('/{id}', [App\Http\Controllers\EmployeeController::class, 'updateFields']);
-        // Delete
-        Route::delete('/{id}', [App\Http\Controllers\EmployeeController::class, 'destroy']);
-        // Get Employee List by Designation id
-        Route::post('/getEmployeeListByDesignationIds', [App\Http\Controllers\EmployeeController::class, 'getEmployeeListByDesignationIds']);
-    });
-
-    // APPLICANT PROFILE
-    Route::group(['prefix' => 'applicant-profile', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        // Drop Down List
-        Route::get('/dropdown', [App\Http\Controllers\ApplicantProfileController::class, 'dropdown']);
-        // Git By Where
-        Route::get('/getByWhere', [App\Http\Controllers\ApplicantProfileController::class, 'getByWhere']);
-        //profile details
-        Route::get('/applicant/details/{id}', [App\Http\Controllers\ApplicantProfileController::class, 'profileDetails']);
-        // Get All
-        Route::get('/', [App\Http\Controllers\ApplicantProfileController::class, 'index']);
-        // Get One
-        Route::get('/{id}', [App\Http\Controllers\ApplicantProfileController::class, 'show']);
-        // Create
-        Route::post('/', [App\Http\Controllers\ApplicantProfileController::class, 'store']);
-        // Update (Check Validation)
-        Route::put('/{id}', [App\Http\Controllers\ApplicantProfileController::class, 'update']);
-        // Update Partial (Without Validation)
-        Route::patch('/{id}', [App\Http\Controllers\ApplicantProfileController::class, 'updateFields']);
-        // Delete
-        Route::delete('/{id}', [App\Http\Controllers\ApplicantProfileController::class, 'destroy']);
-    });
-
     Route::group(['prefix' => 'option', 'middleware' => ['restrictIp', 'authVerify']], function () {
         // Load
         Route::get('/load', [App\Http\Controllers\OptionController::class, 'load']); // Done
@@ -586,34 +543,6 @@ Route::prefix('api')->group(function () {
         Route::delete('/{id}', [App\Http\Controllers\BrandController::class, 'destroy']);
     });
 
-    Route::group(['prefix' => 'approver-group', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        // Bulk Actions
-        Route::get('/test', [App\Http\Controllers\ApproverGroupController::class, 'test']);
-        Route::post('/bulk', [App\Http\Controllers\ApproverGroupController::class, 'bulk']);
-
-        // Drop Down List
-        Route::get('/dropdown', [App\Http\Controllers\ApproverGroupController::class, 'dropdown']);
-        Route::get('/member-dropdown', [App\Http\Controllers\ApproverGroupController::class, 'memberDropdown']);
-
-        // Get All
-        Route::get('/', [App\Http\Controllers\ApproverGroupController::class, 'index']);
-
-        // Get One
-        Route::get('/{id}', [App\Http\Controllers\ApproverGroupController::class, 'show']);
-
-        // Create
-        Route::post('/', [App\Http\Controllers\ApproverGroupController::class, 'store']);
-
-        // Update (Check Validation)
-        Route::put('/{id}', [App\Http\Controllers\ApproverGroupController::class, 'update']);
-
-        // Update Partial (Without Validation)
-        Route::patch('/{id}', [App\Http\Controllers\ApproverGroupController::class, 'updateFields']);
-
-        // Delete
-        Route::delete('/{id}', [App\Http\Controllers\ApproverGroupController::class, 'destroy']);
-    });
-
     Route::group(['prefix' => 'branch', 'middleware' => ['restrictIp', 'authVerify']], function () {
         // Bulk Actions
         Route::get('/test', [App\Http\Controllers\BranchController::class, 'test']);
@@ -782,87 +711,6 @@ Route::prefix('api')->group(function () {
         Route::delete('/{id}', [App\Http\Controllers\ItemController::class, 'destroy']);
     });
 
-    Route::group(['prefix' => 'workflow', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        // Git By Where
-        Route::get('/getByWhere', [App\Http\Controllers\WorkflowController::class, 'getByWhere']);
-
-        // Bulk Actions
-        Route::post('/bulk', [App\Http\Controllers\WorkflowController::class, 'bulk']);
-
-        // Drop Down List
-        Route::get('/dropdown', [App\Http\Controllers\WorkflowController::class, 'dropdown']);
-
-        // Get All
-        Route::get('/', [App\Http\Controllers\WorkflowController::class, 'index']);
-
-        // Get One
-        Route::get('/{id}', [App\Http\Controllers\WorkflowController::class, 'show']);
-
-        // Create
-        Route::post('/', [App\Http\Controllers\WorkflowController::class, 'store']);
-
-        // Update (Check Validation)
-        Route::put('/{id}', [App\Http\Controllers\WorkflowController::class, 'update']);
-
-        // Update Partial (Without Validation)
-        Route::patch('/{id}', [App\Http\Controllers\WorkflowController::class, 'updateFields']);
-
-        // Delete
-        Route::delete('/{id}', [App\Http\Controllers\WorkflowController::class, 'destroy']);
-    });
-
-    Route::group(['prefix' => 'workflow-step', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        // Git By Where
-        Route::get('/getByWhere', [App\Http\Controllers\WorkflowStepController::class, 'getByWhere']);
-
-        // Bulk Actions
-        Route::post('/bulk', [App\Http\Controllers\WorkflowStepController::class, 'bulk']);
-
-        // Drop Down List
-        Route::get('/dropdown', [App\Http\Controllers\WorkflowStepController::class, 'dropdown']);
-
-        // Get All
-        Route::get('/', [App\Http\Controllers\WorkflowStepController::class, 'index']);
-
-        // Get One
-        Route::get('/{id}', [App\Http\Controllers\WorkflowStepController::class, 'show']);
-
-        // Create
-        Route::post('/', [App\Http\Controllers\WorkflowStepController::class, 'store']);
-
-        // Update (Check Validation)
-        Route::put('/{id}', [App\Http\Controllers\WorkflowStepController::class, 'update']);
-
-        // Update Partial (Without Validation)
-        Route::patch('/{id}', [App\Http\Controllers\WorkflowStepController::class, 'updateFields']);
-
-        // Delete
-        Route::delete('/{id}', [App\Http\Controllers\WorkflowStepController::class, 'destroy']);
-    });
-
-    Route::group(['prefix' => 'workflow-transition', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        // Git By Where
-        Route::get('/getByWhere', [App\Http\Controllers\WorkflowTransitionController::class, 'getByWhere']);
-
-        // Get All
-        Route::get('/', [App\Http\Controllers\WorkflowTransitionController::class, 'index']);
-
-        // Get One
-        Route::get('/{id}', [App\Http\Controllers\WorkflowTransitionController::class, 'show']);
-
-        // Create
-        Route::post('/', [App\Http\Controllers\WorkflowTransitionController::class, 'store']);
-
-        // Update (Check Validation)
-        Route::put('/{id}', [App\Http\Controllers\WorkflowTransitionController::class, 'update']);
-
-        // Update Partial (Without Validation)
-        Route::patch('/{id}', [App\Http\Controllers\WorkflowTransitionController::class, 'updateFields']);
-
-        // Delete
-        Route::delete('/{id}', [App\Http\Controllers\WorkflowTransitionController::class, 'destroy']);
-    });
-
     Route::group(['prefix' => 'govt-holiday', 'middleware' => ['restrictIp', 'authVerify']], function () {
         // Git By Where
         Route::get('/getByWhere', [App\Http\Controllers\GovtHolidayController::class, 'getByWhere']);
@@ -920,15 +768,6 @@ Route::prefix('api')->group(function () {
         Route::delete('/{id}', [App\Http\Controllers\RequisitionController::class, 'destroy']);
     });
 
-    // REQUISITION APPROVAL
-    Route::group(['prefix' => 'approval-requisition', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        // Get All
-        Route::get('/', [App\Http\Controllers\Approval\RequisitionApprovalController::class, 'index']);
-
-        // Get One
-        Route::get('/{id}', [App\Http\Controllers\Approval\RequisitionApprovalController::class, 'show']);
-    });
-
     // GOODS RECEIVE NOTE
     Route::group(['prefix' => 'goods-receive-note', 'middleware' => ['restrictIp', 'authVerify']], function () {
 
@@ -966,23 +805,6 @@ Route::prefix('api')->group(function () {
         Route::delete('/{id}', [App\Http\Controllers\GoodsReceiveNoteController::class, 'destroy']);
     });
 
-    // GOODS RECEIVE NOTE APPROVAL
-    Route::group(['prefix' => 'approval-goods-receive-note', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        // Get All
-        Route::get('/', [App\Http\Controllers\Approval\GoodsReceiveNoteApprovalController::class, 'index']);
-
-        // Get One
-        Route::get('/{id}', [App\Http\Controllers\Approval\GoodsReceiveNoteApprovalController::class, 'show']);
-    });
-
-    // STOCK TRANSFER APPROVAL
-    Route::group(['prefix' => 'approval-stock-transfer', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        // Get All
-        Route::get('/', [App\Http\Controllers\Approval\StockTransferApprovalController::class, 'index']);
-        // Get One
-        Route::get('/{id}', [App\Http\Controllers\Approval\StockTransferApprovalController::class, 'show']);
-    });
-
     // STOCK ADJUSTMENT
     Route::group(['prefix' => 'stock-adjustment', 'middleware' => ['restrictIp', 'authVerify']], function () {
         Route::post('/update-process-status/{id}', [App\Http\Controllers\StockAdjustmentController::class, 'stockProcessStatusUpdate']);
@@ -1015,15 +837,6 @@ Route::prefix('api')->group(function () {
 
         // Delete
         Route::delete('/{id}', [App\Http\Controllers\StockAdjustmentController::class, 'destroy']);
-    });
-
-    // STOCK ADJUSTMENT APPROVAL
-    Route::group(['prefix' => 'approval-stock-adjustment', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        // Get All
-        Route::get('/', [App\Http\Controllers\Approval\StockAdjustmentApprovalController::class, 'index']);
-
-        // Get One
-        Route::get('/{id}', [App\Http\Controllers\Approval\StockAdjustmentApprovalController::class, 'show']);
     });
 
     // ITEM CONSUMPTION
@@ -1125,30 +938,4 @@ Route::prefix('api')->group(function () {
     // EXPORT
     Route::group(['prefix' => 'export', 'middleware' => ['restrictIp', 'authVerify']], function () {});
 
-    // PATIENT
-    Route::group(['prefix' => 'patient', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        // Bulk Actions
-        Route::post('/bulk', [App\Http\Controllers\PatientController::class, 'bulk']);
-
-        // Drop Down List
-        Route::get('/dropdown', [App\Http\Controllers\PatientController::class, 'dropdown']);
-
-        // Get All
-        Route::get('/', [App\Http\Controllers\PatientController::class, 'index']);
-
-        // Get One
-        Route::get('/{id}', [App\Http\Controllers\PatientController::class, 'show']);
-
-        // Create
-        Route::post('/', [App\Http\Controllers\PatientController::class, 'store']);
-
-        // Update (Check Validation)
-        Route::put('/{id}', [App\Http\Controllers\PatientController::class, 'update']);
-
-        // Update Partial (Without Validation)
-        Route::patch('/{id}', [App\Http\Controllers\PatientController::class, 'updateFields']);
-
-        // Delete
-        Route::delete('/{id}', [App\Http\Controllers\PatientController::class, 'destroy']);
-    });
 });
