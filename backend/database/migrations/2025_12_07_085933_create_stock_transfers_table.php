@@ -21,7 +21,7 @@ class CreateStocktransfersTable extends Migration
             $table->string('stock_transfer_number')->unique();
             $table->integer('transfer_from')->comment('FK=branch.id')->index();
             // $table->unsignedBigInteger('transfer_to')->comment('FK=branch.id')->index();
-            $table->text('transfer_to')->comment('FK=branch.id')->index();
+            $table->text('transfer_to')->comment('FK=branch.id');
             $table->text('reason')->nullable();
             $table->string('process_status')->default('SUBMITTED')->comment('DRAFT, SUBMITTED');
 

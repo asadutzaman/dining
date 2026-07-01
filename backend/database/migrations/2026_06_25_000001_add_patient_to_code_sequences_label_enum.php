@@ -21,16 +21,13 @@ class AddPatientToCodeSequencesLabelEnum extends Migration
     {
         $table = $this->prefixed('code_sequences');
 
-        // Drop the existing check constraint and recreate it with PATIENT added
-        DB::statement("ALTER TABLE {$table} DROP CONSTRAINT IF EXISTS {$table}_label_check");
-        DB::statement("ALTER TABLE {$table} ADD CONSTRAINT {$table}_label_check CHECK (label IN ('SUPPLIER','ITEM','REQUISITION','GRN','STOCK_TRANSFER','STOCK_ADJUSTMENT','PATIENT'))");
+        DB::statement("ALTER TABLE {$table} MODIFY COLUMN label ENUM('SUPPLIER','ITEM','REQUISITION','GRN','STOCK_TRANSFER','STOCK_ADJUSTMENT','PATIENT') NOT NULL");
     }
 
     public function down()
     {
         $table = $this->prefixed('code_sequences');
 
-        DB::statement("ALTER TABLE {$table} DROP CONSTRAINT IF EXISTS {$table}_label_check");
-        DB::statement("ALTER TABLE {$table} ADD CONSTRAINT {$table}_label_check CHECK (label IN ('SUPPLIER','ITEM','REQUISITION','GRN','STOCK_TRANSFER','STOCK_ADJUSTMENT'))");
+        DB::statement("ALTER TABLE {$table} MODIFY COLUMN label ENUM('SUPPLIER','ITEM','REQUISITION','GRN','STOCK_TRANSFER','STOCK_ADJUSTMENT') NOT NULL");
     }
 }

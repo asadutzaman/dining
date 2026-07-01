@@ -23,17 +23,17 @@ class WorkflowSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::transaction(function () {
-            $this->truncateMultiple([
-                'workflows',
-                'workflow_steps',
-                'workflow_step_actions',
-                'workflow_step_approvers',
-                'workflow_step_preconditions',
-                'workflow_step_tasks',
-                'workflow_step_action_rules'
-            ]);
+        $this->truncateMultiple([
+            'workflows',
+            'workflow_steps',
+            'workflow_step_actions',
+            'workflow_step_approvers',
+            'workflow_step_preconditions',
+            'workflow_step_tasks',
+            'workflow_step_action_rules'
+        ]);
 
+        DB::transaction(function () {
             $json = File::get(database_path('seeders/json/workflowsSeeder.json'));
             $workflows = json_decode($json);
 
