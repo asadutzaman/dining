@@ -1,0 +1,62 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "requisitionApproval",
+        "display_name": "Approval - Requisition",
+        "resource_uri": "requisitionApproval",
+        "controller_name": "RequisitionController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:requisitionApproval:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/requisition"
+                }
+            ]
+        },
+        {
+            "scope": "auth:requisitionApproval:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/requisition"
+                }
+            ]
+        },
+        {
+            "scope": "auth:requisitionApproval:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/requisition/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/requisition/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:requisitionApproval:StepAction",
+            "display_name": "Step Action",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/requisition"
+                }
+            ]
+        }
+    ]
+}

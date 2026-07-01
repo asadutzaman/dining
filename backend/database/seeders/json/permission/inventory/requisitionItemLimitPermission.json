@@ -1,0 +1,100 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "requisitionItemLimit",
+    "display_name": "Back Office Setup - Requisition Item Limits",
+    "resource_uri": "requisition-item-limit",
+    "controller_name": "RequisitionItemLimitController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:requisitionItemLimit:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/requisition-item-limit"
+        }
+      ]
+    },
+    {
+      "scope": "auth:requisitionItemLimit:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/requisition-item-limit"
+        }
+      ]
+    },
+    {
+      "scope": "auth:requisitionItemLimit:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/requisition-item-limit/*"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getByWhere",
+          "uri": "/requisition-item-limit/getByWhere"
+        }
+      ]
+    },
+    {
+      "scope": "auth:requisitionItemLimit:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/requisition-item-limit"
+        }
+      ]
+    },
+    {
+      "scope": "auth:requisitionItemLimit:edit",
+      "display_name": "Edit",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/requisition-item-limit/*"
+        },
+        {
+          "http_method": "PATCH",
+          "action_name": "updateFields",
+          "uri": "/requisition-item-limit/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:requisitionItemLimit:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/requisition-item-limit/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:requisitionItemLimit:multiSelect",
+      "display_name": "Multiple Selection",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "bulk",
+          "uri": "/requisition-item-limit/bulk"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+[
+    {
+        "user_id": 1,
+        "name": "OAuth2 Web Login Client",
+        "client_id": "7c268d3d418d8e101d8825c294260397a7c017d5090867a2c0c685f996eb30ce9c9721159c2281b9",
+        "client_secret": "J5kv6kJ9WFx3DdnJfkXTkHRy2fvg12O3w6HZHYeO",
+        "password_client": 1,
+        "is_default": 1
+    },
+    {
+        "user_id": 1,
+        "name": "OAuth2 Mobile Login Client",
+        "client_id": "fd523d975feb3d4a2c9b5ae6efed937b154e228d6c8919e087991e794ab1a80eb27b7a6868faf944",
+        "client_secret": "8tHRseqCtFYHfSB1mP5IRZ3CzlY3oI1qBi4Om2EA",
+        "password_client": 1,
+        "is_default": 0
+    }
+]
+

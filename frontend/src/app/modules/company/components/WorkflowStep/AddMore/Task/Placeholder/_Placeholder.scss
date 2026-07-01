@@ -1,0 +1,62 @@
+.report-table {
+    width: 100%;
+
+    & > thead {
+        & > tr {
+            & > th {
+                background-color: #414b6a;
+                color: #fff;
+            }
+        }
+    }
+
+    & > thead,
+    & > tbody,
+    & > tfoot {
+        & > tr {
+            & > th,
+            & > td {
+                padding: 5px;
+            }
+        }
+    }
+
+    &.report-table-bordered {
+        & > thead,
+        & > tbody,
+        & > tfoot {
+            & > tr {
+                & > th,
+                & > td {
+                    border: 1px solid #ccc;
+                }
+            }
+        }
+    }
+
+    &.report-table-sm {
+        & > thead,
+        & > tbody,
+        & > tfoot {
+            & > tr {
+                & > th,
+                & > td {
+                    padding: 2px;
+                }
+            }
+        }
+    }
+}
+
+@media print {
+    .report-table {
+        & > thead {
+            & > tr {
+                & > th {
+                    background-color: transparent;
+                    color: #000;
+                }
+            }
+        }
+    }
+}

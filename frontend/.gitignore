@@ -1,0 +1,87 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Packages
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Adobe files to ignore
+*.psd
+*.ai
+
+# Logs
+*.log
+
+# Compiled source
+*.dll
+*.exe
+*.o
+*.so
+
+# OS generated files
+*.DS_Store
+*.swp
+*.out
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+# /build
+/webui
+
+# phpstorm project files
+.idea
+
+# Visual Studio Code Project files
+.vscode
+*.code-workspace
+*.todo
+
+# Docker
+Dockerfile
+Dockerfile.nginx
+docker-compose.yml
+/.deploy
+.deploy
+.dockerignore
+
+# misc
+.DS_Store
+.env
+.env.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+package-lock.json
+
+/src/app/constants/config.constant.ts

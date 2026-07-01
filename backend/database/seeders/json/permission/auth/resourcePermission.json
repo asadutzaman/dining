@@ -1,0 +1,100 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "resource",
+    "display_name": "Permissions - Resource",
+    "resource_uri": "resource",
+    "controller_name": "ResourceController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:resource:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/resource"
+        }
+      ]
+    },
+    {
+      "scope": "auth:resource:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/resource"
+        }
+      ]
+    },
+    {
+      "scope": "auth:resource:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/resource/*"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getByWhere",
+          "uri": "/resource/getByWhere"
+        }
+      ]
+    },
+    {
+      "scope": "auth:resource:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/resource"
+        }
+      ]
+    },
+    {
+      "scope": "auth:resource:edit",
+      "display_name": "Edit",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/resource/*"
+        },
+        {
+          "http_method": "PATCH",
+          "action_name": "updateFields",
+          "uri": "/resource/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:resource:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/resource/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:resource:multiSelect",
+      "display_name": "Multiple Selection",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "bulk",
+          "uri": "/resource/bulk"
+        }
+      ]
+    }
+  ]
+}

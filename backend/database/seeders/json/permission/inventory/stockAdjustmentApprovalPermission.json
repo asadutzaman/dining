@@ -1,0 +1,62 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "stockAdjustmentApproval",
+        "display_name": "Approval - Stock Adjustment",
+        "resource_uri": "stockAdjustmentApproval",
+        "controller_name": "StockAdjustmentController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:stockAdjustmentApproval:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/stock-adjustment"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stockAdjustmentApproval:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/stock-adjustment"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stockAdjustmentApproval:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/stock-adjustment/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/stock-adjustment/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stockAdjustmentApproval:StepAction",
+            "display_name": "Step Action",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/stock-adjustment"
+                }
+            ]
+        }
+    ]
+}

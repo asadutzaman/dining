@@ -1,0 +1,111 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "requisition",
+    "display_name": "Requisition",
+    "resource_uri": "requisition",
+    "controller_name": "RequisitionController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:requisition:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/requisition"
+        }
+      ]
+    },    
+    {
+      "scope": "auth:requisition:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/requisition"
+        }
+      ]
+    },
+    {
+      "scope": "auth:requisition:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/requisition/*"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getByWhere",
+          "uri": "/requisition/getByWhere"
+        }
+      ]
+    },
+    {
+      "scope": "auth:requisition:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/requisition"
+        }
+      ]
+    },
+    {
+      "scope": "auth:requisition:edit",
+      "display_name": "Edit",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/requisition/*"
+        },
+        {
+          "http_method": "PATCH",
+          "action_name": "updateFields",
+          "uri": "/requisition/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:requisition:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/requisition/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:requisition:multiSelect",
+      "display_name": "Multiple Selection",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "bulk",
+          "uri": "/requisition/bulk"
+        }
+      ]
+    },
+    {
+      "scope": "auth:requisition:requestAcknowledgement",
+      "display_name": "Request Acknowledgement",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "bulk",
+          "uri": "/requisition"
+        }
+      ]
+    }
+  ]
+}

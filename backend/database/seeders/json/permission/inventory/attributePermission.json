@@ -1,0 +1,100 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "attribute",
+        "display_name": "Back Office Setup - Attribute",
+        "resource_uri": "attribute",
+        "controller_name": "AttributeController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:attribute:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/attribute"
+                }
+            ]
+        },
+        {
+            "scope": "auth:attribute:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/attribute"
+                }
+            ]
+        },
+        {
+            "scope": "auth:attribute:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/attribute/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/attribute/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:attribute:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/attribute"
+                }
+            ]
+        },
+        {
+            "scope": "auth:attribute:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/attribute/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/attribute/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:attribute:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/attribute/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:attribute:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/attribute/bulk"
+                }
+            ]
+        }
+    ]
+}

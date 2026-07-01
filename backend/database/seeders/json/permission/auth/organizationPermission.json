@@ -1,0 +1,100 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "organization",
+    "display_name": "Organization",
+    "resource_uri": "organization",
+    "controller_name": "OrganizationController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:organization:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/organization"
+        }
+      ]
+    },
+    {
+      "scope": "auth:organization:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/organization"
+        }
+      ]
+    },
+    {
+      "scope": "auth:organization:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/organization/*"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getByWhere",
+          "uri": "/organization/getByWhere"
+        }
+      ]
+    },
+    {
+      "scope": "auth:organization:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/organization"
+        }
+      ]
+    },
+    {
+      "scope": "auth:organization:edit",
+      "display_name": "Edit",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/organization/*"
+        },
+        {
+          "http_method": "PATCH",
+          "action_name": "updateFields",
+          "uri": "/organization/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:organization:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/organization/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:organization:multiSelect",
+      "display_name": "Multiple Selection",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "bulk",
+          "uri": "/organization/bulk"
+        }
+      ]
+    }
+  ]
+}

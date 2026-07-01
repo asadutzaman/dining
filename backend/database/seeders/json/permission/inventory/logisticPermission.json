@@ -1,0 +1,100 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "logistic",
+        "display_name": "Back Office Setup - Logistic",
+        "resource_uri": "logistic",
+        "controller_name": "LogisticController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:logistic:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/logistic"
+                }
+            ]
+        },
+        {
+            "scope": "auth:logistic:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/logistic"
+                }
+            ]
+        },
+        {
+            "scope": "auth:logistic:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/logistic/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/logistic/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:logistic:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/logistic"
+                }
+            ]
+        },
+        {
+            "scope": "auth:logistic:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/logistic/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/logistic/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:logistic:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/logistic/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:logistic:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/logistic/bulk"
+                }
+            ]
+        }
+    ]
+}

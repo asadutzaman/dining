@@ -1,0 +1,17 @@
+.field-permission-table-header {
+  width: 100%;
+}
+.field-permission-table-body {
+  width: 100%;
+}
+.field-permission-item {
+  float: left;
+  width: 25%;
+  padding: 10px 0 0 0;
+}
+.field-permission-table-header span{
+  font-weight: bold;
+}
+.field-permission-table-body .ant-radio-group.ant-radio-group-outline {
+  display: block;
+}

@@ -1,0 +1,232 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "oauth",
+    "display_name": "Auth",
+    "resource_uri": "oauth",
+    "controller_name": "AuthController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:oauth:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/oauth"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/oauth"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/oauth/*"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getByWhere",
+          "uri": "/oauth/getByWhere"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/oauth"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:edit",
+      "display_name": "Edit",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/oauth/*"
+        },
+        {
+          "http_method": "PATCH",
+          "action_name": "updateFields",
+          "uri": "/oauth/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/oauth/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:multiSelect",
+      "display_name": "Multiple Selection",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "bulk",
+          "uri": "/oauth/bulk"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:changePassword",
+      "display_name": "Change Password",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "changePassword",
+          "uri": "/oauth/change-password"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:forgotPassword",
+      "display_name": "Forgot Password",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "forgotPassword",
+          "uri": "/oauth/forgot-password"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:resetPassword",
+      "display_name": "Reset Password",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "resetPassword",
+          "uri": "/oauth/reset-password"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:login",
+      "display_name": "Login",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "login",
+          "uri": "/oauth/login"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:register",
+      "display_name": "Register",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "register",
+          "uri": "/oauth/register"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:verifyUserEmail",
+      "display_name": "Verify User Email",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "verifyUserEmail",
+          "uri": "/oauth/verify-email"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:loadGlobalState",
+      "display_name": "Load Global State",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "loadGlobalState",
+          "uri": "/oauth/load-global-state"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:loadAuthState",
+      "display_name": "Load Auth State",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "loadAuthState",
+          "uri": "/oauth/load-auth-state"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:loadUserScopes",
+      "display_name": "Load User Scopes",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "loadUserScopes",
+          "uri": "/oauth/load-user-scopes"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:checkValidLoginInfo",
+      "display_name": "Check Valid Login",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "checkValidLoginInfo",
+          "uri": "/oauth/check-valid-login-info"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:switchLoginOrganization",
+      "display_name": "Switch Organization",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "switchLoginOrganization",
+          "uri": "/oauth/switch-login-organization"
+        }
+      ]
+    },
+    {
+      "scope": "auth:oauth:validateIdTokenAndGenerateAccessToken",
+      "display_name": "Generate Access Token",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "validateIdTokenAndGenerateAccessToken",
+          "uri": "/oauth/validate-id-token-and-generate-access-token"
+        }
+      ]
+    }
+  ]
+}

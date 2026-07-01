@@ -1,0 +1,100 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "role",
+    "display_name": "User Management - Role",
+    "resource_uri": "role",
+    "controller_name": "RoleController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:role:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/role"
+        }
+      ]
+    },
+    {
+      "scope": "auth:role:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/role"
+        }
+      ]
+    },
+    {
+      "scope": "auth:role:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/role/*"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getByWhere",
+          "uri": "/role/getByWhere"
+        }
+      ]
+    },
+    {
+      "scope": "auth:role:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/role"
+        }
+      ]
+    },
+    {
+      "scope": "auth:role:edit",
+      "display_name": "Edit",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/role/*"
+        },
+        {
+          "http_method": "PATCH",
+          "action_name": "updateFields",
+          "uri": "/role/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:role:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/role/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:role:multiSelect",
+      "display_name": "Multiple Selection",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "bulk",
+          "uri": "/role/bulk"
+        }
+      ]
+    }
+  ]
+}

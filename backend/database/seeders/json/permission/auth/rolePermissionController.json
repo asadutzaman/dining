@@ -1,0 +1,28 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "rolePermission",
+    "display_name": "Permissions - Role Permissions",
+    "resource_uri": "permission",
+    "controller_name": "PermissionController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:permission:rolePermission",
+      "display_name": "Permissions",
+      "actions": null
+    },
+    {
+      "scope": "auth:permission:fieldPermission",
+      "display_name": "Field Permissions",
+      "actions": null
+    },
+    {
+      "scope": "auth:permission:userAdditionalPermission",
+      "display_name": "User Permissions",
+      "actions": null
+    }
+  ]
+}

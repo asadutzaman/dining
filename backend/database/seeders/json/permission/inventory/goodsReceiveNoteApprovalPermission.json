@@ -1,0 +1,62 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "goodsReceiveNoteApproval",
+        "display_name": "Approval - Goods Receive Note",
+        "resource_uri": "goodsReceiveNoteApproval",
+        "controller_name": "GoodsReceiveNoteController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:goodsReceiveNoteApproval:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/goods-receive-note"
+                }
+            ]
+        },
+        {
+            "scope": "auth:goodsReceiveNoteApproval:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/goods-receive-note"
+                }
+            ]
+        },
+        {
+            "scope": "auth:goodsReceiveNoteApproval:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/goods-receive-note/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/goods-receive-note/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:goodsReceiveNoteApproval:StepAction",
+            "display_name": "Step Action",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/goods-receive-note"
+                }
+            ]
+        }
+    ]
+}

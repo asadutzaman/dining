@@ -1,0 +1,30 @@
+<?php
+
+namespace DummyNamespace;
+
+use DummyModelNamespace;
+use App\Services\ODataService;
+
+class DummyClass extends BaseRepository
+{
+    /**
+    * @var DummyModelClass
+    */
+    protected $model;
+
+    protected $request;
+
+    protected $oDataService;
+
+    protected $fieldSearchable = ['title', 'description'];
+
+    public function __construct()
+    {
+       $this->model         = new DummyModelClass();
+        }
+ protected function init()
+    {
+        $this->request      = request();
+        $this->oDataService = (new ODataService())->init();
+    }
+}

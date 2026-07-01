@@ -1,0 +1,144 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "item",
+        "display_name": "Back Office Setup - Item",
+        "resource_uri": "item",
+        "controller_name": "ItemController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:item:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/item"
+                }
+            ]
+        },
+        {
+            "scope": "auth:item:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/item"
+                }
+            ]
+        },
+        {
+            "scope": "auth:item:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/item/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/item/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:item:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/item"
+                }
+            ]
+        },
+        {
+            "scope": "auth:item:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/item/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/item/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:item:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/item/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:item:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/item/bulk"
+                }
+            ]
+        },
+        {
+            "scope": "auth:itemAttribute:edit",
+            "display_name": "Attribute Edit",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/item/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:itemAttribute:delete",
+            "display_name": "Attribute Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/item/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:itemUnitMapping:edit",
+            "display_name": "Unit Mapping Edit",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/item/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:itemUnitMapping:delete",
+            "display_name": "Unit Mapping Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/item/*"
+                }
+            ]
+        }
+    ]
+}

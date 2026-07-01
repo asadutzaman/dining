@@ -1,0 +1,100 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "group",
+    "display_name": "User Management - Group",
+    "resource_uri": "group",
+    "controller_name": "GroupController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:group:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/group"
+        }
+      ]
+    },
+    {
+      "scope": "auth:group:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/group"
+        }
+      ]
+    },
+    {
+      "scope": "auth:group:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/group/*"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getByWhere",
+          "uri": "/group/getByWhere"
+        }
+      ]
+    },
+    {
+      "scope": "auth:group:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/group"
+        }
+      ]
+    },
+    {
+      "scope": "auth:group:edit",
+      "display_name": "Edit",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/group/*"
+        },
+        {
+          "http_method": "PATCH",
+          "action_name": "updateFields",
+          "uri": "/group/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:group:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/group/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:group:multiSelect",
+      "display_name": "Multiple Selection",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "bulk",
+          "uri": "/group/bulk"
+        }
+      ]
+    }
+  ]
+}

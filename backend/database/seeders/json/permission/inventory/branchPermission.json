@@ -1,0 +1,100 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "branch",
+        "display_name": "Back Office Setup - Branch",
+        "resource_uri": "branch",
+        "controller_name": "BranchController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:branch:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/branch"
+                }
+            ]
+        },
+        {
+            "scope": "auth:branch:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/branch"
+                }
+            ]
+        },
+        {
+            "scope": "auth:branch:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/branch/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/branch/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:branch:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/branch"
+                }
+            ]
+        },
+        {
+            "scope": "auth:branch:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/branch/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/branch/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:branch:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/branch/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:branch:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/branch/bulk"
+                }
+            ]
+        }
+    ]
+}

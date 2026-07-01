@@ -1,0 +1,24 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "applicationSetting",
+        "display_name": "Application Setting",
+        "resource_uri": "applicationSetting",
+        "controller_name": "ApplicationSettingController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:applicationSetting:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/application-setting"
+                }
+            ]
+        }
+    ]
+}

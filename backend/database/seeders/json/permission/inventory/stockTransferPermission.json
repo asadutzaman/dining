@@ -1,0 +1,100 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "stockTransfer",
+        "display_name": "Stock Transfer",
+        "resource_uri": "stockTransfer",
+        "controller_name": "StockTransferController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:stockTransfer:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/stockTransfer"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stockTransfer:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/stockTransfer"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stockTransfer:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/stockTransfer/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/stockTransfer/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stockTransfer:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/stockTransfer"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stockTransfer:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/stockTransfer/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/stockTransfer/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stockTransfer:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/stockTransfer/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stockTransfer:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/stockTransfer/bulk"
+                }
+            ]
+        }
+    ]
+}

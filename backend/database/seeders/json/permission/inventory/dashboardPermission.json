@@ -1,0 +1,93 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "dashboard",
+        "display_name": "Dashboard",
+        "resource_uri": "dashboard",
+        "controller_name": "DashboardController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:dashboard:pendingRequisitionCard",
+            "display_name": "Pending Requisitions Card",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:itemStockCard",
+            "display_name": "Item Stock Card",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:demandVsStockCard",
+            "display_name": "Demand vs Stock Card",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:requesterWiseDisbursementCard",
+            "display_name": "Requester Wise Disbursement Card",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:requisitionFlowBottlenecksCard",
+            "display_name": "Requisition Flow & Bottlenecks",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:thanaWiseRequisitionOverview",
+            "display_name": "Thana Wise Requisition Overview",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:demandvsStockIntelligence",
+            "display_name": "Demand vs Stock Intelligence",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:twelveMonthsRequisitionReport",
+            "display_name": "Twelve Months Requisition Report",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:requisitionCard",
+            "display_name": "Requisition Card",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:goodsReceiveNoteCard",
+            "display_name": "Goods Receive Note Card",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:stockAdjustmentCard",
+            "display_name": "Stock Adjustment Card",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:requisitionPieChartCardStatus",
+            "display_name": "Requisition Pie Chart Status",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:goodsReceiveNotePieChartCardStatus",
+            "display_name": "Goods Receive Note Pie Chart Status",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:stockAdjustmentPieChartCardStatus",
+            "display_name": "Stock Adjustment Pie Chart Status",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:itemDisbursementStatistics",
+            "display_name": "Item Disbursement Statistics",
+            "actions": null
+        },
+        {
+            "scope": "auth:dashboard:branchUser",
+            "display_name": "Branch User (Requisition Create & Consumption)",
+            "actions": null
+        }
+    ]
+}

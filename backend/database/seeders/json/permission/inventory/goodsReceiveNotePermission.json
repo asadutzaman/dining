@@ -1,0 +1,111 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "goodsReceiveNote",
+        "display_name": "Goods Receive Note",
+        "resource_uri": "goodsReceiveNote",
+        "controller_name": "GoodsReceiveNoteController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:goodsReceiveNote:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/goodsReceiveNote"
+                }
+            ]
+        },
+        {
+            "scope": "auth:goodsReceiveNote:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/goodsReceiveNote"
+                }
+            ]
+        },
+        {
+            "scope": "auth:goodsReceiveNote:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/goodsReceiveNote/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/goodsReceiveNote/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:goodsReceiveNote:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/goodsReceiveNote"
+                }
+            ]
+        },
+        {
+            "scope": "auth:goodsReceiveNote:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/goodsReceiveNote/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/goodsReceiveNote/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:goodsReceiveNote:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/goodsReceiveNote/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:goodsReceiveNote:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/goodsReceiveNote/bulk"
+                }
+            ]
+        },
+        {
+            "scope": "auth:goodsReceiveNote:goodsReceiveNoteAcknowledgement",
+            "display_name": "Request Acknowledgement",
+            "actions": [
+                {
+                "http_method": "POST",
+                "action_name": "bulk",
+                "uri": "/goodsReceiveNote"
+                }
+            ]
+        }
+    ]
+}

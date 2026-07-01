@@ -1,0 +1,100 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "itemCategory",
+        "display_name": "Back Office Setup - Item Category",
+        "resource_uri": "itemCategory",
+        "controller_name": "ItemCategoryController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:itemCategory:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/item-category"
+                }
+            ]
+        },
+        {
+            "scope": "auth:itemCategory:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/item-category"
+                }
+            ]
+        },
+        {
+            "scope": "auth:itemCategory:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/item-category/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/item-category/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:itemCategory:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/item-category"
+                }
+            ]
+        },
+        {
+            "scope": "auth:itemCategory:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/item-category/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/item-category/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:itemCategory:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/item-category/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:itemCategory:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/item-category/bulk"
+                }
+            ]
+        }
+    ]
+}

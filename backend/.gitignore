@@ -1,0 +1,72 @@
+# Packages
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Adobe files to ignore
+*.psd
+*.ai
+
+# Logs
+*.log
+
+# Compiled source
+*.dll
+*.exe
+*.o
+*.so
+
+# OS generated files
+*.DS_Store
+*.swp
+*.out
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Laravel Default
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+.env
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+# phpstorm project files
+/.idea
+.idea
+
+# Visual Studio Code Project files
+/.vscode
+.vscode
+
+# Config File
+# /config/api.php
+# /config/database.php
+
+# Docker
+Dockerfile
+Dockerfile.nginx
+docker-compose.yml
+/.deploy
+.deploy
+.dockerignore
+
+# Road Runner
+rr
+.rr.yaml
+
+# Docker generated mysql & redis folder
+/mysql
+/redis

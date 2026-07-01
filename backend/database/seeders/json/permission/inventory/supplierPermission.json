@@ -1,0 +1,100 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "supplier",
+        "display_name": "Back Office Setup - Supplier",
+        "resource_uri": "supplier",
+        "controller_name": "SupplierController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:supplier:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/supplier"
+                }
+            ]
+        },
+        {
+            "scope": "auth:supplier:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/supplier"
+                }
+            ]
+        },
+        {
+            "scope": "auth:supplier:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/supplier/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/supplier/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:supplier:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/supplier"
+                }
+            ]
+        },
+        {
+            "scope": "auth:supplier:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/supplier/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/supplier/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:supplier:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/supplier/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:supplier:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/supplier/bulk"
+                }
+            ]
+        }
+    ]
+}

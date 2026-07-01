@@ -1,0 +1,8 @@
+export const SET_ERROR = 'SET_ERROR';
+export const SET_LOADING = 'SET_LOADING';
+export const LOADED_SCOPE = 'LOADED_SCOPE';
+export const LOADED_TOKEN = 'LOADED_TOKEN';
+export const REMOVE_TOKEN = 'REMOVE_TOKEN';
+export const LOADED_AUTH_STATE = 'LOADED_AUTH_STATE';
+export const CLEAR_AUTH_STATE = 'CLEAR_AUTH_STATE';
+export const CLEAR_ALL_AUTH_STATE = 'CLEAR_ALL_AUTH_STATE';

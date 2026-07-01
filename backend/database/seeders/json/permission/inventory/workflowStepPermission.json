@@ -1,0 +1,100 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "workflowStep",
+        "display_name": "Workflow Step",
+        "resource_uri": "workflowStep",
+        "controller_name": "WorkflowStepController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:workflowStep:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/workflow-step"
+                }
+            ]
+        },
+        {
+            "scope": "auth:workflowStep:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/workflow-step"
+                }
+            ]
+        },
+        {
+            "scope": "auth:workflowStep:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/workflow-step/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/workflow-step/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:workflowStep:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/workflow-step"
+                }
+            ]
+        },
+        {
+            "scope": "auth:workflowStep:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/workflow-step/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/workflow-step/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:workflowStep:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/workflow-step/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:workflowStep:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/workflow-step/bulk"
+                }
+            ]
+        }
+    ]
+}

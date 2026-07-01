@@ -1,0 +1,36 @@
+[
+    {
+        "name": "Color",
+        "type": "COLOR",
+        "items": [
+            {
+                "key": "RED",
+                "value": "Red"
+            },
+            {
+                "key": "GREEN",
+                "value": "Green"
+            },
+            {
+                "key": "BLUE",
+                "value": "Blue"
+            },
+            {
+                "key": "ORANGE",
+                "value": "Orange"
+            },
+            {
+                "key": "YELLOW",
+                "value": "Yellow"
+            },
+            {
+                "key": "INDIGO",
+                "value": "Indigo"
+            },
+            {
+                "key": "VIOLET",
+                "value": "Violet"
+            }
+        ]
+    }
+]

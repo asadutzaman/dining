@@ -1,0 +1,100 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "brand",
+        "display_name": "Back Office Setup - Brand",
+        "resource_uri": "brand",
+        "controller_name": "BrandController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:brand:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/brand"
+                }
+            ]
+        },
+        {
+            "scope": "auth:brand:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/brand"
+                }
+            ]
+        },
+        {
+            "scope": "auth:brand:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/brand/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/brand/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:brand:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/brand"
+                }
+            ]
+        },
+        {
+            "scope": "auth:brand:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/brand/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/brand/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:brand:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/brand/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:brand:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/brand/bulk"
+                }
+            ]
+        }
+    ]
+}

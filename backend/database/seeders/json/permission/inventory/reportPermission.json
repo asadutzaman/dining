@@ -1,0 +1,90 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "InventoryReport",
+        "display_name": "Inventory Report",
+        "resource_uri": "InventoryReport",
+        "controller_name": "InventoryReportController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:item-stock-analytics-report:menuAccess",
+            "display_name": "Item Stock Analytics Report",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/inv/report/item-stock"
+                }
+            ]
+        },
+        {
+            "scope": "auth:requisition-analytics-report:menuAccess",
+            "display_name": "Requisition Analytics Report",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/inv/report/requisition-analytics"
+                }
+            ]
+        },
+        {
+            "scope": "auth:item-low-stock-report:menuAccess",
+            "display_name": "Item Low Stock Report",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/inv/report/item-low-stock"
+                }
+            ]
+        },
+        {
+            "scope": "auth:unit-wise-requisition-statistics-report:menuAccess",
+            "display_name": "Unit Wise Requisition Statistics Report",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/inv/report/requisition-statistics"
+                }
+            ]
+        },
+        {
+            "scope": "auth:requester-wise-disbursement-report:menuAccess",
+            "display_name": "Requester Wise Disbursement Report",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/inv/report/requester-wise-disbursement"
+                }
+            ]
+        },
+        {
+            "scope": "auth:item-wise-disbursement-report:menuAccess",
+            "display_name": "Item Wise Disbursement Report",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/inv/report/item-wise-disbursement"
+                }
+            ]
+        },
+        {
+            "scope": "auth:branch-wise-disbursement-report:menuAccess",
+            "display_name": "Branch Wise Disbursement Report",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/inv/report/branch-wise-disbursement"
+                }
+            ]
+        }
+    ]
+}

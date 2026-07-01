@@ -1,0 +1,62 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "stockTransferApproval",
+        "display_name": "Approval - Stock Transfer",
+        "resource_uri": "stockTransferApproval",
+        "controller_name": "StockTransferController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:stockTransferApproval:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/stock-transfer"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stockTransferApproval:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/stock-transfer"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stockTransferApproval:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/stock-transfer/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/stock-transfer/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stockTransferApproval:StepAction",
+            "display_name": "Step Action",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/stock-transfer"
+                }
+            ]
+        }
+    ]
+}

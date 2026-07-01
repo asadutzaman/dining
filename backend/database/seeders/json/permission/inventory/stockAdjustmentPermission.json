@@ -1,0 +1,84 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "stock-adjustment",
+        "display_name": "Stock Adjustment",
+        "resource_uri": "stock-adjustment",
+        "controller_name": "StockAdjustmentController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:stock-adjustment:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/stock-adjustment"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stock-adjustment:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/stock-adjustment"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stock-adjustment:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/stock-adjustment/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/stock-adjustment/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stock-adjustment:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/stock-adjustment"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stock-adjustment:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/stock-adjustment/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:stock-adjustment:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/stock-adjustment/bulk"
+                }
+            ]
+        }
+    ]
+}

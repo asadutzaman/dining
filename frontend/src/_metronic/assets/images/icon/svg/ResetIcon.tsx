@@ -1,0 +1,19 @@
+import React from 'react';
+import Icon from '@ant-design/icons';
+
+type IconProps = React.ComponentProps<typeof Icon>;
+
+const IconComponent = () => (
+    <>
+        <svg width="1em" height="1em" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+            <path d="M492.1,213.8h-62.2C412.6,111.5,323.6,33.5,216.5,33.5C97,33.5,0.1,130.5,0.1,250S97,466.5,216.5,466.5
+                c54.5,0,104.3-20.2,142.3-53.4L314,356.2c-25.7,23.6-59.9,38.1-97.4,38.1c-79.6,0-144.3-64.7-144.3-144.3s64.7-144.3,144.3-144.3
+                c67.1,0,123.4,46,139.5,108.1h-63c-7.9,0-10.3,5.1-5.3,11.2l95.8,117.9c5,6.2,13.1,6.2,18.2,0L497.6,225
+                C502.4,218.9,500,213.8,492.1,213.8z"/>
+        </svg>
+    </>
+);
+
+const ResetIcon = (props: IconProps) => <Icon component={IconComponent} {...props} />;
+
+export default ResetIcon;

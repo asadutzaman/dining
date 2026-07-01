@@ -1,0 +1,115 @@
+import DeleteAction from 'src/app/components/Actions/DeleteAction'
+import EditAction from 'src/app/components/Actions/EditAction'
+import ViewAction from 'src/app/components/Actions/ViewAction'
+import ScopeFormController from '../Form/ScopeForm.controller'
+import ScopeViewController from '../View/ScopeView.controller'
+
+export const ScopeAction = {
+  COMMON_ACTION: {
+    CREATE: {
+      type: 'item',
+      title: 'New Scope',
+      action: 'create',
+      link: {to: ''},
+      permission: 'auth:scope:create',
+      component: ScopeFormController,
+      className: 'grid-view-action',
+      // icon: <EyeOutlined />,
+    },
+    EDIT: {
+      type: 'item',
+      title: 'Edit Scope',
+      action: 'edit',
+      link: {to: ''},
+      permission: 'auth:scope:edit',
+      component: ScopeFormController,
+      className: 'grid-view-action',
+      // icon: <EyeOutlined />,
+    },
+    VIEW: {
+      type: 'item',
+      title: 'View Scope',
+      action: 'view',
+      link: {to: ''},
+      permission: 'auth:scope:view',
+      component: ScopeViewController,
+      className: 'grid-view-action',
+      // icon: <EyeOutlined />,
+    },
+    DELETE: {
+      type: 'item',
+      title: 'Delete Scope',
+      action: 'delete',
+      link: {to: ''},
+      permission: 'auth:scope:delete',
+      component: '',
+      className: 'grid-view-action',
+      // icon: <EyeOutlined />,
+    },
+  },
+  LIST_ITEM_ACTION: [
+    {
+      type: 'item',
+      title: 'View',
+      action: 'active',
+      link: {to: ''},
+      permission: 'auth:scope:view',
+      component: ViewAction,
+      className: '',
+      icon: 'information-4',
+    },
+    {
+      type: 'item',
+      title: 'Edit',
+      action: 'inactive',
+      link: {to: ''},
+      permission: 'auth:scope:edit',
+      component: EditAction,
+      className: '',
+      icon: 'pencil',
+    },
+    {
+      type: 'item',
+      title: 'Delete',
+      action: 'delete',
+      link: {to: ''},
+      permission: 'auth:scope:delete',
+      component: DeleteAction,
+      className: '',
+      icon: 'trash',
+    },
+  ],
+  BULK_ACTION: {
+    permission: 'auth:scope:multiSelect',
+    action_list: [
+      {
+        type: 'item',
+        title: 'Mark as Active',
+        action: 'active',
+        link: {to: ''},
+        component: '',
+        className: 'grid-view-action',
+        // icon: <EyeOutlined />,
+      },
+      {
+        type: 'item',
+        title: 'Mark as Inactive',
+        action: 'inactive',
+        link: {to: ''},
+        component: '',
+        className: 'grid-view-action',
+        // icon: <EyeOutlined />,
+      },
+      {
+        type: 'item',
+        title: 'Delete',
+        action: 'delete',
+        link: {to: ''},
+        permission: 'auth:scope:delete',
+        component: '',
+        className: 'grid-view-action',
+        // icon: <EyeOutlined />,
+      },
+    ],
+  },
+}

@@ -1,0 +1,3 @@
+export enum ModalFormType {
+  REQUEST_ACKNOWLEDGEMENT = 'REQUEST_ACKNOWLEDGEMENT',
+}

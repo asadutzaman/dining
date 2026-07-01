@@ -1,0 +1,30 @@
+<?php
+
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
+
+use App\Models\DummyModel;
+use Faker\Generator as Faker;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use App\Constants\Common;
+
+$factory->define(DummyModel::class, function (Faker $faker) {
+    return [
+        'uuid' => $faker->unique()->uuid,
+        'name' => $faker->name,
+        'code' => Str::slug($faker->unique()->text(80)),
+        'description' => $faker->realText(100),
+        'image' => $faker->randomElement(['1.jpg', '2.jpg', '3.jpg']),
+
+        'quantity' => $faker->numberBetween(1, 10),
+        'price' => $faker->randomFloat(2,10,500),
+        'date' => $faker->date($format = 'Y-m-d', $max = '+1 month'), // $max = 'now', $max = '+5 years'
+        'expired' =>  $faker->dateTimeBetween('+1 day', '+1 month'),
+
+        'user_id' => \App\Models\User::all()->random()->id,
+
+        'created_at' => date('Y-m-d H:i:s'),
+        'created_by' => $faker->dateTime,
+        'status' => Common::STATUS_ACTIVE
+    ];
+});

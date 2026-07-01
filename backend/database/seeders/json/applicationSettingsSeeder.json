@@ -1,0 +1,70 @@
+[
+    {
+        "type": "inv",
+        "items": [
+            {
+                "label": "SMS Api Key",
+                "option": "sms_api_key",
+                "value": "",
+                "is_changable": 1,
+                "_comment": "API key for SMS service"
+            },
+            {
+                "label": "SMS Secret Key",
+                "option": "sms_secret_key",
+                "value": "",
+                "is_changable": 1,
+                "_comment": "Secret key for SMS service"
+            },
+            {
+                "label": "Office Start Time",
+                "option": "office_start_time",
+                "value": "09:00",
+                "is_changable": 1,
+                "_comment": "Office Hours in 24Hour Format"
+            },
+            {
+                "label": "Office End Time",
+                "option": "office_end_time",
+                "value": "17:00",
+                "is_changable": 1,
+                "_comment": "Office Hours in 24Hour Format"
+            },
+            {
+                "label": "Slot Duration",
+                "option": "slot_duration",
+                "value": 30,
+                "is_changable": 1,
+                "_comment": "Slot Duration in Minutes"
+            },
+            {
+                "label": "Slot Capacity",
+                "option": "slot_capacity",
+                "value": 10,
+                "is_changable": 1,
+                "_comment": "Slot Capacity for Disbursement"
+            },
+            {
+                "label": "Daily Slot Quantity Limit",
+                "option": "daily_slot_quantity_limit",
+                "value": 16,
+                "is_changable": 1,
+                "_comment": "Daily Slot Quantity Limit"
+            },
+            {
+                "label": "Daily Assign Slot Quantity Limit",
+                "option": "daily_assign_slot_quantity_limit",
+                "value": 160,
+                "is_changable": 1,
+                "_comment": "Daily Assign Slot Quantity Limit"
+            },
+            {
+                "label": "Weekend Days",
+                "option": "weekends_days",
+                "value": "Friday,Saturday",
+                "is_changable": 1,
+                "_comment": "Weekend Days"
+            }
+        ]
+    }
+]

@@ -1,0 +1,100 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "shelve",
+        "display_name": "Back Office Setup - Shelve",
+        "resource_uri": "shelve",
+        "controller_name": "ShelveController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:shelve:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/shelve"
+                }
+            ]
+        },
+        {
+            "scope": "auth:shelve:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/shelve"
+                }
+            ]
+        },
+        {
+            "scope": "auth:shelve:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/shelve/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/shelve/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:shelve:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/shelve"
+                }
+            ]
+        },
+        {
+            "scope": "auth:shelve:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/shelve/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/shelve/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:shelve:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/shelve/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:shelve:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/shelve/bulk"
+                }
+            ]
+        }
+    ]
+}

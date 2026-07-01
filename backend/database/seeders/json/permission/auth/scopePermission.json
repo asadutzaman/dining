@@ -1,0 +1,100 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "scope",
+    "display_name": "Permissions - Scope",
+    "resource_uri": "scope",
+    "controller_name": "ScopeController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:scope:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/scope"
+        }
+      ]
+    },
+    {
+      "scope": "auth:scope:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/scope"
+        }
+      ]
+    },
+    {
+      "scope": "auth:scope:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/scope/*"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getByWhere",
+          "uri": "/scope/getByWhere"
+        }
+      ]
+    },
+    {
+      "scope": "auth:scope:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/scope"
+        }
+      ]
+    },
+    {
+      "scope": "auth:scope:edit",
+      "display_name": "Edit",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/scope/*"
+        },
+        {
+          "http_method": "PATCH",
+          "action_name": "updateFields",
+          "uri": "/scope/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:scope:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/scope/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:scope:multiSelect",
+      "display_name": "Multiple Selection",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "bulk",
+          "uri": "/scope/bulk"
+        }
+      ]
+    }
+  ]
+}

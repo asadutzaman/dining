@@ -1,0 +1,100 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "govtHoliday",
+        "display_name": "Govt Holiday",
+        "resource_uri": "govtHoliday",
+        "controller_name": "GovtHolidayController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:govtHoliday:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/govtHoliday"
+                }
+            ]
+        },
+        {
+            "scope": "auth:govtHoliday:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/govtHoliday"
+                }
+            ]
+        },
+        {
+            "scope": "auth:govtHoliday:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/govtHoliday/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/govtHoliday/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:govtHoliday:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/govtHoliday"
+                }
+            ]
+        },
+        {
+            "scope": "auth:govtHoliday:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/govtHoliday/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/govtHoliday/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:govtHoliday:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/govtHoliday/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:govtHoliday:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/govtHoliday/bulk"
+                }
+            ]
+        }
+    ]
+}

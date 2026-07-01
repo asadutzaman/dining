@@ -1,0 +1,58 @@
+[
+    {
+        "label": "SUPPLIER",
+        "prefix": "SUP",
+        "separator": "-",
+        "next_sequence": "1",
+        "sort_order": 1,
+        "status": 1
+    },
+    {
+        "label": "ITEM",
+        "prefix": "ITM",
+        "separator": "-",
+        "next_sequence": "1",
+        "sort_order": 1,
+        "status": 1
+    },
+    {
+        "label": "REQUISITION",
+        "prefix": "REQ",
+        "separator": "-",
+        "next_sequence": "1",
+        "sort_order": 1,
+        "status": 1
+    },
+    {
+        "label": "GRN",
+        "prefix": "GRN",
+        "separator": "-",
+        "next_sequence": "1",
+        "sort_order": 1,
+        "status": 1
+    },
+    {
+        "label": "STOCK_TRANSFER",
+        "prefix": "ST",
+        "separator": "-",
+        "next_sequence": "1",
+        "sort_order": 1,
+        "status": 1
+    },
+    {
+        "label": "STOCK_ADJUSTMENT",
+        "prefix": "SA",
+        "separator": "-",
+        "next_sequence": "1",
+        "sort_order": 1,
+        "status": 1
+    },
+    {
+        "label": "PATIENT",
+        "prefix": "MRN",
+        "separator": "-",
+        "next_sequence": "1",
+        "sort_order": 1,
+        "status": 1
+    }
+]

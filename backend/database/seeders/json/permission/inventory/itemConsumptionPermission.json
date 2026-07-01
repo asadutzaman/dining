@@ -1,0 +1,62 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "itemConsumption",
+        "display_name": "Item Consumption",
+        "resource_uri": "itemConsumption",
+        "controller_name": "ItemConsumptionController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:itemConsumption:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/itemConsumption"
+                }
+            ]
+        },
+        {
+            "scope": "auth:itemConsumption:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/itemConsumption"
+                }
+            ]
+        },
+        {
+            "scope": "auth:itemConsumption:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/itemConsumption/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/itemConsumption/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:itemConsumption:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/itemConsumption"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,100 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "approverGroup",
+        "display_name": "Back Office Setup - Approver Groups",
+        "resource_uri": "approverGroup",
+        "controller_name": "ApproverGroupController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:approverGroup:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/approverGroup"
+                }
+            ]
+        },
+        {
+            "scope": "auth:approverGroup:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/approverGroup"
+                }
+            ]
+        },
+        {
+            "scope": "auth:approverGroup:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/approverGroup/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/approverGroup/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:approverGroup:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/approverGroup"
+                }
+            ]
+        },
+        {
+            "scope": "auth:approverGroup:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/approverGroup/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/approverGroup/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:approverGroup:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/approverGroup/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:approverGroup:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/approverGroup/bulk"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,100 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "designation",
+        "display_name": "Back Office Setup - Designation",
+        "resource_uri": "designation",
+        "controller_name": "DesignationController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:designation:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/designation"
+                }
+            ]
+        },
+        {
+            "scope": "auth:designation:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/designation"
+                }
+            ]
+        },
+        {
+            "scope": "auth:designation:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/designation/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/designation/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:designation:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/designation"
+                }
+            ]
+        },
+        {
+            "scope": "auth:designation:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/designation/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/designation/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:designation:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/designation/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:designation:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/designation/bulk"
+                }
+            ]
+        }
+    ]
+}

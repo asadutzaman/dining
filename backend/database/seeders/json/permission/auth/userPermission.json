@@ -1,0 +1,122 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "user",
+    "display_name": "User Management - User",
+    "resource_uri": "user",
+    "controller_name": "UserController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:user:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/user"
+        }
+      ]
+    },
+    {
+      "scope": "auth:user:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/user"
+        }
+      ]
+    },
+    {
+      "scope": "auth:user:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/user/*"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getByWhere",
+          "uri": "/user/getByWhere"
+        }
+      ]
+    },
+    {
+      "scope": "auth:user:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/user"
+        }
+      ]
+    },
+    {
+      "scope": "auth:user:edit",
+      "display_name": "Edit",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/user/*"
+        },
+        {
+          "http_method": "PATCH",
+          "action_name": "updateFields",
+          "uri": "/user/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:user:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/user/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:user:multiSelect",
+      "display_name": "Multiple Selection",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "bulk",
+          "uri": "/user/bulk"
+        }
+      ]
+    },
+    {
+      "scope": "auth:user:myAccount",
+      "display_name": "My Account",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/user/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:user:mySetting",
+      "display_name": "My Settings",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "updateUserSetting",
+          "uri": "/user/update-user-setting"
+        }
+      ]
+    }
+  ]
+}

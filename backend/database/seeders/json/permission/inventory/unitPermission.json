@@ -1,0 +1,100 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "unit",
+        "display_name": "Back Office Setup - Unit",
+        "resource_uri": "unit",
+        "controller_name": "UnitController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:unit:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/unit"
+                }
+            ]
+        },
+        {
+            "scope": "auth:unit:list",
+            "display_name": "List",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/unit"
+                }
+            ]
+        },
+        {
+            "scope": "auth:unit:view",
+            "display_name": "View",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "show",
+                    "uri": "/unit/*"
+                },
+                {
+                    "http_method": "GET",
+                    "action_name": "getByWhere",
+                    "uri": "/unit/getByWhere"
+                }
+            ]
+        },
+        {
+            "scope": "auth:unit:create",
+            "display_name": "Create",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "store",
+                    "uri": "/unit"
+                }
+            ]
+        },
+        {
+            "scope": "auth:unit:edit",
+            "display_name": "Edit",
+            "actions": [
+                {
+                    "http_method": "PUT",
+                    "action_name": "update",
+                    "uri": "/unit/*"
+                },
+                {
+                    "http_method": "PATCH",
+                    "action_name": "updateFields",
+                    "uri": "/unit/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:unit:delete",
+            "display_name": "Delete",
+            "actions": [
+                {
+                    "http_method": "DELETE",
+                    "action_name": "destroy",
+                    "uri": "/unit/*"
+                }
+            ]
+        },
+        {
+            "scope": "auth:unit:multiSelect",
+            "display_name": "Multiple Selection",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "bulk",
+                    "uri": "/unit/bulk"
+                }
+            ]
+        }
+    ]
+}

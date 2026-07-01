@@ -1,0 +1,100 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "organogram",
+    "display_name": "Organogram",
+    "resource_uri": "organogram",
+    "controller_name": "OrganogramController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:organogram:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/organogram"
+        }
+      ]
+    },
+    {
+      "scope": "auth:organogram:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/organogram"
+        }
+      ]
+    },
+    {
+      "scope": "auth:organogram:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/organogram/*"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getByWhere",
+          "uri": "/organogram/getByWhere"
+        }
+      ]
+    },
+    {
+      "scope": "auth:organogram:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/organogram"
+        }
+      ]
+    },
+    {
+      "scope": "auth:organogram:edit",
+      "display_name": "Edit",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/organogram/*"
+        },
+        {
+          "http_method": "PATCH",
+          "action_name": "updateFields",
+          "uri": "/organogram/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:organogram:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/organogram/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:organogram:multiSelect",
+      "display_name": "Multiple Selection",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "bulk",
+          "uri": "/organogram/bulk"
+        }
+      ]
+    }
+  ]
+}

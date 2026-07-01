@@ -1,0 +1,100 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "patient",
+    "display_name": "Patient",
+    "resource_uri": "patient",
+    "controller_name": "PatientController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:patient:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/patient"
+        }
+      ]
+    },    
+    {
+      "scope": "auth:patient:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/patient"
+        }
+      ]
+    },
+    {
+      "scope": "auth:patient:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/patient/*"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getByWhere",
+          "uri": "/patient/getByWhere"
+        }
+      ]
+    },
+    {
+      "scope": "auth:patient:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/patient"
+        }
+      ]
+    },
+    {
+      "scope": "auth:patient:edit",
+      "display_name": "Edit",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/patient/*"
+        },
+        {
+          "http_method": "PATCH",
+          "action_name": "updateFields",
+          "uri": "/patient/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:patient:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/patient/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:patient:multiSelect",
+      "display_name": "Multiple Selection",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "bulk",
+          "uri": "/patient/bulk"
+        }
+      ]
+    }
+  ]
+}
