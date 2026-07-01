@@ -1,0 +1,79 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "mealToken",
+    "display_name": "Meal Token",
+    "resource_uri": "meal-token",
+    "controller_name": "MealTokenController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:mealToken:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/meal-token"
+        }
+      ]
+    },
+    {
+      "scope": "auth:mealToken:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/meal-token"
+        }
+      ]
+    },
+    {
+      "scope": "auth:mealToken:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/meal-token/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:mealToken:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/meal-token"
+        }
+      ]
+    },
+    {
+      "scope": "auth:mealToken:collect",
+      "display_name": "Collect",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "collect",
+          "uri": "/meal-token/collect/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:mealToken:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/meal-token/*"
+        }
+      ]
+    }
+  ]
+}

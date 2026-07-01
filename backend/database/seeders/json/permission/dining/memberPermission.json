@@ -1,0 +1,95 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "member",
+    "display_name": "Member",
+    "resource_uri": "member",
+    "controller_name": "MemberController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:member:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/member"
+        }
+      ]
+    },
+    {
+      "scope": "auth:member:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/member"
+        }
+      ]
+    },
+    {
+      "scope": "auth:member:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/member/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:member:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/member"
+        }
+      ]
+    },
+    {
+      "scope": "auth:member:edit",
+      "display_name": "Edit",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/member/*"
+        },
+        {
+          "http_method": "PATCH",
+          "action_name": "updateFields",
+          "uri": "/member/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:member:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/member/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:member:bulkImport",
+      "display_name": "Bulk Import",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "bulkImport",
+          "uri": "/member/bulk-import"
+        }
+      ]
+    }
+  ]
+}

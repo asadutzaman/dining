@@ -1,0 +1,68 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "payment",
+    "display_name": "Payment",
+    "resource_uri": "payment",
+    "controller_name": "PaymentController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:payment:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/payment"
+        }
+      ]
+    },
+    {
+      "scope": "auth:payment:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/payment"
+        }
+      ]
+    },
+    {
+      "scope": "auth:payment:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/payment/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:payment:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/payment"
+        }
+      ]
+    },
+    {
+      "scope": "auth:payment:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/payment/*"
+        }
+      ]
+    }
+  ]
+}

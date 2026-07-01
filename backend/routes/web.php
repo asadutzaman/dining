@@ -938,4 +938,55 @@ Route::prefix('api')->group(function () {
     // EXPORT
     Route::group(['prefix' => 'export', 'middleware' => ['restrictIp', 'authVerify']], function () {});
 
+    // DINING
+    Route::group(['prefix' => 'member', 'middleware' => ['restrictIp', 'authVerify']], function () {
+        Route::get('/find-by-card', [App\Http\Controllers\MemberController::class, 'findByCard']);
+        Route::post('/bulk-import', [App\Http\Controllers\MemberController::class, 'bulkImport']);
+        Route::get('/dropdown', [App\Http\Controllers\MemberController::class, 'dropdown']);
+        Route::get('/', [App\Http\Controllers\MemberController::class, 'index']);
+        Route::get('/{id}', [App\Http\Controllers\MemberController::class, 'show']);
+        Route::post('/', [App\Http\Controllers\MemberController::class, 'store']);
+        Route::put('/{id}', [App\Http\Controllers\MemberController::class, 'update']);
+        Route::patch('/{id}', [App\Http\Controllers\MemberController::class, 'updateFields']);
+        Route::delete('/{id}', [App\Http\Controllers\MemberController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'meal-setting', 'middleware' => ['restrictIp', 'authVerify']], function () {
+        Route::get('/current-cost', [App\Http\Controllers\MealSettingController::class, 'currentCost']);
+        Route::get('/dropdown', [App\Http\Controllers\MealSettingController::class, 'dropdown']);
+        Route::get('/', [App\Http\Controllers\MealSettingController::class, 'index']);
+        Route::get('/{id}', [App\Http\Controllers\MealSettingController::class, 'show']);
+        Route::post('/', [App\Http\Controllers\MealSettingController::class, 'store']);
+        Route::put('/{id}', [App\Http\Controllers\MealSettingController::class, 'update']);
+        Route::patch('/{id}', [App\Http\Controllers\MealSettingController::class, 'updateFields']);
+        Route::delete('/{id}', [App\Http\Controllers\MealSettingController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'meal-token', 'middleware' => ['restrictIp', 'authVerify']], function () {
+        Route::get('/find-by-token-number', [App\Http\Controllers\MealTokenController::class, 'findByTokenNumber']);
+        Route::get('/dropdown', [App\Http\Controllers\MealTokenController::class, 'dropdown']);
+        Route::get('/', [App\Http\Controllers\MealTokenController::class, 'index']);
+        Route::get('/{id}', [App\Http\Controllers\MealTokenController::class, 'show']);
+        Route::post('/', [App\Http\Controllers\MealTokenController::class, 'store']);
+        Route::put('/collect/{id}', [App\Http\Controllers\MealTokenController::class, 'collect']);
+        Route::delete('/{id}', [App\Http\Controllers\MealTokenController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'payment', 'middleware' => ['restrictIp', 'authVerify']], function () {
+        Route::get('/dropdown', [App\Http\Controllers\PaymentController::class, 'dropdown']);
+        Route::get('/', [App\Http\Controllers\PaymentController::class, 'index']);
+        Route::get('/{id}', [App\Http\Controllers\PaymentController::class, 'show']);
+        Route::post('/', [App\Http\Controllers\PaymentController::class, 'store']);
+        Route::delete('/{id}', [App\Http\Controllers\PaymentController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'report/dining', 'middleware' => ['restrictIp', 'authVerify']], function () {
+        Route::get('/monthly', [App\Http\Controllers\Report\DiningReportController::class, 'getMonthlySummary']);
+        Route::get('/monthly-export', [App\Http\Controllers\Report\DiningReportController::class, 'getMonthlySummaryExport']);
+        Route::get('/individual', [App\Http\Controllers\Report\DiningReportController::class, 'getIndividualStatement']);
+        Route::get('/individual-export', [App\Http\Controllers\Report\DiningReportController::class, 'getIndividualStatementExport']);
+        Route::get('/meal-cost', [App\Http\Controllers\Report\DiningReportController::class, 'getMealCostSummary']);
+        Route::get('/meal-cost-export', [App\Http\Controllers\Report\DiningReportController::class, 'getMealCostSummaryExport']);
+    });
+
 });

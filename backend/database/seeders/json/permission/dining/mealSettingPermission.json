@@ -1,0 +1,84 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "mealSetting",
+    "display_name": "Meal Setting",
+    "resource_uri": "meal-setting",
+    "controller_name": "MealSettingController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:mealSetting:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/meal-setting"
+        }
+      ]
+    },
+    {
+      "scope": "auth:mealSetting:list",
+      "display_name": "List",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "index",
+          "uri": "/meal-setting"
+        }
+      ]
+    },
+    {
+      "scope": "auth:mealSetting:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "show",
+          "uri": "/meal-setting/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:mealSetting:create",
+      "display_name": "Create",
+      "actions": [
+        {
+          "http_method": "POST",
+          "action_name": "store",
+          "uri": "/meal-setting"
+        }
+      ]
+    },
+    {
+      "scope": "auth:mealSetting:edit",
+      "display_name": "Edit",
+      "actions": [
+        {
+          "http_method": "PUT",
+          "action_name": "update",
+          "uri": "/meal-setting/*"
+        },
+        {
+          "http_method": "PATCH",
+          "action_name": "updateFields",
+          "uri": "/meal-setting/*"
+        }
+      ]
+    },
+    {
+      "scope": "auth:mealSetting:delete",
+      "display_name": "Delete",
+      "actions": [
+        {
+          "http_method": "DELETE",
+          "action_name": "destroy",
+          "uri": "/meal-setting/*"
+        }
+      ]
+    }
+  ]
+}

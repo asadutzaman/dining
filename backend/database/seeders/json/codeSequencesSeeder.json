@@ -48,8 +48,24 @@
         "status": 1
     },
     {
-        "label": "PATIENT",
-        "prefix": "MRN",
+        "label": "MEMBER",
+        "prefix": "MEM",
+        "separator": "-",
+        "next_sequence": "1",
+        "sort_order": 1,
+        "status": 1
+    },
+    {
+        "label": "MEAL_TOKEN",
+        "prefix": "TKN",
+        "separator": "-",
+        "next_sequence": "1",
+        "sort_order": 1,
+        "status": 1
+    },
+    {
+        "label": "PAYMENT",
+        "prefix": "PAY",
         "separator": "-",
         "next_sequence": "1",
         "sort_order": 1,

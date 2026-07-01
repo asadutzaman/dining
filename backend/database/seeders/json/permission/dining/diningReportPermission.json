@@ -1,0 +1,66 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "diningReport",
+    "display_name": "Dining Report",
+    "resource_uri": "report/dining",
+    "controller_name": "DiningReportController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:diningReport:menuAccess",
+      "display_name": "Menu Access",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "getMonthlySummary",
+          "uri": "/report/dining/monthly"
+        }
+      ]
+    },
+    {
+      "scope": "auth:diningReport:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "getMonthlySummary",
+          "uri": "/report/dining/monthly"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getIndividualStatement",
+          "uri": "/report/dining/individual"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getMealCostSummary",
+          "uri": "/report/dining/meal-cost"
+        }
+      ]
+    },
+    {
+      "scope": "auth:diningReport:export",
+      "display_name": "Export",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "getMonthlySummaryExport",
+          "uri": "/report/dining/monthly-export"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getIndividualStatementExport",
+          "uri": "/report/dining/individual-export"
+        },
+        {
+          "http_method": "GET",
+          "action_name": "getMealCostSummaryExport",
+          "uri": "/report/dining/meal-cost-export"
+        }
+      ]
+    }
+  ]
+}
