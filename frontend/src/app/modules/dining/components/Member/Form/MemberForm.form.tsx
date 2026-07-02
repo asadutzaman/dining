@@ -58,7 +58,14 @@ const MemberAddOrEditForm: FC<any> = (props) => {
                 <Input />
               </Form.Item>
 
-              <Form.Item label={'Email'} name='email' rules={rules.emailMaxCharacter100}>
+              <Form.Item
+                label={'Email'}
+                name='email'
+                rules={[
+                  {type: 'email', message: 'Provide valid email'},
+                  {max: 100, message: 'Maximum character is 100'},
+                ]}
+              >
                 <Input />
               </Form.Item>
 
