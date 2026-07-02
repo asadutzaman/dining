@@ -1,0 +1,24 @@
+{
+  "resource": {
+    "permission_type": "RESOURCE",
+    "name": "diningDashboard",
+    "display_name": "Dining Dashboard",
+    "resource_uri": "report/dining/dashboard",
+    "controller_name": "DiningReportController",
+    "server_url_prefix": "auth",
+    "component": "COMMON"
+  },
+  "scopes": [
+    {
+      "scope": "auth:diningDashboard:view",
+      "display_name": "View",
+      "actions": [
+        {
+          "http_method": "GET",
+          "action_name": "getDashboardStats",
+          "uri": "/report/dining/dashboard"
+        }
+      ]
+    }
+  ]
+}

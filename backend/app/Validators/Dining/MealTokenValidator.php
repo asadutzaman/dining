@@ -24,9 +24,11 @@ class MealTokenValidator extends BaseValidator
                 return [
                     'member_id'      => ['required', 'integer', 'exists:members,id'],
                     'meal_type'      => ['required', 'in:BREAKFAST,LUNCH,DINNER'],
-                    'meal_date'      => ['required', 'date'],
+                    // Optional: controller defaults to today when omitted (Issue screen).
+                    'meal_date'      => ['nullable', 'date'],
                     'payment_status' => ['required', 'in:PAID,DUE'],
-                    'payment_method' => ['required_if:payment_status,PAID', 'nullable', 'in:CASH'],
+                    // Optional: controller defaults to CASH for PAID tokens.
+                    'payment_method' => ['nullable', 'in:CASH'],
                 ];
             default:
                 break;

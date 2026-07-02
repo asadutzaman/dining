@@ -981,6 +981,7 @@ Route::prefix('api')->group(function () {
     });
 
     Route::group(['prefix' => 'report/dining', 'middleware' => ['restrictIp', 'authVerify']], function () {
+        Route::get('/dashboard', [App\Http\Controllers\Report\DiningReportController::class, 'getDashboardStats']);
         Route::get('/monthly', [App\Http\Controllers\Report\DiningReportController::class, 'getMonthlySummary']);
         Route::get('/monthly-export', [App\Http\Controllers\Report\DiningReportController::class, 'getMonthlySummaryExport']);
         Route::get('/individual', [App\Http\Controllers\Report\DiningReportController::class, 'getIndividualStatement']);

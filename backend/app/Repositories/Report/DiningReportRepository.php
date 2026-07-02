@@ -141,4 +141,132 @@ class DiningReportRepository extends BaseRepository
             ->orderBy('meal_type')
             ->get();
     }
+
+    // At-a-glance analytics payload for the dining dashboard (KPIs + charts).
+    public function getDashboardStats()
+    {
+        $today = Carbon::today()->format('Y-m-d');
+        $monthStart = Carbon::today()->startOfMonth()->format('Y-m-d');
+        $monthEnd = Carbon::today()->endOfMonth()->format('Y-m-d');
+
+        // ---- KPI cards ----
+        $tokensToday = MealToken::query()->whereDate('meal_date', $today)->count();
+
+        $paidTokensToday = (float) MealToken::query()
+            ->whereDate('meal_date', $today)
+            ->where('payment_status', 'PAID')
+            ->sum('amount');
+        $paymentsToday = (float) Payment::query()->whereDate('payment_date', $today)->sum('amount');
+        $revenueToday = $paidTokensToday + $paymentsToday;
+
+        $totalDue = (float) Member::query()->where('status', 1)->sum('due_balance');
+        $activeMembers = Member::query()->where('status', 1)->count();
+
+        // ---- Trend (last 14 days): tokens issued + paid revenue per day ----
+        $trendStart = Carbon::today()->subDays(13)->format('Y-m-d');
+        $trendRows = MealToken::query()
+            ->select(
+                'meal_date',
+                DB::raw('COUNT(*) as tokens_count'),
+                DB::raw("SUM(CASE WHEN payment_status = 'PAID' THEN amount ELSE 0 END) as revenue")
+            )
+            ->whereBetween('meal_date', [$trendStart, $today])
+            ->groupBy('meal_date')
+            ->get()
+            ->keyBy(function ($row) {
+                return Carbon::parse($row->meal_date)->format('Y-m-d');
+            });
+
+        $trend = [];
+        for ($i = 13; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i)->format('Y-m-d');
+            $row = $trendRows->get($date);
+            $trend[] = [
+                'date'         => $date,
+                'tokens_count' => (int) ($row->tokens_count ?? 0),
+                'revenue'      => (float) ($row->revenue ?? 0),
+            ];
+        }
+
+        // ---- Meal-type distribution (current month) ----
+        $mealTypeRows = MealToken::query()
+            ->select('meal_type', DB::raw('COUNT(*) as tokens_count'))
+            ->whereBetween('meal_date', [$monthStart, $monthEnd])
+            ->groupBy('meal_type')
+            ->pluck('tokens_count', 'meal_type');
+        $mealTypeDistribution = [
+            'BREAKFAST' => (int) ($mealTypeRows['BREAKFAST'] ?? 0),
+            'LUNCH'     => (int) ($mealTypeRows['LUNCH'] ?? 0),
+            'DINNER'    => (int) ($mealTypeRows['DINNER'] ?? 0),
+        ];
+
+        // ---- Paid vs Due (last 7 days) ----
+        $pvdStart = Carbon::today()->subDays(6)->format('Y-m-d');
+        $pvdRows = MealToken::query()
+            ->select(
+                'meal_date',
+                DB::raw("SUM(CASE WHEN payment_status = 'PAID' THEN amount ELSE 0 END) as paid_amount"),
+                DB::raw("SUM(CASE WHEN payment_status = 'DUE' THEN amount ELSE 0 END) as due_amount")
+            )
+            ->whereBetween('meal_date', [$pvdStart, $today])
+            ->groupBy('meal_date')
+            ->get()
+            ->keyBy(function ($row) {
+                return Carbon::parse($row->meal_date)->format('Y-m-d');
+            });
+
+        $paidVsDue = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i)->format('Y-m-d');
+            $row = $pvdRows->get($date);
+            $paidVsDue[] = [
+                'date'        => $date,
+                'paid_amount' => (float) ($row->paid_amount ?? 0),
+                'due_amount'  => (float) ($row->due_amount ?? 0),
+            ];
+        }
+
+        // ---- Member-type distribution (current month tokens) ----
+        $memberTypeRows = MealToken::query()
+            ->join('members', 'meal_tokens.member_id', '=', 'members.id')
+            ->select('members.member_type', DB::raw('COUNT(*) as tokens_count'))
+            ->whereBetween('meal_tokens.meal_date', [$monthStart, $monthEnd])
+            ->groupBy('members.member_type')
+            ->pluck('tokens_count', 'member_type');
+        $memberTypeDistribution = [
+            'STAFF'   => (int) ($memberTypeRows['STAFF'] ?? 0),
+            'STUDENT' => (int) ($memberTypeRows['STUDENT'] ?? 0),
+        ];
+
+        // ---- Top 5 outstanding dues ----
+        $topDues = Member::query()
+            ->select('id as member_id', 'member_code', 'name', 'due_balance')
+            ->where('status', 1)
+            ->where('due_balance', '>', 0)
+            ->orderByDesc('due_balance')
+            ->limit(5)
+            ->get()
+            ->map(function ($member) {
+                return [
+                    'member_id'   => $member->member_id,
+                    'member_code' => $member->member_code,
+                    'name'        => $member->name,
+                    'due_balance' => (float) $member->due_balance,
+                ];
+            });
+
+        return [
+            'kpi' => [
+                'tokens_today'   => $tokensToday,
+                'revenue_today'  => $revenueToday,
+                'total_due'      => $totalDue,
+                'active_members' => $activeMembers,
+            ],
+            'trend'                     => $trend,
+            'meal_type_distribution'    => $mealTypeDistribution,
+            'paid_vs_due'               => $paidVsDue,
+            'member_type_distribution'  => $memberTypeDistribution,
+            'top_dues'                  => $topDues,
+        ];
+    }
 }

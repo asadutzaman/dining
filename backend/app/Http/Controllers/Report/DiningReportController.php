@@ -23,6 +23,16 @@ class DiningReportController extends Controller
         $this->repository = $repository;
     }
 
+    public function getDashboardStats(Request $request)
+    {
+        try {
+            $result = ($this->repository->init())->getDashboardStats();
+            return $this->successResponse($result);
+        } catch (Exception $e) {
+            $this->errorResponse($e->getMessage());
+        }
+    }
+
     public function getMonthlySummary(Request $request)
     {
         try {

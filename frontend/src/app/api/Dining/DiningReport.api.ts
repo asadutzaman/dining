@@ -4,6 +4,7 @@ import { HttpService } from "../../services/http.services";
 
 const RESOURCE_ENDPOINT = `${CONSTANT_CONFIG.SERVER_PREFIX}/report/dining`
 const endpoints = {
+    dashboard: () => `${RESOURCE_ENDPOINT}/dashboard`,
     monthly: () => `${RESOURCE_ENDPOINT}/monthly`,
     monthlyExport: () => `${RESOURCE_ENDPOINT}/monthly-export`,
     individual: () => `${RESOURCE_ENDPOINT}/individual`,
@@ -13,6 +14,10 @@ const endpoints = {
 }
 
 export default class DiningReportApi {
+    public getDashboardStats = (params: any = {}): AxiosPromise<any> => {
+        return HttpService.get(endpoints.dashboard(), params);
+    }
+
     public getMonthlySummary = (params: any = {}): AxiosPromise<any> => {
         return HttpService.get(endpoints.monthly(), params);
     }
