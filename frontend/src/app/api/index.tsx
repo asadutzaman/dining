@@ -38,6 +38,12 @@ import _ItemConsumptionApi from './Inventory/ItemConsumption.api'
 import _StockTransferApi from './Inventory/StockTransfer.api'
 // Report
 import _ReportInvApi from './Inventory/ReportInv.api'
+// DINING
+import _MemberApi from './Dining/Member.api'
+import _MealSettingApi from './Dining/MealSetting.api'
+import _MealTokenApi from './Dining/MealToken.api'
+import _PaymentApi from './Dining/Payment.api'
+import _DiningReportApi from './Dining/DiningReport.api'
 
 export const FackApi = new _FackApi()
 export const OauthApi = new _OauthApi()
@@ -79,3 +85,9 @@ export const ItemConsumptionApi = new _ItemConsumptionApi()
 export const StockTransferApi = new _StockTransferApi()
 // Report
 export const ReportInvApi = new _ReportInvApi()
+// DINING
+export const MemberApi = new _MemberApi()
+export const MealSettingApi = new _MealSettingApi()
+export const MealTokenApi = new _MealTokenApi()
+export const PaymentApi = new _PaymentApi()
+export const DiningReportApi = new _DiningReportApi()

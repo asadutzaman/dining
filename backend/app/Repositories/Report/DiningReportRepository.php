@@ -3,9 +3,9 @@
 namespace App\Repositories\Report;
 
 use App\Repositories\BaseRepository;
-use App\Models\Member;
-use App\Models\MealToken;
-use App\Models\Payment;
+use App\Models\Dining\Member;
+use App\Models\Dining\MealToken;
+use App\Models\Dining\Payment;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 

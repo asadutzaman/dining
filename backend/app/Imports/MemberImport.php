@@ -3,7 +3,7 @@
 namespace App\Imports;
 
 use Illuminate\Support\Str;
-use App\Repositories\MemberRepository;
+use App\Repositories\Dining\MemberRepository;
 use App\Repositories\DepartmentRepository;
 use App\Repositories\DesignationRepository;
 use App\Repositories\CodeSequenceRepository;

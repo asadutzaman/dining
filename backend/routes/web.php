@@ -940,44 +940,44 @@ Route::prefix('api')->group(function () {
 
     // DINING
     Route::group(['prefix' => 'member', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        Route::get('/find-by-card', [App\Http\Controllers\MemberController::class, 'findByCard']);
-        Route::post('/bulk-import', [App\Http\Controllers\MemberController::class, 'bulkImport']);
-        Route::get('/dropdown', [App\Http\Controllers\MemberController::class, 'dropdown']);
-        Route::get('/', [App\Http\Controllers\MemberController::class, 'index']);
-        Route::get('/{id}', [App\Http\Controllers\MemberController::class, 'show']);
-        Route::post('/', [App\Http\Controllers\MemberController::class, 'store']);
-        Route::put('/{id}', [App\Http\Controllers\MemberController::class, 'update']);
-        Route::patch('/{id}', [App\Http\Controllers\MemberController::class, 'updateFields']);
-        Route::delete('/{id}', [App\Http\Controllers\MemberController::class, 'destroy']);
+        Route::get('/find-by-card', [App\Http\Controllers\Dining\MemberController::class, 'findByCard']);
+        Route::post('/bulk-import', [App\Http\Controllers\Dining\MemberController::class, 'bulkImport']);
+        Route::get('/dropdown', [App\Http\Controllers\Dining\MemberController::class, 'dropdown']);
+        Route::get('/', [App\Http\Controllers\Dining\MemberController::class, 'index']);
+        Route::get('/{id}', [App\Http\Controllers\Dining\MemberController::class, 'show']);
+        Route::post('/', [App\Http\Controllers\Dining\MemberController::class, 'store']);
+        Route::put('/{id}', [App\Http\Controllers\Dining\MemberController::class, 'update']);
+        Route::patch('/{id}', [App\Http\Controllers\Dining\MemberController::class, 'updateFields']);
+        Route::delete('/{id}', [App\Http\Controllers\Dining\MemberController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'meal-setting', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        Route::get('/current-cost', [App\Http\Controllers\MealSettingController::class, 'currentCost']);
-        Route::get('/dropdown', [App\Http\Controllers\MealSettingController::class, 'dropdown']);
-        Route::get('/', [App\Http\Controllers\MealSettingController::class, 'index']);
-        Route::get('/{id}', [App\Http\Controllers\MealSettingController::class, 'show']);
-        Route::post('/', [App\Http\Controllers\MealSettingController::class, 'store']);
-        Route::put('/{id}', [App\Http\Controllers\MealSettingController::class, 'update']);
-        Route::patch('/{id}', [App\Http\Controllers\MealSettingController::class, 'updateFields']);
-        Route::delete('/{id}', [App\Http\Controllers\MealSettingController::class, 'destroy']);
+        Route::get('/current-cost', [App\Http\Controllers\Dining\MealSettingController::class, 'currentCost']);
+        Route::get('/dropdown', [App\Http\Controllers\Dining\MealSettingController::class, 'dropdown']);
+        Route::get('/', [App\Http\Controllers\Dining\MealSettingController::class, 'index']);
+        Route::get('/{id}', [App\Http\Controllers\Dining\MealSettingController::class, 'show']);
+        Route::post('/', [App\Http\Controllers\Dining\MealSettingController::class, 'store']);
+        Route::put('/{id}', [App\Http\Controllers\Dining\MealSettingController::class, 'update']);
+        Route::patch('/{id}', [App\Http\Controllers\Dining\MealSettingController::class, 'updateFields']);
+        Route::delete('/{id}', [App\Http\Controllers\Dining\MealSettingController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'meal-token', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        Route::get('/find-by-token-number', [App\Http\Controllers\MealTokenController::class, 'findByTokenNumber']);
-        Route::get('/dropdown', [App\Http\Controllers\MealTokenController::class, 'dropdown']);
-        Route::get('/', [App\Http\Controllers\MealTokenController::class, 'index']);
-        Route::get('/{id}', [App\Http\Controllers\MealTokenController::class, 'show']);
-        Route::post('/', [App\Http\Controllers\MealTokenController::class, 'store']);
-        Route::put('/collect/{id}', [App\Http\Controllers\MealTokenController::class, 'collect']);
-        Route::delete('/{id}', [App\Http\Controllers\MealTokenController::class, 'destroy']);
+        Route::get('/find-by-token-number', [App\Http\Controllers\Dining\MealTokenController::class, 'findByTokenNumber']);
+        Route::get('/dropdown', [App\Http\Controllers\Dining\MealTokenController::class, 'dropdown']);
+        Route::get('/', [App\Http\Controllers\Dining\MealTokenController::class, 'index']);
+        Route::get('/{id}', [App\Http\Controllers\Dining\MealTokenController::class, 'show']);
+        Route::post('/', [App\Http\Controllers\Dining\MealTokenController::class, 'store']);
+        Route::put('/collect/{id}', [App\Http\Controllers\Dining\MealTokenController::class, 'collect']);
+        Route::delete('/{id}', [App\Http\Controllers\Dining\MealTokenController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'payment', 'middleware' => ['restrictIp', 'authVerify']], function () {
-        Route::get('/dropdown', [App\Http\Controllers\PaymentController::class, 'dropdown']);
-        Route::get('/', [App\Http\Controllers\PaymentController::class, 'index']);
-        Route::get('/{id}', [App\Http\Controllers\PaymentController::class, 'show']);
-        Route::post('/', [App\Http\Controllers\PaymentController::class, 'store']);
-        Route::delete('/{id}', [App\Http\Controllers\PaymentController::class, 'destroy']);
+        Route::get('/dropdown', [App\Http\Controllers\Dining\PaymentController::class, 'dropdown']);
+        Route::get('/', [App\Http\Controllers\Dining\PaymentController::class, 'index']);
+        Route::get('/{id}', [App\Http\Controllers\Dining\PaymentController::class, 'show']);
+        Route::post('/', [App\Http\Controllers\Dining\PaymentController::class, 'store']);
+        Route::delete('/{id}', [App\Http\Controllers\Dining\PaymentController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'report/dining', 'middleware' => ['restrictIp', 'authVerify']], function () {

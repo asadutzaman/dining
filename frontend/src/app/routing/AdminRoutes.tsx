@@ -15,6 +15,7 @@ const AdminRoutes = () => {
   const InventoryRoutes = lazy(
     () => import('../modules/inventory/InventoryRoutes')
   );
+  const DiningRoutes = lazy(() => import('../modules/dining/DiningRoutes'));
   return (
     <Routes>
       <Route element={<MasterLayout />}>
@@ -49,6 +50,14 @@ const AdminRoutes = () => {
           element={
             <SuspensedView>
               <InventoryRoutes />
+            </SuspensedView>
+          }
+        />
+        <Route
+          path={'/dining/*'}
+          element={
+            <SuspensedView>
+              <DiningRoutes />
             </SuspensedView>
           }
         />
