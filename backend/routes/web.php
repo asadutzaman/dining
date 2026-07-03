@@ -387,6 +387,9 @@ Route::prefix('api')->group(function () {
         // File download
         Route::get('/download-file', [App\Http\Controllers\FileController::class, 'downloadFile']);
 
+        // Serve raw file inline (for <img> previews)
+        Route::get('/view/{fileId}', [App\Http\Controllers\FileController::class, 'view']);
+
         // Get File
         Route::get('/{id}', [App\Http\Controllers\FileController::class, 'show']); // Done
 

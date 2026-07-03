@@ -28,6 +28,7 @@ class MemberValidator extends BaseValidator
                     'name'             => ['required', 'string', 'max:255'],
                     'phone'            => ['nullable', 'string', 'max:20'],
                     'email'            => ['nullable', 'email', 'max:255'],
+                    'photo_id'         => ['nullable', 'string', 'max:255'],
                     'rfid_card_number' => ['nullable', 'string', 'max:64'],
                     'department_id'    => ['required_if:member_type,STAFF', 'nullable', 'integer'],
                     'designation_id'   => ['nullable', 'integer'],

@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use Intervention\Image\Facades\Image;
-
 class StorageService
 {
     public $compressImage = true;
@@ -12,24 +10,14 @@ class StorageService
 
     public function upload($file, $fileName, $path)
     {
-        if ($this->isImage($fileName)) {
-          $this->uploadImage($file, $fileName, $path);
-        }
-        else {
-            $this->uploadFile($file, $fileName, $path);
-        }
+        // Store every file (including images) as-is. Image compression previously
+        // relied on the Intervention Image package, which is not installed.
+        $this->uploadFile($file, $fileName, $path);
     }
 
     public function uploadImage($file, $fileName, $path)
     {
-        $image = Image::make($file->getRealPath());
-        $imagePath = $path . '/' . $fileName;
-        if ($this->compressImage) {
-            $image->save($imagePath, $this->imageQuality);
-        }
-        else {
-            $this->uploadFile($file, $fileName, $path);
-        }
+        $this->uploadFile($file, $fileName, $path);
     }
 
     public function uploadFile($file, $fileName, $path)

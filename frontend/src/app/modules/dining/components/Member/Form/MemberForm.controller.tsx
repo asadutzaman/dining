@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react'
+import React, {FC, useEffect, useState} from 'react'
 import {MemberApi} from 'src/app/api'
 import DrawerForm from 'src/app/components/Drawer/DrawerForm'
 import MemberAddOrEditForm from './MemberForm.form'
@@ -50,16 +50,22 @@ const MemberFormController: FC<any> = (props) => {
     handleCallbackFunc,
   } = useCrudFormService(MemberApi, initialState, props)
 
+  const [imageList, setImageList] = useState<any[]>([])
+  const [photoId, setPhotoId] = useState<any>(null)
+
   useEffect(() => {
     if (entityId && isShowForm) {
       setIsNewRecord(false)
       setModalTitle('Edit Member')
       resetForm()
+      setImageList([])
       loadData()
     } else {
       resetForm()
       setModalTitle(initialState.modalTitle)
       setIsNewRecord(initialState.isNewRecord)
+      setImageList([])
+      setPhotoId(null)
     }
   }, [entityId, reloadForm])
 
@@ -78,6 +84,7 @@ const MemberFormController: FC<any> = (props) => {
         roll_no: res.data.roll_no,
         status: res.data.status,
       }
+      setPhotoId(res.data.photo_id || null)
       handleChange(initFormDta)
       formRef.setFieldsValue(initFormDta)
     })
@@ -94,6 +101,7 @@ const MemberFormController: FC<any> = (props) => {
   const handleCreate = (values: any): Promise<any> => {
     const payload = {
       ...values,
+      photo_id: imageList?.[0]?.file_id ?? null,
     }
     return BaseCrudFormService.handleCreate(payload)
   }
@@ -101,6 +109,7 @@ const MemberFormController: FC<any> = (props) => {
   const handleUpdate = (values: any): Promise<any> => {
     const payload = {
       ...values,
+      photo_id: imageList?.[0]?.file_id ?? null,
     }
     return BaseCrudFormService.handleUpdate(payload)
   }
@@ -121,6 +130,9 @@ const MemberFormController: FC<any> = (props) => {
         handleSubmit={handleSubmit}
         handleSubmitFailed={handleSubmitFailed}
         handleCallbackFunc={handleCallbackFunc}
+        imageList={imageList}
+        setImageList={setImageList}
+        photoId={photoId}
       />
     </div>
   )

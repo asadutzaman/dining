@@ -26,6 +26,7 @@ class MemberResource extends BaseResource
                 'name'              => $this->name,
                 'phone'             => $this->phone,
                 'email'             => $this->email,
+                'photo_id'          => $this->photo_id,
                 'department_id'     => $this->department_id,
                 'designation_id'    => $this->designation_id,
                 'class_name'        => $this->class_name,

@@ -3,6 +3,7 @@ import {Form, Input, Row, Col, Select} from 'antd'
 import {rules} from 'src/app/components/Validation/Form.validate'
 import DepartmentSelect from 'src/app/components/Dropdown/DepartmentSelect'
 import DesignationSelect from 'src/app/components/Dropdown/DesignationSelect'
+import UploadImage from 'src/app/components/Upload/UploadImage'
 
 const formItemLayout = {
   labelCol: {
@@ -17,7 +18,16 @@ const formItemLayout = {
 
 const MemberAddOrEditForm: FC<any> = (props) => {
   const {Option} = Select
-  const {formRef, initialValues, handleChange, handleSubmit, handleSubmitFailed} = props
+  const {
+    formRef,
+    initialValues,
+    handleChange,
+    handleSubmit,
+    handleSubmitFailed,
+    imageList,
+    setImageList,
+    photoId,
+  } = props
 
   return (
     <Fragment>
@@ -35,6 +45,10 @@ const MemberAddOrEditForm: FC<any> = (props) => {
         >
           <Row gutter={24}>
             <Col span={24}>
+              <Form.Item label={'Photo'}>
+                <UploadImage imageId={photoId} imageList={imageList} setImageList={setImageList} />
+              </Form.Item>
+
               <Form.Item label={'Member Type'} name='member_type' rules={rules.required}>
                 <Select placeholder={'-- Select --'}>
                   <Option key='member-type-staff' value='STAFF'>
