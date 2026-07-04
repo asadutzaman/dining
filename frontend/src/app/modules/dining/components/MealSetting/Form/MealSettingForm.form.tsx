@@ -1,5 +1,5 @@
 import React, {FC, Fragment} from 'react'
-import {Form, InputNumber, Row, Col, Select, DatePicker} from 'antd'
+import {Form, InputNumber, Row, Col, Select, DatePicker, TimePicker} from 'antd'
 import {rules} from 'src/app/components/Validation/Form.validate'
 
 const formItemLayout = {
@@ -49,6 +49,22 @@ const MealSettingAddOrEditForm: FC<any> = (props) => {
               <Form.Item label={'Cost'} name='cost' rules={rules.required}>
                 <InputNumber style={{width: '100%'}} min={0} step={0.01} precision={2} />
               </Form.Item>
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item label={'Serving Start Time'} name='start_time'>
+                    <TimePicker style={{width: '100%'}} format='HH:mm' minuteStep={5} placeholder='e.g. 07:00' />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label={'Serving End Time'} name='end_time'>
+                    <TimePicker style={{width: '100%'}} format='HH:mm' minuteStep={5} placeholder='e.g. 11:00' />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <div className='text-muted fs-8 mb-4'>
+                Optional. When set, tokens for this meal can only be issued within this time window.
+              </div>
 
               <Form.Item label={'Effective From'} name='effective_from' rules={rules.required}>
                 <DatePicker style={{width: '100%'}} placeholder='Select Date' />

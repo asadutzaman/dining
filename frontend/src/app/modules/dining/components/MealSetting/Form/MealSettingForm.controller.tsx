@@ -11,6 +11,8 @@ const initialState = {
   fields: {
     meal_type: 'BREAKFAST',
     cost: null,
+    start_time: null,
+    end_time: null,
     effective_from: null,
     status: 1,
   },
@@ -62,6 +64,8 @@ const MealSettingFormController: FC<any> = (props) => {
       const initFormDta = {
         meal_type: res.data.meal_type,
         cost: res.data.cost,
+        start_time: res.data.start_time ? dayjs(res.data.start_time, 'HH:mm:ss') : null,
+        end_time: res.data.end_time ? dayjs(res.data.end_time, 'HH:mm:ss') : null,
         effective_from: res.data.effective_from ? dayjs(res.data.effective_from) : null,
         status: res.data.status,
       }
@@ -78,20 +82,19 @@ const MealSettingFormController: FC<any> = (props) => {
     }
   }
 
+  const buildPayload = (values: any) => ({
+    ...values,
+    effective_from: values.effective_from ? dayjs(values.effective_from).format('YYYY-MM-DD') : null,
+    start_time: values.start_time ? dayjs(values.start_time).format('HH:mm:ss') : null,
+    end_time: values.end_time ? dayjs(values.end_time).format('HH:mm:ss') : null,
+  })
+
   const handleCreate = (values: any): Promise<any> => {
-    const payload = {
-      ...values,
-      effective_from: values.effective_from ? dayjs(values.effective_from).format('YYYY-MM-DD') : null,
-    }
-    return BaseCrudFormService.handleCreate(payload)
+    return BaseCrudFormService.handleCreate(buildPayload(values))
   }
 
   const handleUpdate = (values: any): Promise<any> => {
-    const payload = {
-      ...values,
-      effective_from: values.effective_from ? dayjs(values.effective_from).format('YYYY-MM-DD') : null,
-    }
-    return BaseCrudFormService.handleUpdate(payload)
+    return BaseCrudFormService.handleUpdate(buildPayload(values))
   }
 
   return (

@@ -27,6 +27,9 @@ class MealSettingValidator extends BaseValidator
                     'meal_type'      => ['required', 'in:BREAKFAST,LUNCH,DINNER'],
                     'cost'           => ['required', 'numeric', 'min:0'],
                     'effective_from' => ['required', 'date'],
+                    // Optional serving window; if one is set the other is required, end after start.
+                    'start_time'     => ['nullable', 'date_format:H:i:s', 'required_with:end_time'],
+                    'end_time'       => ['nullable', 'date_format:H:i:s', 'required_with:start_time', 'after:start_time'],
                 ];
             default:
                 break;

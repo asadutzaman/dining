@@ -17,6 +17,8 @@ class MealSetting extends BaseModel
     protected $fillable = [
         'meal_type',
         'cost',
+        'start_time',
+        'end_time',
         'effective_from',
         'status',
     ];
@@ -40,6 +42,8 @@ class MealSetting extends BaseModel
         'updated_at' => 'datetime:Y-m-d H:i:s',
         // String
         'meal_type'  => 'string',
+        'start_time' => 'string',
+        'end_time'   => 'string',
     ];
 
     protected $dates = [

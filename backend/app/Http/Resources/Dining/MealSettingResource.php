@@ -22,6 +22,8 @@ class MealSettingResource extends BaseResource
                 'id'              => $this->id,
                 'meal_type'       => $this->meal_type,
                 'cost'            => $this->cost,
+                'start_time'      => $this->start_time,
+                'end_time'        => $this->end_time,
                 'effective_from'  => $this->effective_from,
                 'status'          => $this->status,
                 'created_by_name' => $baseData['created_by_name'],

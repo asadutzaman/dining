@@ -955,6 +955,7 @@ Route::prefix('api')->group(function () {
     });
 
     Route::group(['prefix' => 'meal-setting', 'middleware' => ['restrictIp', 'authVerify']], function () {
+        Route::get('/current-meal', [App\Http\Controllers\Dining\MealSettingController::class, 'currentMeal']);
         Route::get('/current-cost', [App\Http\Controllers\Dining\MealSettingController::class, 'currentCost']);
         Route::get('/dropdown', [App\Http\Controllers\Dining\MealSettingController::class, 'dropdown']);
         Route::get('/', [App\Http\Controllers\Dining\MealSettingController::class, 'index']);

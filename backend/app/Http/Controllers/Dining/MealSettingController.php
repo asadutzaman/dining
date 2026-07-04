@@ -47,6 +47,8 @@ class MealSettingController extends Controller
             $result = $this->repository->create([
                 'meal_type'      => $request->meal_type,
                 'cost'           => $request->cost,
+                'start_time'     => $request->start_time,
+                'end_time'       => $request->end_time,
                 'effective_from' => $request->effective_from,
             ]);
 
@@ -78,6 +80,8 @@ class MealSettingController extends Controller
             $this->repository->update([
                 'meal_type'      => $request->meal_type,
                 'cost'           => $request->cost,
+                'start_time'     => $request->start_time,
+                'end_time'       => $request->end_time,
                 'effective_from' => $request->effective_from,
             ], $id);
 
@@ -111,6 +115,17 @@ class MealSettingController extends Controller
 
             $response = new MealSettingResource($setting);
             return $this->successResourceResponse($response);
+        } catch (\Exception $e) {
+            $this->errorResponse($e->getMessage());
+        }
+    }
+
+    // Used by the Issue screen to auto-detect which meal is being served now.
+    public function currentMeal(Request $request)
+    {
+        try {
+            $result = $this->repository->getCurrentMeal();
+            return $this->successResponse($result);
         } catch (\Exception $e) {
             $this->errorResponse($e->getMessage());
         }

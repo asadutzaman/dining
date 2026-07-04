@@ -9,6 +9,8 @@ const MealTokenIssueView: FC<any> = (props) => {
     memberInfo,
     memberLoading,
     mealType,
+    mealInfo,
+    activeMeal,
     lastToken,
     cardInputRef,
     handleCardNumberChange,
@@ -16,6 +18,10 @@ const MealTokenIssueView: FC<any> = (props) => {
     handleMealTypeChange,
     handleReset,
   } = props
+
+  const MEAL_LABEL: any = {BREAKFAST: 'Breakfast', LUNCH: 'Lunch', DINNER: 'Dinner'}
+  const windowsConfigured = !!mealInfo?.windows_configured
+  const scanDisabled = !activeMeal
 
   const photoUrl = memberInfo?.photo_id ? `${CONSTANT_CONFIG.MEDIA_SOURCE}${memberInfo.photo_id}` : ''
   const initials = (memberInfo?.name || '?')
@@ -30,22 +36,45 @@ const MealTokenIssueView: FC<any> = (props) => {
       <div className='p-6'>
         <h3 className='mb-6'>Issue Meal Token</h3>
 
+        {/* Current meal: auto-detected by time window, or a manual picker if no windows are set */}
+        {windowsConfigured ? (
+          <div className='mb-4'>
+            {activeMeal ? (
+              <Tag color='green' style={{fontSize: 16, padding: '6px 14px'}}>
+                Now serving: {MEAL_LABEL[activeMeal] || activeMeal}
+              </Tag>
+            ) : (
+              <Tag color='red' style={{fontSize: 16, padding: '6px 14px'}}>
+                No meal is being served right now
+              </Tag>
+            )}
+          </div>
+        ) : (
+          <Row gutter={[16, 16]} className='mb-2'>
+            <Col md={8} xs={24}>
+              <label className='fw-bold mb-2 d-block'>Current Meal</label>
+              <Select style={{width: '100%'}} size='large' value={mealType} onChange={handleMealTypeChange}>
+                <Option value='BREAKFAST'>Breakfast</Option>
+                <Option value='LUNCH'>Lunch</Option>
+                <Option value='DINNER'>Dinner</Option>
+              </Select>
+            </Col>
+          </Row>
+        )}
+
         <Row gutter={[16, 16]} align='bottom'>
-          <Col md={6} xs={24}>
-            <label className='fw-bold mb-2 d-block'>Current Meal</label>
-            <Select style={{width: '100%'}} size='large' value={mealType} onChange={handleMealTypeChange}>
-              <Option value='BREAKFAST'>Breakfast</Option>
-              <Option value='LUNCH'>Lunch</Option>
-              <Option value='DINNER'>Dinner</Option>
-            </Select>
-          </Col>
-          <Col md={12} xs={24}>
+          <Col md={18} xs={24}>
             <label className='fw-bold mb-2 d-block'>Scan / Enter RFID Card</label>
             <Input
               ref={cardInputRef}
               autoFocus
               size='large'
-              placeholder='Scan card — token issues & prints automatically'
+              disabled={scanDisabled}
+              placeholder={
+                scanDisabled
+                  ? 'Scanning disabled — no meal is being served now'
+                  : 'Scan card — token issues & prints automatically'
+              }
               value={cardNumber}
               onChange={(e) => handleCardNumberChange(e.target.value)}
               onPressEnter={handleCardScan}

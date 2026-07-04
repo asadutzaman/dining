@@ -68,6 +68,17 @@ class MealTokenController extends Controller
                 $this->errorResponse('No active cost setting found for this meal type!');
             }
 
+            // Enforce the meal's serving time window (if configured). No window = no restriction.
+            if (!empty($mealSetting->start_time) && !empty($mealSetting->end_time)) {
+                $now = now()->format('H:i:s');
+                if ($now < $mealSetting->start_time || $now > $mealSetting->end_time) {
+                    $meal = ucfirst(strtolower($request->meal_type));
+                    $from = substr($mealSetting->start_time, 0, 5);
+                    $to = substr($mealSetting->end_time, 0, 5);
+                    $this->errorResponse("{$meal} can only be issued between {$from} and {$to}!");
+                }
+            }
+
             $latestCodeSequence = (new CodeSequenceRepository())->getLatestCodeByLabel('MEAL_TOKEN');
             if ($latestCodeSequence == null) {
                 $this->errorResponse('Number Sequence not found!');

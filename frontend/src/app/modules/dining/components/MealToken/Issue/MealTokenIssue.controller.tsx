@@ -1,5 +1,5 @@
-import React, {FC, useRef, useState} from 'react'
-import {MemberApi, MealTokenApi} from 'src/app/api'
+import React, {FC, useEffect, useRef, useState} from 'react'
+import {MemberApi, MealTokenApi, MealSettingApi} from 'src/app/api'
 import {Message} from 'src/app/utils'
 import MealTokenIssueView from './MealTokenIssue.view'
 
@@ -7,7 +7,9 @@ const initialState = {
   cardNumber: '',
   memberInfo: null as any,
   memberLoading: false,
-  mealType: 'BREAKFAST', // persistent across scans (operator sets the current meal)
+  mealType: 'BREAKFAST', // manual fallback meal (used only when no time windows are configured)
+  // Auto-detected serving info: {meal_type, cost, windows_configured}
+  mealInfo: null as any,
   lastToken: null as any,
 }
 
@@ -16,6 +18,8 @@ const MEAL_LABEL: any = {BREAKFAST: 'Breakfast', LUNCH: 'Lunch', DINNER: 'Dinner
 const MealTokenIssueController: FC = () => {
   const [state, setState] = useState<any>(initialState)
   const cardInputRef = useRef<any>(null)
+  const stateRef = useRef<any>(state)
+  stateRef.current = state
 
   const setPartial = (partial: any) => setState((prev: any) => ({...prev, ...partial}))
 
@@ -25,10 +29,39 @@ const MealTokenIssueController: FC = () => {
 
   const handleMealTypeChange = (value: string) => setPartial({mealType: value})
 
+  // Auto-detect which meal is being served now (re-checked on mount + every minute).
+  const loadCurrentMeal = () => {
+    MealSettingApi.currentMeal()
+      .then((res: any) => setPartial({mealInfo: res.data}))
+      .catch(() => setPartial({mealInfo: null}))
+  }
+
+  useEffect(() => {
+    loadCurrentMeal()
+    const timer = setInterval(loadCurrentMeal, 60000)
+    return () => clearInterval(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // The meal a token will be issued for: time-detected when windows are set, else the manual pick.
+  const resolveActiveMeal = () => {
+    const s = stateRef.current
+    if (s.mealInfo?.windows_configured) {
+      return s.mealInfo.meal_type || null
+    }
+    return s.mealType
+  }
+
   // Scan -> look up member -> immediately issue a DUE token + print.
   const handleCardScan = () => {
     const card = state.cardNumber.trim()
     if (!card) {
+      return
+    }
+    if (!resolveActiveMeal()) {
+      Message.error('No meal is being served right now. Check the meal time windows.')
+      setPartial({cardNumber: ''})
+      refocus()
       return
     }
     setPartial({memberLoading: true})
@@ -42,9 +75,10 @@ const MealTokenIssueController: FC = () => {
   }
 
   const issueToken = (member: any) => {
+    const activeMeal = resolveActiveMeal()
     MealTokenApi.create({
       member_id: member.id,
-      meal_type: state.mealType,
+      meal_type: activeMeal,
       payment_status: 'DUE',
     })
       .then((res: any) => {
@@ -120,13 +154,14 @@ const MealTokenIssueController: FC = () => {
   }
 
   const handleReset = () => {
-    setState({...initialState, mealType: state.mealType})
+    setState({...initialState, mealType: state.mealType, mealInfo: state.mealInfo})
     refocus()
   }
 
   return (
     <MealTokenIssueView
       {...state}
+      activeMeal={resolveActiveMeal()}
       cardInputRef={cardInputRef}
       handleCardNumberChange={handleCardNumberChange}
       handleCardScan={handleCardScan}

@@ -38,14 +38,24 @@ const MealSettingListing: FC<any> = (props) => {
       key: 'cost',
       title: 'Cost',
       sorter: true,
-      width: '20%',
+      width: '13%',
+    },
+    {
+      dataIndex: 'time_window',
+      key: 'time_window',
+      title: 'Serving Time',
+      width: '17%',
+      render: (text: string, record: any) =>
+        record.start_time && record.end_time
+          ? `${String(record.start_time).slice(0, 5)} - ${String(record.end_time).slice(0, 5)}`
+          : 'Any time',
     },
     {
       dataIndex: 'effective_from',
       key: 'effective_from',
       title: 'Effective From',
       sorter: true,
-      width: '20%',
+      width: '17%',
       render: (value: any) => DateTimeUtils.formatDate(value),
     },
     {

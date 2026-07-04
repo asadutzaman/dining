@@ -51,4 +51,44 @@ class MealSettingRepository extends BaseRepository
             ->orderBy('effective_from', 'desc')
             ->first();
     }
+
+    /**
+     * Determine which meal is being served right now based on each meal's
+     * effective time window. Returns:
+     *   meal_type: the active meal now (or null if none / windows not configured)
+     *   cost: that meal's cost
+     *   windows_configured: whether ANY effective meal has a time window set
+     *
+     * "windows_configured = false" means no meal restricts by time, so the
+     * Issue screen falls back to a manual meal picker (no time restriction).
+     */
+    public function getCurrentMeal($date = null, $now = null)
+    {
+        $date = $date ?: now()->format('Y-m-d');
+        $now = $now ?: now()->format('H:i:s');
+
+        $windowsConfigured = false;
+        $currentMeal = null;
+        $currentCost = null;
+
+        foreach (['BREAKFAST', 'LUNCH', 'DINNER'] as $mealType) {
+            $setting = $this->getEffectiveCost($mealType, $date);
+            if (!$setting) {
+                continue;
+            }
+            if (!empty($setting->start_time) && !empty($setting->end_time)) {
+                $windowsConfigured = true;
+                if ($now >= $setting->start_time && $now <= $setting->end_time && $currentMeal === null) {
+                    $currentMeal = $mealType;
+                    $currentCost = $setting->cost;
+                }
+            }
+        }
+
+        return [
+            'meal_type'          => $currentMeal,
+            'cost'               => $currentCost,
+            'windows_configured' => $windowsConfigured,
+        ];
+    }
 }

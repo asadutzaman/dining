@@ -12,6 +12,7 @@ const endpoints = {
     delete: (id: Number) => `${RESOURCE_ENDPOINT}/${id}`,
     dropdown: () => `${RESOURCE_ENDPOINT}/dropdown`,
     currentCost: () => `${RESOURCE_ENDPOINT}/current-cost`,
+    currentMeal: () => `${RESOURCE_ENDPOINT}/current-meal`,
 }
 
 export default class MealSettingApi {
@@ -53,5 +54,10 @@ export default class MealSettingApi {
     public currentCost = (mealType: string, date?: string): AxiosPromise<any> => {
         const url = endpoints.currentCost();
         return HttpService.get(url, { meal_type: mealType, date });
+    };
+
+    public currentMeal = (): AxiosPromise<any> => {
+        const url = endpoints.currentMeal();
+        return HttpService.get(url);
     };
 }
