@@ -34,7 +34,7 @@ class MemberImport implements ToModel, WithValidation, WithChunkReading, WithHea
 
     /**
      * Expected columns (header row): member_type, name, phone, email,
-     * rfid_card_number, department, designation, class_name, section, roll_no
+     * rfid_card_number, department, designation, staff_id, class_name, section, roll_no
      *
      * @param array $row
      *
@@ -58,6 +58,7 @@ class MemberImport implements ToModel, WithValidation, WithChunkReading, WithHea
 
         $departmentId = null;
         $designationId = null;
+        $staffId = null;
         if ($memberType === 'STAFF') {
             if (!empty($row['department'])) {
                 $department = $this->departmentRepository->findBy('name', Str::squish($row['department']));
@@ -75,6 +76,12 @@ class MemberImport implements ToModel, WithValidation, WithChunkReading, WithHea
                 $designation = $this->designationRepository->findBy('name', Str::squish($row['designation']));
                 $designationId = $designation ? $designation->id : null;
             }
+
+            if (empty($row['staff_id'])) {
+                $this->skippedRows[] = "{$name}: staff_id is required for staff";
+                return null;
+            }
+            $staffId = Str::squish((string) $row['staff_id']);
         }
 
         if ($memberType === 'STUDENT' && (empty($row['class_name']) || empty($row['roll_no']))) {
@@ -97,6 +104,7 @@ class MemberImport implements ToModel, WithValidation, WithChunkReading, WithHea
             'email'            => $row['email'] ?? null,
             'department_id'    => $departmentId,
             'designation_id'   => $designationId,
+            'staff_id'         => $staffId,
             'class_name'       => $row['class_name'] ?? null,
             'section'          => $row['section'] ?? null,
             'roll_no'          => $row['roll_no'] ?? null,

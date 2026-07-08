@@ -946,6 +946,7 @@ Route::prefix('api')->group(function () {
         Route::get('/find-by-card', [App\Http\Controllers\Dining\MemberController::class, 'findByCard']);
         Route::post('/bulk-import', [App\Http\Controllers\Dining\MemberController::class, 'bulkImport']);
         Route::get('/dropdown', [App\Http\Controllers\Dining\MemberController::class, 'dropdown']);
+        Route::get('/candidate', [App\Http\Controllers\Dining\MemberCandidateController::class, 'index']);
         Route::get('/', [App\Http\Controllers\Dining\MemberController::class, 'index']);
         Route::get('/{id}', [App\Http\Controllers\Dining\MemberController::class, 'show']);
         Route::post('/', [App\Http\Controllers\Dining\MemberController::class, 'store']);

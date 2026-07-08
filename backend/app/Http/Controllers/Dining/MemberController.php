@@ -49,6 +49,13 @@ class MemberController extends Controller
                 }
             }
 
+            if (!empty($request->candidate_id)) {
+                $existingByCandidate = $this->repository->findWhere('candidate_id', $request->candidate_id);
+                if ($existingByCandidate->isNotEmpty()) {
+                    $this->errorResponse('This candidate has already been added as a member!');
+                }
+            }
+
             $latestCodeSequence = (new CodeSequenceRepository())->getLatestCodeByLabel('MEMBER');
             if ($latestCodeSequence == null) {
                 $this->errorResponse('Number Sequence not found!');
@@ -68,6 +75,8 @@ class MemberController extends Controller
                 'photo_id'         => $request->photo_id,
                 'department_id'    => $request->department_id,
                 'designation_id'   => $request->designation_id,
+                'staff_id'         => $request->staff_id,
+                'candidate_id'     => $request->candidate_id,
                 'class_name'       => $request->class_name,
                 'section'          => $request->section,
                 'roll_no'          => $request->roll_no,
@@ -115,6 +124,7 @@ class MemberController extends Controller
                 'photo_id'         => $request->photo_id,
                 'department_id'    => $request->department_id,
                 'designation_id'   => $request->designation_id,
+                'staff_id'         => $request->staff_id,
                 'class_name'       => $request->class_name,
                 'section'          => $request->section,
                 'roll_no'          => $request->roll_no,
