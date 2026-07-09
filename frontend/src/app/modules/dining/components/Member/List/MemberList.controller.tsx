@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react'
+import React, {FC, useEffect, useState} from 'react'
 import {useLocation} from 'react-router-dom'
 import {parse} from 'query-string'
 import {Form} from 'antd'
@@ -8,6 +8,7 @@ import MemberListing from './MemberList.listing'
 import MemberListPagination from './MemberList.pagination'
 import MemberViewController from '../View/MemberView.controller'
 import MemberFormController from '../Form/MemberForm.controller'
+import MemberCandidatePicker from '../Candidate/MemberCandidatePicker'
 import {useCrudListService} from 'src/app/hooks/crud/useCrudListService'
 
 const initialState = {
@@ -81,6 +82,9 @@ const MemberListController: FC<any> = (props) => {
     reloadView,
     reloadForm,
   } = useCrudListService(MemberApi, queryState, initialState, props)
+
+  const [isCandidatePickerOpen, setIsCandidatePickerOpen] = useState(false)
+  const [candidatePrefill, setCandidatePrefill] = useState<any>(null)
 
   useEffect(() => {
     initData()
@@ -179,6 +183,22 @@ const MemberListController: FC<any> = (props) => {
     BaseCrudListService.handleCallbackFunc(event, action, recordId, data)
   }
 
+  const openCandidatePicker = () => {
+    setIsCandidatePickerOpen(true)
+  }
+
+  const handlePickCandidate = (candidate: any) => {
+    setCandidatePrefill({
+      member_type: candidate.member_type,
+      name: candidate.name,
+      staff_id: candidate.staff_id ?? null,
+      roll_no: candidate.roll_no ?? null,
+      candidate_id: candidate.id,
+    })
+    setIsCandidatePickerOpen(false)
+    handleCallbackFunc(null, 'add')
+  }
+
   return (
     <div className='card'>
       <Form form={formRef} name='memberListingFilterForm' initialValues={initialValues}>
@@ -186,6 +206,7 @@ const MemberListController: FC<any> = (props) => {
           filters={filters}
           handleOnChanged={handleOnChanged}
           handleCallbackFunc={handleCallbackFunc}
+          onOpenCandidatePicker={openCandidatePicker}
         />
         <MemberListing
           loading={loading}
@@ -214,6 +235,13 @@ const MemberListController: FC<any> = (props) => {
         reloadForm={reloadForm}
         isShowForm={isShowForm}
         handleCallbackFunc={handleCallbackFunc}
+        prefillFields={candidatePrefill}
+        onPrefillConsumed={() => setCandidatePrefill(null)}
+      />
+      <MemberCandidatePicker
+        open={isCandidatePickerOpen}
+        onClose={() => setIsCandidatePickerOpen(false)}
+        onPick={handlePickCandidate}
       />
     </div>
   )

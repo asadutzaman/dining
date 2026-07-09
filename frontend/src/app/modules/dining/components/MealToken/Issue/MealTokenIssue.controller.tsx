@@ -101,10 +101,6 @@ const MealTokenIssueController: FC = () => {
   }
 
   const printReceipt = (token: any, member: any) => {
-    const win = window.open('', 'PRINT', 'width=360,height=640')
-    if (!win) {
-      return
-    }
     const meal = MEAL_LABEL[token.meal_type] || token.meal_type
     const html = `
       <html>
@@ -143,11 +139,29 @@ const MealTokenIssueController: FC = () => {
         </body>
       </html>`
     try {
-      win.document.write(html)
-      win.document.close()
-      win.focus()
-      win.print()
-      win.close()
+      // A hidden iframe (instead of window.open) isn't subject to popup-blocking,
+      // which matters here since this runs async after the scan/API calls, not
+      // directly inside a user-gesture handler.
+      let frame = document.getElementById('token-print-frame') as HTMLIFrameElement | null
+      if (!frame) {
+        frame = document.createElement('iframe')
+        frame.id = 'token-print-frame'
+        frame.style.position = 'fixed'
+        frame.style.width = '0'
+        frame.style.height = '0'
+        frame.style.border = '0'
+        document.body.appendChild(frame)
+      }
+      const frameWindow = frame.contentWindow
+      const doc = frameWindow?.document
+      if (!doc || !frameWindow) {
+        return
+      }
+      doc.open()
+      doc.write(html)
+      doc.close()
+      frameWindow.focus()
+      frameWindow.print()
     } catch (e) {
       // ignore print failures; token is still recorded
     }

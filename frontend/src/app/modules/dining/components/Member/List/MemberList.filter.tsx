@@ -5,11 +5,13 @@ import {MemberAction} from '../Actions/Member.actions'
 import CreateAction from 'src/app/components/Actions/CreateAction'
 import {Col, Row} from 'react-bootstrap'
 import {RefreshIcon, ResetIcon} from 'src/app/../_metronic/assets/images/icon/svg'
+import {usePermissionContext} from 'src/app/hooks/context/usePermissionContext'
 
 const MemberListFilter: FC<any> = (props) => {
   const {Search} = Input
   const {Option} = Select
-  const {filters, handleOnChanged, handleCallbackFunc} = props
+  const {filters, handleOnChanged, handleCallbackFunc, onOpenCandidatePicker} = props
+  const {isPermissionLoaded, hasPermission} = usePermissionContext()
 
   return (
     <div className='p-6'>
@@ -26,6 +28,15 @@ const MemberListFilter: FC<any> = (props) => {
             <Link to='/admin/dining/member/import' className='btn btn-light-primary me-3'>
               Bulk Import
             </Link>
+            {isPermissionLoaded && hasPermission('auth:member:create') && (
+              <button
+                type='button'
+                className='btn btn-light-primary me-3'
+                onClick={() => onOpenCandidatePicker && onOpenCandidatePicker()}
+              >
+                Add From API
+              </button>
+            )}
             <CreateAction
               actionItem={MemberAction.COMMON_ACTION.CREATE}
               handleCallbackFunc={handleCallbackFunc}

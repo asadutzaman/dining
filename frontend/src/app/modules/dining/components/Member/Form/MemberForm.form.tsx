@@ -106,6 +106,10 @@ const MemberAddOrEditForm: FC<any> = (props) => {
                           onClear={() => formRef.setFieldsValue({designation_id: null})}
                         />
                       </Form.Item>
+
+                      <Form.Item label={'Staff ID'} name='staff_id' rules={rules.required}>
+                        <Input />
+                      </Form.Item>
                     </>
                   ) : (
                     <>

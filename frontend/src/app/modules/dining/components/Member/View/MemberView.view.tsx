@@ -67,6 +67,11 @@ const MemberView: FC<any> = (props) => {
                 <td width={'5%'}>:</td>
                 <td width={'75%'}>{itemData.designation_name}</td>
               </tr>
+              <tr>
+                <td width={'20%'}>Staff ID</td>
+                <td width={'5%'}>:</td>
+                <td width={'75%'}>{itemData.staff_id}</td>
+              </tr>
             </>
           )}
           {itemData.member_type === 'STUDENT' && (

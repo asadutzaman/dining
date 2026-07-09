@@ -15,6 +15,7 @@ const initialState = {
     email: null,
     department_id: null,
     designation_id: null,
+    staff_id: null,
     class_name: null,
     section: null,
     roll_no: null,
@@ -52,6 +53,7 @@ const MemberFormController: FC<any> = (props) => {
 
   const [imageList, setImageList] = useState<any[]>([])
   const [photoId, setPhotoId] = useState<any>(null)
+  const [candidateId, setCandidateId] = useState<any>(null)
 
   useEffect(() => {
     if (entityId && isShowForm) {
@@ -66,6 +68,15 @@ const MemberFormController: FC<any> = (props) => {
       setIsNewRecord(initialState.isNewRecord)
       setImageList([])
       setPhotoId(null)
+      setCandidateId(null)
+
+      if (props.prefillFields) {
+        const prefillFormData = {...initialState.fields, ...props.prefillFields}
+        setCandidateId(props.prefillFields.candidate_id ?? null)
+        handleChange(prefillFormData)
+        formRef.setFieldsValue(prefillFormData)
+        props.onPrefillConsumed?.()
+      }
     }
   }, [entityId, reloadForm])
 
@@ -79,6 +90,7 @@ const MemberFormController: FC<any> = (props) => {
         email: res.data.email,
         department_id: res.data.department_id,
         designation_id: res.data.designation_id,
+        staff_id: res.data.staff_id,
         class_name: res.data.class_name,
         section: res.data.section,
         roll_no: res.data.roll_no,
@@ -102,6 +114,7 @@ const MemberFormController: FC<any> = (props) => {
     const payload = {
       ...values,
       photo_id: imageList?.[0]?.file_id ?? null,
+      candidate_id: candidateId,
     }
     return BaseCrudFormService.handleCreate(payload)
   }

@@ -13,6 +13,7 @@ const endpoints = {
     dropdown: () => `${RESOURCE_ENDPOINT}/dropdown`,
     findByCard: () => `${RESOURCE_ENDPOINT}/find-by-card`,
     bulkImport: () => `${RESOURCE_ENDPOINT}/bulk-import`,
+    candidateList: () => `${RESOURCE_ENDPOINT}/candidate`,
 }
 
 export default class MemberApi {
@@ -59,5 +60,10 @@ export default class MemberApi {
     public bulkImport = (file: File): Promise<any> => {
         const url = endpoints.bulkImport();
         return HttpService.upload(url, file);
+    };
+
+    public candidateList = (params = {}, headers = {}): AxiosPromise<any> => {
+        const url = endpoints.candidateList();
+        return HttpService.get(url, params, headers);
     };
 }
