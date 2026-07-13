@@ -19,8 +19,12 @@ class MemberCandidateResource extends BaseResource
             'name'        => $this->name,
             'type'        => $this->type,
             'member_type' => strtoupper($this->type),
+            'external_id' => $this->external_id,
             'staff_id'    => $this->staff_id,
             'roll_no'     => $this->roll_no,
+            'rfid'        => $this->rfid,
+            'image_url'   => $this->image_url,
+            'has_card'    => !empty($this->rfid),
         ];
     }
 }

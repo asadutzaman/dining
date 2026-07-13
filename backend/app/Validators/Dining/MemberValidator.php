@@ -30,10 +30,13 @@ class MemberValidator extends BaseValidator
                     'email'            => ['nullable', 'email', 'max:255'],
                     'photo_id'         => ['nullable', 'string', 'max:255'],
                     'rfid_card_number' => ['nullable', 'string', 'max:64'],
-                    'department_id'    => ['required_if:member_type,STAFF', 'nullable', 'integer'],
+                    // Department/designation/class are not in the NCMS payload, so a member
+                    // enrolled off the roster has nothing to put there. A missing department is
+                    // a data-quality gap to fill in later, never a reason to refuse someone a meal.
+                    'department_id'    => ['nullable', 'integer'],
                     'designation_id'   => ['nullable', 'integer'],
                     'staff_id'         => ['required_if:member_type,STAFF', 'nullable', 'string', 'max:50'],
-                    'class_name'       => ['required_if:member_type,STUDENT', 'nullable', 'string', 'max:50'],
+                    'class_name'       => ['nullable', 'string', 'max:50'],
                     'section'          => ['nullable', 'string', 'max:50'],
                     'roll_no'          => ['required_if:member_type,STUDENT', 'nullable', 'string', 'max:50'],
                     'candidate_id'     => ['nullable', 'integer'],
@@ -50,9 +53,7 @@ class MemberValidator extends BaseValidator
         $includesMessages = [
             'member_type.required'   => 'Member type is required.',
             'name.required'          => 'Name is required.',
-            'department_id.required_if' => 'Department is required for staff.',
             'staff_id.required_if'      => 'Staff ID is required for staff.',
-            'class_name.required_if'    => 'Class is required for students.',
             'roll_no.required_if'       => 'Roll number is required for students.',
         ];
 

@@ -16,8 +16,13 @@ class MemberCandidate extends BaseModel
     protected $fillable = [
         'name',
         'type',
+        'external_id',
         'staff_id',
         'roll_no',
+        'rfid',
+        'image_url',
+        'synced_at',
+        'is_active',
     ];
 
     protected $hidden = [
@@ -29,14 +34,20 @@ class MemberCandidate extends BaseModel
         'id'              => 'integer',
         'created_by'      => 'integer',
         'updated_by'      => 'integer',
+        // Boolean
+        'is_active'       => 'boolean',
         //Date Time
         'created_at'      => 'datetime:Y-m-d H:i:s',
         'updated_at'      => 'datetime:Y-m-d H:i:s',
+        'synced_at'       => 'datetime:Y-m-d H:i:s',
         // String
         'name'            => 'string',
         'type'            => 'string',
+        'external_id'     => 'string',
         'staff_id'        => 'string',
         'roll_no'         => 'string',
+        'rfid'            => 'string',
+        'image_url'       => 'string',
     ];
 
     protected $dates = [
@@ -46,5 +57,11 @@ class MemberCandidate extends BaseModel
     public function importedMember()
     {
         return $this->hasOne(Member::class, 'candidate_id', 'id');
+    }
+
+    // Uppercase form used by the members table (STAFF / STUDENT).
+    public function memberType()
+    {
+        return strtoupper((string) $this->type);
     }
 }

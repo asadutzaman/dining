@@ -194,6 +194,8 @@ const MemberListController: FC<any> = (props) => {
       staff_id: candidate.staff_id ?? null,
       roll_no: candidate.roll_no ?? null,
       candidate_id: candidate.id,
+      // Carry the NCMS card over so the operator only has to enter one when NCMS has none.
+      rfid_card_number: candidate.rfid ?? null,
     })
     setIsCandidatePickerOpen(false)
     handleCallbackFunc(null, 'add')
@@ -242,6 +244,7 @@ const MemberListController: FC<any> = (props) => {
         open={isCandidatePickerOpen}
         onClose={() => setIsCandidatePickerOpen(false)}
         onPick={handlePickCandidate}
+        onEnrolled={BaseCrudListService.handleReloadListing}
       />
     </div>
   )

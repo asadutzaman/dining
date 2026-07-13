@@ -28,7 +28,8 @@ class Kernel extends ConsoleKernel
         Commands\Scaffold\HelperMakeCommand::class,
         Commands\Scaffold\TraitMakeCommand::class,
         Commands\Scaffold\TestMakeCommand::class,
-        Commands\ClearLogFile::class
+        Commands\ClearLogFile::class,
+        Commands\Dining\SyncNcmsRoster::class
     ];
 
     /**
@@ -39,7 +40,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Refresh the NCMS roster overnight, well clear of meal service.
+        $schedule->command('dining:sync-roster')
+            ->dailyAt('02:00')
+            ->withoutOverlapping();
     }
 
     /**

@@ -946,7 +946,17 @@ Route::prefix('api')->group(function () {
         Route::get('/find-by-card', [App\Http\Controllers\Dining\MemberController::class, 'findByCard']);
         Route::post('/bulk-import', [App\Http\Controllers\Dining\MemberController::class, 'bulkImport']);
         Route::get('/dropdown', [App\Http\Controllers\Dining\MemberController::class, 'dropdown']);
+
+        // NCMS roster ("candidates"): everyone the dining members are drawn from
+        Route::get('/candidate/find-by-card', [App\Http\Controllers\Dining\MemberCandidateController::class, 'findByCard']);
+        Route::post('/candidate/sync', [App\Http\Controllers\Dining\MemberCandidateController::class, 'sync']);
+        Route::post('/candidate/enroll-bulk', [App\Http\Controllers\Dining\MemberController::class, 'enrollBulk']);
         Route::get('/candidate', [App\Http\Controllers\Dining\MemberCandidateController::class, 'index']);
+
+        // Enrollment from the counter, when a card is punched by someone not yet a member
+        Route::post('/enroll-by-card', [App\Http\Controllers\Dining\MemberController::class, 'enrollByCard']);
+        Route::post('/enroll-and-bind-card', [App\Http\Controllers\Dining\MemberController::class, 'enrollAndBindCard']);
+
         Route::get('/', [App\Http\Controllers\Dining\MemberController::class, 'index']);
         Route::get('/{id}', [App\Http\Controllers\Dining\MemberController::class, 'show']);
         Route::post('/', [App\Http\Controllers\Dining\MemberController::class, 'store']);

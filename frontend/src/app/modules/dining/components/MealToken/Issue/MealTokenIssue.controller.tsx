@@ -11,6 +11,23 @@ const initialState = {
   // Auto-detected serving info: {meal_type, cost, windows_configured}
   mealInfo: null as any,
   lastToken: null as any,
+
+  // Enrollment at the counter. NCMS lists ~1000 staff/students but only ~170-200 actually eat
+  // here, and nobody has a list of which. So the roster is staged in `candidates` and people
+  // become dining members the first time they punch in -- handled by the two states below.
+
+  // Card is on the NCMS roster but its owner is not a dining member yet: awaiting the
+  // operator's confirmation before we enroll them.
+  enrollCandidate: null as any,
+  // Card matched nothing at all. Usually a dining member whose NCMS record has no RFID:
+  // the operator finds them on the roster and we bind this physical card to them.
+  unknownCard: '',
+  enrolling: false,
+
+  assignOpen: false,
+  assignSearch: '',
+  assignResults: [] as any[],
+  assignLoading: false,
 }
 
 const MEAL_LABEL: any = {BREAKFAST: 'Breakfast', LUNCH: 'Lunch', DINNER: 'Dinner'}
@@ -52,7 +69,12 @@ const MealTokenIssueController: FC = () => {
     return s.mealType
   }
 
-  // Scan -> look up member -> immediately issue a DUE token + print.
+  // Scan -> resolve the card -> issue a DUE token + print.
+  //
+  // A punched card lands in exactly one of three states:
+  //   1. an enrolled dining member          -> issue the token (the common case)
+  //   2. on the NCMS roster, not a member    -> offer to enroll them, then issue
+  //   3. matched nothing                     -> offer to find the person and bind this card
   const handleCardScan = () => {
     const card = state.cardNumber.trim()
     if (!card) {
@@ -64,15 +86,113 @@ const MealTokenIssueController: FC = () => {
       refocus()
       return
     }
-    setPartial({memberLoading: true})
+    setPartial({memberLoading: true, enrollCandidate: null, unknownCard: ''})
     MemberApi.findByCard(card)
       .then((res: any) => issueToken(res.data))
+      .catch(() => resolveUnknownCard(card))
+  }
+
+  // The card is not a dining member's. Ask the NCMS roster who it belongs to.
+  const resolveUnknownCard = (card: string) => {
+    MemberApi.candidateFindByCard(card)
+      .then((res: any) => {
+        setPartial({
+          enrollCandidate: res.data,
+          unknownCard: '',
+          memberInfo: null,
+          memberLoading: false,
+          cardNumber: '',
+        })
+        refocus()
+      })
       .catch(() => {
-        setPartial({memberLoading: false, cardNumber: ''})
-        Message.error('No member found for this card number.')
+        setPartial({
+          enrollCandidate: null,
+          unknownCard: card,
+          memberInfo: null,
+          memberLoading: false,
+          cardNumber: '',
+        })
         refocus()
       })
   }
+
+  // Operator confirmed the person on the roster eats here. Enroll them, then issue the token.
+  // Deliberately a confirmed click, never automatic: a stray punch from any of the ~800
+  // non-members would otherwise enroll them permanently.
+  const handleEnrollConfirm = () => {
+    const candidate = stateRef.current.enrollCandidate
+    if (!candidate?.rfid) {
+      return
+    }
+    setPartial({enrolling: true})
+    MemberApi.enrollByCard(candidate.rfid)
+      .then((res: any) => {
+        setPartial({enrolling: false, enrollCandidate: null})
+        Message.success(`${res.data.name} enrolled as a dining member.`)
+        issueToken(res.data)
+      })
+      .catch((err: any) => {
+        setPartial({enrolling: false})
+        Message.error(readError(err, 'Enrollment failed. Please try again.'))
+        refocus()
+      })
+  }
+
+  const handleEnrollCancel = () => {
+    setPartial({enrollCandidate: null, unknownCard: ''})
+    refocus()
+  }
+
+  // --- Unrecognized card: find the person on the roster and bind this card to them ---
+
+  const handleAssignOpen = () => {
+    setPartial({assignOpen: true, assignSearch: '', assignResults: []})
+  }
+
+  const handleAssignClose = () => {
+    setPartial({assignOpen: false, assignSearch: '', assignResults: []})
+    refocus()
+  }
+
+  const handleAssignSearch = (value: string) => {
+    setPartial({assignSearch: value})
+    if (!value || value.trim().length < 2) {
+      setPartial({assignResults: []})
+      return
+    }
+    setPartial({assignLoading: true})
+    MemberApi.candidateList({$search: value.trim(), $top: 20, $skip: 0})
+      .then((res: any) => setPartial({assignResults: res.data?.results || [], assignLoading: false}))
+      .catch(() => setPartial({assignResults: [], assignLoading: false}))
+  }
+
+  const handleAssignSelect = (candidate: any) => {
+    const card = stateRef.current.unknownCard
+    if (!card) {
+      return
+    }
+    setPartial({enrolling: true})
+    MemberApi.enrollAndBindCard(candidate.id, card)
+      .then((res: any) => {
+        setPartial({
+          enrolling: false,
+          assignOpen: false,
+          assignSearch: '',
+          assignResults: [],
+          unknownCard: '',
+        })
+        Message.success(`Card ${card} assigned to ${res.data.name}.`)
+        issueToken(res.data)
+      })
+      .catch((err: any) => {
+        setPartial({enrolling: false})
+        Message.error(readError(err, 'Could not assign this card. Please try again.'))
+      })
+  }
+
+  const readError = (err: any, fallback: string) =>
+    err?.status === 422 && typeof err.data === 'string' ? err.data : fallback
 
   const issueToken = (member: any) => {
     const activeMeal = resolveActiveMeal()
@@ -83,19 +203,28 @@ const MealTokenIssueController: FC = () => {
     })
       .then((res: any) => {
         const token = res.data
-        setPartial({memberInfo: member, lastToken: token, memberLoading: false, cardNumber: ''})
+        setPartial({
+          memberInfo: member,
+          lastToken: token,
+          memberLoading: false,
+          cardNumber: '',
+          enrollCandidate: null,
+          unknownCard: '',
+        })
         printReceipt(token, member)
         Message.success('Token issued.')
         refocus()
       })
       .catch((err: any) => {
         // Show who was scanned even when issuance fails (e.g. already issued for this meal today)
-        setPartial({memberInfo: member, memberLoading: false, cardNumber: ''})
-        const msg =
-          err?.status === 422 && typeof err.data === 'string'
-            ? err.data
-            : 'A network error occurred. Please try again later.'
-        Message.error(msg)
+        setPartial({
+          memberInfo: member,
+          memberLoading: false,
+          cardNumber: '',
+          enrollCandidate: null,
+          unknownCard: '',
+        })
+        Message.error(readError(err, 'A network error occurred. Please try again later.'))
         refocus()
       })
   }
@@ -181,6 +310,12 @@ const MealTokenIssueController: FC = () => {
       handleCardScan={handleCardScan}
       handleMealTypeChange={handleMealTypeChange}
       handleReset={handleReset}
+      handleEnrollConfirm={handleEnrollConfirm}
+      handleEnrollCancel={handleEnrollCancel}
+      handleAssignOpen={handleAssignOpen}
+      handleAssignClose={handleAssignClose}
+      handleAssignSearch={handleAssignSearch}
+      handleAssignSelect={handleAssignSelect}
     />
   )
 }
