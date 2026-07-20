@@ -125,8 +125,14 @@ data class GreetingDto(
 @Serializable
 data class NowServingDto(
     @SerialName("meal_type") val mealType: String,
+    // True while the meal is actually being served; false when this is an
+    // announcement of the next sitting.
+    @SerialName("is_live") val isLive: Boolean = true,
+    @SerialName("meal_date") val mealDate: String? = null,
     val until: String? = null,
     @SerialName("until_label") val untilLabel: String? = null,
+    @SerialName("starts_at") val startsAt: String? = null,
+    @SerialName("starts_at_label") val startsAtLabel: String? = null,
     val cost: Double = 0.0,
     val state: String? = null,
     @SerialName("is_booked") val isBooked: Boolean = false,

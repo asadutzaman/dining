@@ -58,7 +58,7 @@ class HomeController extends BaseMobileController
                     'date_label' => $today->format('l j F'),
                 ],
 
-                'now_serving' => $this->nowServing($todayPlan, $today),
+                'now_serving' => $this->nowServing($todayPlan, $tomorrowPlan, $today),
 
                 'occupancy' => $this->occupancy->forMeal(),
 
@@ -80,29 +80,70 @@ class HomeController extends BaseMobileController
     }
 
     /**
-     * The pulsing banner. Present only while a meal is actually being served,
-     * and it reports whether this member is booked for it.
+     * The banner in the hero.
+     *
+     * While a meal is being served this is the pulsing "NOW SERVING" card. The
+     * rest of the time it announces the next sitting instead of vanishing --
+     * an absent card collapses the hero and leaves the header photo looking
+     * cropped, and "when can I next eat?" is the question a member has between
+     * meals anyway.
      */
-    private function nowServing(array $todayPlan, Carbon $today): ?array
+    private function nowServing(array $todayPlan, array $tomorrowPlan, Carbon $today): ?array
     {
         $current = $this->settings->getCurrentMeal($today->format('Y-m-d'));
 
-        if (empty($current['meal_type'])) {
+        if (!empty($current['meal_type'])) {
+            $cell = collect($todayPlan['meals'])->firstWhere('meal_type', $current['meal_type']);
+
+            return [
+                'meal_type'   => $current['meal_type'],
+                'is_live'     => true,
+                'meal_date'   => $today->format('Y-m-d'),
+                'until'       => $cell['serving_to'] ?? null,
+                'until_label' => !empty($cell['serving_to'])
+                    ? Carbon::parse($cell['serving_to'])->format('g:i A')
+                    : null,
+                'starts_at'       => null,
+                'starts_at_label' => null,
+                'cost'        => (float) ($current['cost'] ?? 0),
+                // BOOKED means "go and scan"; CONSUMED means they already ate.
+                'state'       => $cell['state'] ?? null,
+                'is_booked'   => in_array($cell['state'] ?? null, [
+                    MealBookingService::STATE_BOOKED,
+                    MealBookingService::STATE_CONSUMED,
+                ], true),
+            ];
+        }
+
+        $next = $this->settings->getNextServing($today);
+
+        if (!$next) {
             return null;
         }
 
-        $cell = collect($todayPlan['meals'])->firstWhere('meal_type', $current['meal_type']);
+        $setting = $next['setting'];
+
+        /*
+         * getNextServing() only ever looks at today or tomorrow, and index() has
+         * already built both plans -- so the member's booking state for the next
+         * sitting is resolved without another query, whichever day it falls on.
+         */
+        $plan = $next['meal_date'] === $today->format('Y-m-d') ? $todayPlan : $tomorrowPlan;
+        $cell = collect($plan['meals'])->firstWhere('meal_type', $next['meal_type']);
 
         return [
-            'meal_type'  => $current['meal_type'],
-            'until'      => $cell['serving_to'] ?? null,
-            'until_label'=> !empty($cell['serving_to'])
-                ? Carbon::parse($cell['serving_to'])->format('g:i A')
+            'meal_type'       => $next['meal_type'],
+            'is_live'         => false,
+            'meal_date'       => $next['meal_date'],
+            'until'           => $setting->end_time,
+            'until_label'     => !empty($setting->end_time)
+                ? Carbon::parse($setting->end_time)->format('g:i A')
                 : null,
-            'cost'       => (float) ($current['cost'] ?? 0),
-            // BOOKED means "go and scan"; CONSUMED means they already ate.
-            'state'      => $cell['state'] ?? null,
-            'is_booked'  => in_array($cell['state'] ?? null, [
+            'starts_at'       => $setting->start_time,
+            'starts_at_label' => Carbon::parse($setting->start_time)->format('g:i A'),
+            'cost'            => (float) $setting->cost,
+            'state'           => $cell['state'] ?? null,
+            'is_booked'       => in_array($cell['state'] ?? null, [
                 MealBookingService::STATE_BOOKED,
                 MealBookingService::STATE_CONSUMED,
             ], true),

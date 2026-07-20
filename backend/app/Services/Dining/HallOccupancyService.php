@@ -4,7 +4,6 @@ namespace App\Services\Dining;
 
 use App\Models\Dining\MealToken;
 use App\Repositories\Dining\MealSettingRepository;
-use App\Services\Dining\MealBookingService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -99,49 +98,18 @@ class HallOccupancyService
     }
 
     /**
-     * The next meal due to be served, looking at the rest of today and then
-     * rolling over to tomorrow's earliest.
+     * The next meal due to be served. Delegates to the repository so the home
+     * hero and this chart can never disagree about what is coming next.
      *
      * @return array{0: ?string, 1: Carbon} meal type and the date it is served on
      */
     private function nextServing(Carbon $date): array
     {
-        $now = now();
+        $next = $this->settings->getNextServing($date);
 
-        $upcoming = collect(MealBookingService::MEAL_TYPES)
-            ->map(function (string $mealType) use ($date) {
-                $setting = $this->settings->getEffectiveCost($mealType, $date->format('Y-m-d'));
-
-                return ($setting && !empty($setting->start_time))
-                    ? ['meal_type' => $mealType, 'starts_at' => $date->copy()->setTimeFromTimeString($setting->start_time)]
-                    : null;
-            })
-            ->filter()
-            ->sortBy('starts_at')
-            ->values();
-
-        $later = $upcoming->first(fn (array $slot) => $slot['starts_at']->greaterThan($now));
-
-        if ($later) {
-            return [$later['meal_type'], $date];
-        }
-
-        // Everything today has been served: preview tomorrow's first sitting.
-        $tomorrow = $date->copy()->addDay();
-
-        $first = collect(MealBookingService::MEAL_TYPES)
-            ->map(function (string $mealType) use ($tomorrow) {
-                $setting = $this->settings->getEffectiveCost($mealType, $tomorrow->format('Y-m-d'));
-
-                return ($setting && !empty($setting->start_time))
-                    ? ['meal_type' => $mealType, 'starts_at' => $tomorrow->copy()->setTimeFromTimeString($setting->start_time)]
-                    : null;
-            })
-            ->filter()
-            ->sortBy('starts_at')
-            ->first();
-
-        return [$first['meal_type'] ?? null, $tomorrow];
+        return $next
+            ? [$next['meal_type'], Carbon::parse($next['meal_date'])->startOfDay()]
+            : [null, $date];
     }
 
     /**

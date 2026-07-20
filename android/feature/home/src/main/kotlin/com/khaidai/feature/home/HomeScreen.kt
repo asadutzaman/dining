@@ -1,5 +1,6 @@
 package com.khaidai.feature.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,10 +13,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -106,16 +110,56 @@ private fun HomeContent(
 }
 
 /**
- * The hero. The design layers a dark scrim over a campus photo; with no bundled
- * asset this uses the same navy gradient, which keeps the white text contrast
- * the design relies on.
+ * The hero: the campus photo under the design's navy scrim.
+ *
+ * The scrim is not decoration -- it is what makes the white greeting and the
+ * status bar readable over an arbitrary photo. Its three stops are taken
+ * verbatim from the design (dark at top, lifting through the middle, dark
+ * again at the bottom behind the "now serving" card).
  */
 @Composable
 private fun Header(home: HomeDto, onOpenNotifications: () -> Unit) {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            // The hero is ~26% of the frame in the design. A floor keeps the photo
+            // reading as a hero rather than a stripe if the banner is ever absent
+            // (no meal configured at all), instead of letting it collapse to the
+            // height of the greeting.
+            .heightIn(min = 232.dp),
+    ) {
+        Image(
+            painter = painterResource(R.drawable.campus),
+            // Decorative: it carries no information the labels do not already give.
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            // The design anchors the photo at "center 32%", keeping the building
+            // in frame as the header's height changes.
+            alignment = BiasAlignment(horizontalBias = 0f, verticalBias = -0.36f),
+            modifier = Modifier.matchParentSize(),
+        )
+
+        Box(
+            Modifier
+                .matchParentSize()
+                .background(
+                    Brush.verticalGradient(
+                        0.00f to NavyDeep.copy(alpha = 0.78f),
+                        0.52f to NavyDeep.copy(alpha = 0.40f),
+                        1.00f to NavyDeep.copy(alpha = 0.82f),
+                    ),
+                ),
+        )
+
+        HeaderContent(home, onOpenNotifications)
+    }
+}
+
+@Composable
+private fun HeaderContent(home: HomeDto, onOpenNotifications: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Brush.verticalGradient(listOf(NavyDeep, Navy, Blue.copy(alpha = 0.85f))))
             .padding(start = 24.dp, end = 24.dp, top = 56.dp, bottom = 20.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -171,6 +215,9 @@ private fun Header(home: HomeDto, onOpenNotifications: () -> Unit) {
 
 @Composable
 private fun NowServingBanner(nowServing: NowServingDto) {
+    val live = nowServing.isLive
+    val meal = nowServing.mealType.lowercase().replaceFirstChar(Char::uppercase)
+
     KhaiCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
@@ -178,18 +225,24 @@ private fun NowServingBanner(nowServing: NowServingDto) {
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(10.dp).clip(CircleShape).background(Red))
+            // The red dot means "food is going out now". A future sitting gets a
+            // calm blue one so the urgency cue is not spent on something hours away.
+            Box(Modifier.size(10.dp).clip(CircleShape).background(if (live) Red else Blue))
 
             Column(Modifier.weight(1f).padding(start = 12.dp)) {
                 Text(
-                    text = "NOW SERVING",
+                    text = if (live) "NOW SERVING" else "NEXT SERVING",
                     style = MaterialTheme.typography.labelSmall,
-                    color = RedDeep,
+                    color = if (live) RedDeep else Blue,
                 )
                 Text(
                     text = buildString {
-                        append(nowServing.mealType.lowercase().replaceFirstChar(Char::uppercase))
-                        nowServing.untilLabel?.let { append(" · until $it") }
+                        append(meal)
+                        if (live) {
+                            nowServing.untilLabel?.let { append(" · until $it") }
+                        } else {
+                            nowServing.startsAtLabel?.let { append(" · from $it") }
+                        }
                     },
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,

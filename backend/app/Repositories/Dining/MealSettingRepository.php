@@ -5,6 +5,7 @@ namespace App\Repositories\Dining;
 use App\Models\Dining\MealSetting;
 use App\Repositories\BaseRepository;
 use App\Services\ODataService;
+use Carbon\Carbon;
 
 class MealSettingRepository extends BaseRepository
 {
@@ -50,6 +51,54 @@ class MealSettingRepository extends BaseRepository
             ->where('status', 1)
             ->orderBy('effective_from', 'desc')
             ->first();
+    }
+
+    /**
+     * The next sitting due to start: the rest of today, otherwise tomorrow's
+     * earliest. Used wherever the UI has to stay useful between meals -- the
+     * home hero and the occupancy chart both need something to show when
+     * nothing is being served.
+     *
+     * @return array{meal_type: string, meal_date: string, starts_at: Carbon, setting: MealSetting}|null
+     */
+    public function getNextServing($date = null): ?array
+    {
+        $date = Carbon::parse($date ?: now())->startOfDay();
+        $now  = now();
+
+        foreach ([$date, $date->copy()->addDay()] as $day) {
+            $slots = [];
+
+            foreach (['BREAKFAST', 'LUNCH', 'DINNER'] as $mealType) {
+                $setting = $this->getEffectiveCost($mealType, $day->format('Y-m-d'));
+
+                if (!$setting || empty($setting->start_time)) {
+                    continue;
+                }
+
+                $startsAt = $day->copy()->setTimeFromTimeString($setting->start_time);
+
+                // Today's already-started sittings are behind us.
+                if ($day->isSameDay($date) && $startsAt->lessThanOrEqualTo($now)) {
+                    continue;
+                }
+
+                $slots[] = [
+                    'meal_type' => $mealType,
+                    'meal_date' => $day->format('Y-m-d'),
+                    'starts_at' => $startsAt,
+                    'setting'   => $setting,
+                ];
+            }
+
+            if (!empty($slots)) {
+                usort($slots, fn ($a, $b) => $a['starts_at'] <=> $b['starts_at']);
+
+                return $slots[0];
+            }
+        }
+
+        return null;
     }
 
     /**
