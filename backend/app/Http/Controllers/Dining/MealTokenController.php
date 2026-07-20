@@ -7,6 +7,9 @@ use App\Validators\Dining\MealTokenValidator;
 use App\Repositories\Dining\MealTokenRepository;
 use App\Repositories\Dining\MemberRepository;
 use App\Repositories\Dining\MealSettingRepository;
+use App\Repositories\Dining\MealBookingRepository;
+use App\Models\Dining\MealBooking;
+use App\Services\Dining\MealBookingService;
 use App\Repositories\CodeSequenceRepository;
 use App\Http\Resources\Dining\MealTokenResource;
 use App\Services\SessionService;
@@ -105,7 +108,34 @@ class MealTokenController extends Controller
 
             (new CodeSequenceRepository())->updateNextSequenceByLabel('MEAL_TOKEN');
 
-            if ($request->payment_status == 'DUE') {
+            /*
+             * If the member pre-booked this meal in the app, the booking -- not the
+             * token -- owns the charge. Settling it here posts the due and links the
+             * two records, and we must NOT also run the walk-in due increment below
+             * or the member is billed twice for one meal.
+             */
+            $booking = (new MealBookingRepository())->findFor($request->member_id, $mealDate, $request->meal_type);
+            $settledByBooking = false;
+
+            if ($booking && $booking->booking_status === MealBooking::STATUS_BOOKED) {
+                if ($request->payment_status == 'DUE') {
+                    app(MealBookingService::class)->markConsumed($booking, $tokenResult->id);
+                    $settledByBooking = true;
+                } else {
+                    // Paid in cash at the counter: the meal is consumed but there is
+                    // no due to post, so the charge is recorded as already settled.
+                    $booking->fill([
+                        'booking_status' => MealBooking::STATUS_CONSUMED,
+                        'meal_token_id'  => $tokenResult->id,
+                        'charge_status'  => MealBooking::CHARGE_CHARGED,
+                        'charged_amount' => $booking->unit_price,
+                        'settled_at'     => now(),
+                    ])->save();
+                    $settledByBooking = true;
+                }
+            }
+
+            if ($request->payment_status == 'DUE' && !$settledByBooking) {
                 (new MemberRepository())->incrementDueBalance($request->member_id, $mealSetting->cost);
             }
 
@@ -184,8 +214,31 @@ class MealTokenController extends Controller
                 $this->notFoundResponse();
             }
 
-            // Reverse the running due balance if this token was unpaid
-            if ($token->payment_status == 'DUE') {
+            /*
+             * Undo whichever record posted the charge. When the meal was pre-booked
+             * the booking owns it, so the booking is returned to BOOKED and its
+             * charge reversed; otherwise this was a walk-in and the token's own due
+             * increment is what needs backing out.
+             */
+            $booking = (new MealBookingRepository())->findFor(
+                $token->member_id,
+                $token->meal_date?->format('Y-m-d'),
+                $token->meal_type
+            );
+
+            if ($booking && $booking->meal_token_id == $token->id) {
+                if ($booking->charge_status === MealBooking::CHARGE_CHARGED && (float) $booking->charged_amount > 0) {
+                    (new MemberRepository())->decrementDueBalance($booking->member_id, $booking->charged_amount);
+                }
+
+                $booking->fill([
+                    'booking_status' => MealBooking::STATUS_BOOKED,
+                    'charge_status'  => MealBooking::CHARGE_PENDING,
+                    'charged_amount' => 0,
+                    'meal_token_id'  => null,
+                    'settled_at'     => null,
+                ])->save();
+            } elseif ($token->payment_status == 'DUE') {
                 (new MemberRepository())->decrementDueBalance($token->member_id, $token->amount);
             }
 

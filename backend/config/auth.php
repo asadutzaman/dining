@@ -18,12 +18,27 @@ return [
         'token' => [
             'driver'   => 'access_token',
         ],
+
+        /*
+        | The KhaiDai mobile app. Sanctum-backed and entirely separate from the
+        | staff guards above -- a dining member is not a system user and must
+        | never be able to reach the admin surface with a member token.
+        */
+        'member' => [
+            'driver'   => 'sanctum',
+            'provider' => 'members',
+        ],
     ],
 
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+
+        'members' => [
+            'driver' => 'eloquent',
+            'model'  => App\Models\Dining\Member::class,
         ],
     ],
 

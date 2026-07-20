@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bengali is offered as an in-app preference on the profile screen, and is also
+  picked up automatically when the device locale is bn.
+-->
+<resources>
+    <string name="app_name">খাইদাই</string>
+</resources>
