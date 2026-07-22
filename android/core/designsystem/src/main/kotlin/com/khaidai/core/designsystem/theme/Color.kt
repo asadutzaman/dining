@@ -28,6 +28,7 @@ val Line = Color(0xFFE5E9F0)          // card borders
 val LineStrong = Color(0xFFD8DEE8)    // outlined buttons
 val LineDashed = Color(0xFFC7CFDC)    // available-cell dashes
 val Divider = Color(0xFFEEF1F6)       // list separators
+val ScrimSoft = Color(0x0F17355F)     // lift above the bottom bar
 val Muted = Color(0xFFEAEDF3)         // segmented control track
 val MutedDeep = Color(0xFFE6EAF0)     // locked cell
 val LockedText = Color(0xFF98A1B0)    // locked cell text
