@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,22 +93,27 @@ fun NotificationsRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Column(Modifier.fillMaxSize().background(Canvas)) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 56.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(Modifier.weight(1f)) {
-                Text("Notifications", style = MaterialTheme.typography.headlineSmall, color = Ink)
-                Text("নোটিফিকেশন", fontSize = 12.5.sp, color = InkMuted, modifier = Modifier.padding(top = 2.dp))
-            }
-            Text(
-                text = "Mark all read",
-                fontSize = 12.5.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = Blue,
-                modifier = Modifier.clickable(onClick = viewModel::markAllRead),
-            )
-        }
+        ScreenHeader(
+            title = "Notifications",
+            subtitle = "নোটিফিকেশন",
+            // This screen is pushed over the tab graph, so it needs its own way
+            // back. It previously relied on the system gesture alone, unlike the
+            // other pushed screen, which had an arrow.
+            onBack = onBack,
+            modifier = Modifier.padding(horizontal = 24.dp),
+            action = {
+                Text(
+                    text = "Mark all read",
+                    fontSize = 12.5.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Blue,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable(role = Role.Button, onClick = viewModel::markAllRead)
+                        .padding(horizontal = 10.dp, vertical = 8.dp),
+                )
+            },
+        )
 
         when {
             state.isInitialLoading -> LoadingIndicator(Modifier.padding(top = 80.dp))
@@ -118,7 +124,10 @@ fun NotificationsRoute(
             )
 
             else -> LazyColumn(
-                contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 18.dp, bottom = 32.dp),
+                // No bottom bar on a pushed screen, so the list has to clear the
+                // system navigation itself or the last card sits under it.
+                contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 18.dp, bottom = 32.dp)
+                    .plusNavigationBars(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 state.content!!.sections.forEach { section ->

@@ -7,17 +7,22 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -119,6 +124,8 @@ fun ProfileRoute(
         if (state.signedOut) onSignedOut()
     }
 
+    var confirming by remember { mutableStateOf<Confirmation?>(null) }
+
     Column(
         Modifier
             .fillMaxSize()
@@ -126,7 +133,11 @@ fun ProfileRoute(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp),
     ) {
-        Spacer(Modifier.height(56.dp))
+        // Outside the `when` so the screen keeps its identity while loading.
+        // Every other screen shows its title immediately; this one used to
+        // render a bare spinner on an otherwise blank page.
+        ScreenHeader(title = "Profile", subtitle = "প্রোফাইল ও সেটিংস")
+        Spacer(Modifier.height(18.dp))
 
         when {
             state.isLoading && state.member == null -> LoadingIndicator()
@@ -214,30 +225,130 @@ fun ProfileRoute(
                     }
                 }
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(20.dp))
+                SectionHeader("Account")
+                Spacer(Modifier.height(8.dp))
 
-                Text(
-                    text = "Report a lost or faulty card →",
-                    fontSize = 13.5.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Blue,
-                    modifier = Modifier
-                        .clickable { viewModel.reportCard("LOST") }
-                        .padding(vertical = 8.dp),
-                )
-                Text(
-                    text = "Sign out",
-                    fontSize = 13.5.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = RedText,
-                    modifier = Modifier
-                        .clickable(onClick = viewModel::signOut)
-                        .padding(vertical = 8.dp),
-                )
+                // Both of these were bare text links that fired on the first tap.
+                // Reporting a card and signing out are one-way doors, so they now
+                // look like buttons and ask before acting.
+                KhaiCard(Modifier.fillMaxWidth(), contentPadding = PaddingValues(0.dp)) {
+                    Column {
+                        ActionRow(
+                            label = "Report a lost or faulty card",
+                            description = "Logs a report with the dining office",
+                            tint = Blue,
+                            onClick = { confirming = Confirmation.ReportCard },
+                        )
+                        Box(Modifier.fillMaxWidth().height(1.dp).background(Divider))
+                        ActionRow(
+                            label = "Sign out",
+                            description = "You will need your phone number to sign back in",
+                            tint = RedText,
+                            onClick = { confirming = Confirmation.SignOut },
+                        )
+                    }
+                }
 
                 Spacer(Modifier.height(32.dp))
             }
         }
+    }
+
+    confirming?.let { pending ->
+        ConfirmDialog(
+            confirmation = pending,
+            onDismiss = { confirming = null },
+            onConfirm = {
+                when (pending) {
+                    Confirmation.SignOut -> viewModel.signOut()
+                    Confirmation.ReportCard -> viewModel.reportCard("LOST")
+                }
+                confirming = null
+            },
+        )
+    }
+}
+
+/** The two account actions that ask before they act. */
+private enum class Confirmation { SignOut, ReportCard }
+
+@Composable
+private fun ConfirmDialog(
+    confirmation: Confirmation,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    val destructive = confirmation == Confirmation.SignOut
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = Surface,
+        shape = RoundedCornerShape(24.dp),
+        title = {
+            Text(
+                text = if (destructive) "Sign out?" else "Report this card?",
+                style = MaterialTheme.typography.titleLarge,
+                color = Ink,
+            )
+        },
+        text = {
+            Text(
+                text = if (destructive) {
+                    "Your bookings stay as they are. You will need your phone number to sign back in."
+                } else {
+                    "We will log the report and you can collect a replacement from the dining office."
+                },
+                fontSize = 13.5.sp,
+                color = InkMuted,
+            )
+        },
+        confirmButton = {
+            Text(
+                text = if (destructive) "Sign out" else "Report card",
+                fontSize = 13.5.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = if (destructive) RedText else Blue,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable(role = Role.Button, onClick = onConfirm)
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+            )
+        },
+        dismissButton = {
+            Text(
+                text = "Cancel",
+                fontSize = 13.5.sp,
+                fontWeight = FontWeight.Bold,
+                color = InkFaint,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable(role = Role.Button, onClick = onDismiss)
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+            )
+        },
+    )
+}
+
+@Composable
+private fun ActionRow(
+    label: String,
+    description: String,
+    tint: Color,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(label, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = tint)
+            Text(description, fontSize = 12.sp, color = InkMuted, modifier = Modifier.padding(top = 1.dp))
+        }
+        Text("→", fontSize = 15.sp, color = tint)
     }
 }
 

@@ -99,11 +99,13 @@ fun BookingsRoute(viewModel: BookingsViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Column(Modifier.fillMaxSize().background(Canvas)) {
-        Column(Modifier.padding(horizontal = 24.dp)) {
-            Spacer(Modifier.height(56.dp))
-            Text("My bookings", style = MaterialTheme.typography.headlineSmall, color = Ink)
-            Text("আমার বুকিং", fontSize = 12.5.sp, color = InkMuted, modifier = Modifier.padding(top = 2.dp))
+        ScreenHeader(
+            title = "My bookings",
+            subtitle = "আমার বুকিং",
+            modifier = Modifier.padding(horizontal = 24.dp),
+        )
 
+        Column(Modifier.padding(horizontal = 24.dp)) {
             Spacer(Modifier.height(14.dp))
 
             Row(

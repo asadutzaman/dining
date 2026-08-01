@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +24,8 @@ import com.khaidai.core.data.network.DayPlanDto
 import com.khaidai.core.data.network.MealCellDto
 import com.khaidai.core.designsystem.component.*
 import com.khaidai.core.designsystem.theme.*
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 /**
  * Screen 1b -- the weekly grid. Seven rows by three meals, each cell a single tap.
@@ -42,14 +43,13 @@ fun WeekRoute(viewModel: WeekViewModel = hiltViewModel()) {
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp),
         ) {
-            Spacer(Modifier.height(56.dp))
-            Text("Plan your week", style = MaterialTheme.typography.headlineSmall, color = Ink)
-            Text(
-                text = state.plan?.let { "${it.from} – ${it.to}" } ?: "সপ্তাহের খাবার বুক করুন",
-                fontSize = 12.5.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = InkMuted,
-                modifier = Modifier.padding(top = 2.dp),
+            ScreenHeader(
+                title = "Plan your week",
+                // The API sends ISO dates. Showing them raw leaked a machine
+                // format into the one line that should read as a human date, and
+                // it displaced the Bengali subtitle every other screen carries.
+                subtitle = state.plan?.let { "${formatRange(it.from, it.to)} · সপ্তাহের খাবার" }
+                    ?: "সপ্তাহের খাবার বুক করুন",
             )
 
             Spacer(Modifier.height(14.dp))
@@ -89,6 +89,27 @@ fun WeekRoute(viewModel: WeekViewModel = hiltViewModel()) {
     }
 }
 
+/**
+ * Wide enough for the longest day name beside the TODAY pill. The grid header
+ * spacer and every row read from this, so the columns cannot drift apart.
+ */
+private val DayColumnWidth = 88.dp
+
+/** "2026-07-18", "2026-07-24" -> "18 – 24 Jul". */
+private fun formatRange(from: String, to: String): String = runCatching {
+    val start = LocalDate.parse(from)
+    val end = LocalDate.parse(to)
+    val month = DateTimeFormatter.ofPattern("MMM")
+
+    if (start.month == end.month) {
+        "${start.dayOfMonth} – ${end.dayOfMonth} ${end.format(month)}"
+    } else {
+        "${start.dayOfMonth} ${start.format(month)} – ${end.dayOfMonth} ${end.format(month)}"
+    }
+    // A malformed date is not worth crashing a screen over; the raw range is
+    // still readable, just uglier.
+}.getOrDefault("$from – $to")
+
 @Composable
 private fun Grid(state: WeekUiState, viewModel: WeekViewModel) {
     // Column headers carry the price, so the member sees the cost of a cell
@@ -98,7 +119,7 @@ private fun Grid(state: WeekUiState, viewModel: WeekViewModel) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.Bottom,
     ) {
-        Spacer(Modifier.width(72.dp))
+        Spacer(Modifier.width(DayColumnWidth))
         val firstDay = state.plan?.days?.firstOrNull()
         listOf("Breakfast", "Lunch", "Dinner").forEachIndexed { index, label ->
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -127,7 +148,7 @@ private fun DayRow(day: DayPlanDto, state: WeekUiState, viewModel: WeekViewModel
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(Modifier.width(72.dp)) {
+        Column(Modifier.width(DayColumnWidth)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(day.dayShort, fontSize = 14.sp, fontWeight = FontWeight.ExtraBold, color = Ink)
                 if (day.isToday) {
@@ -138,7 +159,16 @@ private fun DayRow(day: DayPlanDto, state: WeekUiState, viewModel: WeekViewModel
                             .background(Red)
                             .padding(horizontal = 6.dp, vertical = 2.dp),
                     ) {
-                        Text("TODAY", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.ExtraBold)
+                        Text(
+                            text = "TODAY",
+                            color = Color.White,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            // The column is fixed width, so without this the pill
+                            // broke the word across two lines as "TODA / Y".
+                            maxLines = 1,
+                            softWrap = false,
+                        )
                     }
                 }
             }
@@ -223,21 +253,24 @@ private fun Cell(
 private fun Legend() {
     Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
         LegendItem("Booked", Blue)
-        LegendItem("Available", Color.White, bordered = true)
+        LegendItem("Available", Color.White)
         LegendItem("Locked", MutedDeep)
         LegendItem("Served", BlueSurface)
     }
 }
 
 @Composable
-private fun LegendItem(label: String, color: Color, bordered: Boolean = false) {
+private fun LegendItem(label: String, color: Color) {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
         Box(
             Modifier
                 .size(11.dp)
                 .clip(RoundedCornerShape(4.dp))
                 .background(color)
-                .then(if (bordered) Modifier.border(1.5.dp, LineDashed, RoundedCornerShape(4.dp)) else Modifier),
+                // Every swatch is outlined, not just the white one. The pale
+                // Locked and Served fills were near-invisible against the canvas,
+                // which left half the legend explaining nothing.
+                .border(1.5.dp, LineDashed, RoundedCornerShape(4.dp)),
         )
         Text(label, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = InkMuted)
     }

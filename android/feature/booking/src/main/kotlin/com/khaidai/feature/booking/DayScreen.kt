@@ -167,25 +167,11 @@ fun DayRoute(
         Column(
             Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp),
         ) {
-            Spacer(Modifier.height(56.dp))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color.White)
-                        .border(1.5.dp, Line, CircleShape)
-                        .clickable(onClick = onBack),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text("←", fontSize = 17.sp, color = Ink)
-                }
-                Column(Modifier.padding(start = 12.dp)) {
-                    Text("Book a meal", style = MaterialTheme.typography.titleLarge, color = Ink)
-                    Text("দিন বেছে খাবার বুক করুন", fontSize = 12.5.sp, color = InkMuted)
-                }
-            }
+            ScreenHeader(
+                title = "Book a meal",
+                subtitle = "দিন বেছে খাবার বুক করুন",
+                onBack = onBack,
+            )
 
             Spacer(Modifier.height(16.dp))
 

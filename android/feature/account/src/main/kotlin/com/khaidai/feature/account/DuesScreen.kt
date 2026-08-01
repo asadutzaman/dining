@@ -84,11 +84,10 @@ fun DuesRoute(viewModel: DuesViewModel = hiltViewModel()) {
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().background(Canvas),
-        contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 56.dp, bottom = 32.dp),
+        contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 32.dp),
     ) {
         item {
-            Text("Dues & payments", style = MaterialTheme.typography.headlineSmall, color = Ink)
-            Text("বকেয়া ও পেমেন্ট", fontSize = 12.5.sp, color = InkMuted, modifier = Modifier.padding(top = 2.dp))
+            ScreenHeader(title = "Dues & payments", subtitle = "বকেয়া ও পেমেন্ট")
             Spacer(Modifier.height(14.dp))
         }
 
