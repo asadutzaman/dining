@@ -271,26 +271,43 @@ const MealTokenIssueController: FC = () => {
       // A hidden iframe (instead of window.open) isn't subject to popup-blocking,
       // which matters here since this runs async after the scan/API calls, not
       // directly inside a user-gesture handler.
-      let frame = document.getElementById('token-print-frame') as HTMLIFrameElement | null
-      if (!frame) {
-        frame = document.createElement('iframe')
-        frame.id = 'token-print-frame'
-        frame.style.position = 'fixed'
-        frame.style.width = '0'
-        frame.style.height = '0'
-        frame.style.border = '0'
-        document.body.appendChild(frame)
+      //
+      // A fresh iframe per job (rather than one reused element) matters for
+      // kiosk-printing setups: hammering a single long-lived iframe with
+      // doc.write()+print() back to back, without waiting for it to load or
+      // ever tearing it down, is what makes Chrome's silent-print pipe wedge
+      // after a handful of jobs and fall back to showing the print dialog.
+      const frame = document.createElement('iframe')
+      frame.style.position = 'fixed'
+      frame.style.width = '0'
+      frame.style.height = '0'
+      frame.style.border = '0'
+      document.body.appendChild(frame)
+
+      let cleaned = false
+      const cleanup = () => {
+        if (cleaned) return
+        cleaned = true
+        setTimeout(() => frame.parentNode?.removeChild(frame), 1000)
       }
-      const frameWindow = frame.contentWindow
-      const doc = frameWindow?.document
-      if (!doc || !frameWindow) {
-        return
+
+      frame.onload = () => {
+        const frameWindow = frame.contentWindow
+        if (!frameWindow) {
+          cleanup()
+          return
+        }
+        frameWindow.onafterprint = cleanup
+        // Give the frame a beat to finish rendering before invoking print,
+        // and always clean up even if `afterprint` never fires (some
+        // kiosk-printing configs skip it).
+        setTimeout(() => {
+          frameWindow.focus()
+          frameWindow.print()
+          cleanup()
+        }, 150)
       }
-      doc.open()
-      doc.write(html)
-      doc.close()
-      frameWindow.focus()
-      frameWindow.print()
+      frame.srcdoc = html
     } catch (e) {
       // ignore print failures; token is still recorded
     }

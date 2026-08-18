@@ -25,7 +25,7 @@ const Avatar: FC<{src?: string; name?: string; size?: number}> = ({src, name, si
           width: size,
           height: size,
           objectFit: 'cover',
-          borderRadius: 8,
+          borderRadius: 12,
           border: '2px solid #fff',
         }}
       />
@@ -37,7 +37,7 @@ const Avatar: FC<{src?: string; name?: string; size?: number}> = ({src, name, si
       style={{
         width: size,
         height: size,
-        borderRadius: 8,
+        borderRadius: 12,
         background: '#d9d9d9',
         display: 'flex',
         alignItems: 'center',
@@ -153,8 +153,8 @@ const MealTokenIssueView: FC<any> = (props) => {
             style={{background: '#fffbe6', border: '1px solid #ffe58f', borderRadius: 8}}
           >
             <Row gutter={[24, 16]} align='middle'>
-              <Col flex='120px'>
-                <Avatar src={enrollCandidate.image_url} name={enrollCandidate.name} />
+              <Col flex='500px'>
+                <Avatar src={enrollCandidate.image_url} name={enrollCandidate.name} size={480} />
               </Col>
               <Col flex='auto'>
                 <div className='fs-2 fw-bold'>{enrollCandidate.name}</div>
@@ -209,8 +209,8 @@ const MealTokenIssueView: FC<any> = (props) => {
         {memberInfo && (
           <div className='mt-8 p-6' style={{background: '#f5f5f5', borderRadius: 8}}>
             <Row gutter={[24, 16]} align='middle'>
-              <Col flex='120px'>
-                <Avatar src={photoUrl} name={memberInfo.name} />
+              <Col flex='500px'>
+                <Avatar src={photoUrl} name={memberInfo.name} size={480} />
               </Col>
               <Col flex='auto'>
                 <div className='fs-2 fw-bold'>{memberInfo.name}</div>
