@@ -1,7 +1,16 @@
 import React, {FC, useEffect, useRef, useState} from 'react'
 import {MemberApi, MealTokenApi, MealSettingApi} from 'src/app/api'
-import {Message} from 'src/app/utils'
+import {Message, StorageUtils, ThermalPrintUtils} from 'src/app/utils'
 import MealTokenIssueView from './MealTokenIssue.view'
+
+// The page reloads itself after issuing a token, so a wedged Chrome print pipeline can never
+// accumulate across scans. Raise this if the reload cost hurts throughput during a rush --
+// anything below the ~5-6 mark where printing historically died still gives the same protection.
+const RELOAD_AFTER_N_PRINTS = 1
+
+// Hand-off across that reload: the operator should still see who was just served.
+const HANDOFF_KEY = 'dining.mealToken.lastScan'
+const HANDOFF_TTL_MS = 120000
 
 const initialState = {
   cardNumber: '',
@@ -10,6 +19,11 @@ const initialState = {
   mealType: 'BREAKFAST', // manual fallback meal (used only when no time windows are configured)
   // Auto-detected serving info: {meal_type, cost, windows_configured}
   mealInfo: null as any,
+  // Until the first currentMeal() call settles we cannot know which meal is being served, and
+  // resolveActiveMeal() would fall back to the 'BREAKFAST' default -- so a card scanned in that
+  // window would silently issue a BREAKFAST token at dinner. Scanning stays closed until this
+  // is true. It matters because the page reloads after every scan.
+  mealLoaded: false,
   lastToken: null as any,
 
   // Enrollment at the counter. NCMS lists ~1000 staff/students but only ~170-200 actually eat
@@ -28,6 +42,10 @@ const initialState = {
   assignSearch: '',
   assignResults: [] as any[],
   assignLoading: false,
+
+  // Print jobs are completing without the printer ever reporting back. Tokens are still being
+  // recorded, so without a visible warning the operator would keep issuing unprinted tokens.
+  printStalled: false,
 }
 
 const MEAL_LABEL: any = {BREAKFAST: 'Breakfast', LUNCH: 'Lunch', DINNER: 'Dinner'}
@@ -37,6 +55,7 @@ const MealTokenIssueController: FC = () => {
   const cardInputRef = useRef<any>(null)
   const stateRef = useRef<any>(state)
   stateRef.current = state
+  const printsSinceReload = useRef<number>(0)
 
   const setPartial = (partial: any) => setState((prev: any) => ({...prev, ...partial}))
 
@@ -49,14 +68,38 @@ const MealTokenIssueController: FC = () => {
   // Auto-detect which meal is being served now (re-checked on mount + every minute).
   const loadCurrentMeal = () => {
     MealSettingApi.currentMeal()
-      .then((res: any) => setPartial({mealInfo: res.data}))
-      .catch(() => setPartial({mealInfo: null}))
+      .then((res: any) => setPartial({mealInfo: res.data, mealLoaded: true}))
+      // A failure is not fatal: it just means no time windows are known, which is the
+      // legitimate fallback to the manual meal picker. Either way the answer has settled.
+      .catch(() => setPartial({mealInfo: null, mealLoaded: true}))
   }
 
   useEffect(() => {
     loadCurrentMeal()
     const timer = setInterval(loadCurrentMeal, 60000)
     return () => clearInterval(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    ThermalPrintUtils.setStallHandler(() => setPartial({printStalled: true}))
+    return () => ThermalPrintUtils.setStallHandler(null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Pick up the scan that was on screen before the post-print reload. takeFresh() also clears
+  // the key, so a later manual reload cannot resurrect a stale student.
+  useEffect(() => {
+    const handoff: any = StorageUtils.takeFresh(HANDOFF_KEY, HANDOFF_TTL_MS)
+    if (!handoff) {
+      return
+    }
+    setPartial({
+      memberInfo: handoff.memberInfo || null,
+      lastToken: handoff.lastToken || null,
+      // The printer was stalled before the reload and nothing since has proved otherwise.
+      printStalled: !!handoff.printStalled,
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -80,13 +123,27 @@ const MealTokenIssueController: FC = () => {
     if (!card) {
       return
     }
+    // Refuse the scan rather than guess the meal -- see `mealLoaded`.
+    if (!state.mealLoaded) {
+      Message.warning('Still loading the current meal. Please scan again in a moment.')
+      setPartial({cardNumber: ''})
+      refocus()
+      return
+    }
     if (!resolveActiveMeal()) {
       Message.error('No meal is being served right now. Check the meal time windows.')
       setPartial({cardNumber: ''})
       refocus()
       return
     }
-    setPartial({memberLoading: true, enrollCandidate: null, unknownCard: ''})
+    // Drop the carried-over previous student as soon as a new card is in play.
+    setPartial({
+      memberLoading: true,
+      enrollCandidate: null,
+      unknownCard: '',
+      memberInfo: null,
+      lastToken: null,
+    })
     MemberApi.findByCard(card)
       .then((res: any) => issueToken(res.data))
       .catch(() => resolveUnknownCard(card))
@@ -211,6 +268,7 @@ const MealTokenIssueController: FC = () => {
           enrollCandidate: null,
           unknownCard: '',
         })
+        printsSinceReload.current += 1
         printReceipt(token, member)
         Message.success('Token issued.')
         refocus()
@@ -267,54 +325,51 @@ const MealTokenIssueController: FC = () => {
           <div class="center foot">Show this token to collect your meal</div>
         </body>
       </html>`
-    try {
-      // A hidden iframe (instead of window.open) isn't subject to popup-blocking,
-      // which matters here since this runs async after the scan/API calls, not
-      // directly inside a user-gesture handler.
-      //
-      // A fresh iframe per job (rather than one reused element) matters for
-      // kiosk-printing setups: hammering a single long-lived iframe with
-      // doc.write()+print() back to back, without waiting for it to load or
-      // ever tearing it down, is what makes Chrome's silent-print pipe wedge
-      // after a handful of jobs and fall back to showing the print dialog.
-      const frame = document.createElement('iframe')
-      frame.style.position = 'fixed'
-      frame.style.width = '0'
-      frame.style.height = '0'
-      frame.style.border = '0'
-      document.body.appendChild(frame)
+    // Queued rather than printed inline: overlapping print jobs wedge Chrome's per-tab print
+    // path, and printing must stay off the scan critical path so the card field is ready for
+    // the next card immediately. See ThermalPrintUtils.
+    //
+    // The reload runs from onDone, never earlier: tearing the page down while the job is still
+    // spooling is precisely what wedges the print pipeline we are working around.
+    ThermalPrintUtils.print(html, reloadIfSafe)
+  }
 
-      let cleaned = false
-      const cleanup = () => {
-        if (cleaned) return
-        cleaned = true
-        setTimeout(() => frame.parentNode?.removeChild(frame), 1000)
-      }
-
-      frame.onload = () => {
-        const frameWindow = frame.contentWindow
-        if (!frameWindow) {
-          cleanup()
-          return
-        }
-        frameWindow.onafterprint = cleanup
-        // Give the frame a beat to finish rendering before invoking print,
-        // and always clean up even if `afterprint` never fires (some
-        // kiosk-printing configs skip it).
-        setTimeout(() => {
-          frameWindow.focus()
-          frameWindow.print()
-          cleanup()
-        }, 150)
-      }
-      frame.srcdoc = html
-    } catch (e) {
-      // ignore print failures; token is still recorded
+  // Reload the tab so Chrome's print state starts clean for the next scan. Skipped whenever the
+  // operator is mid-task -- a reload there would throw away work they can't easily redo.
+  const reloadIfSafe = () => {
+    if (printsSinceReload.current < RELOAD_AFTER_N_PRINTS) {
+      return
     }
+    if (!ThermalPrintUtils.isIdle()) {
+      return // more receipts still queued; the last one will reload instead
+    }
+    const s = stateRef.current
+    if (s.enrollCandidate || s.unknownCard || s.assignOpen || s.enrolling) {
+      return
+    }
+    if (s.cardNumber) {
+      return // a scan is part-typed; reloading now would swallow it
+    }
+    StorageUtils.set(HANDOFF_KEY, {
+      memberInfo: s.memberInfo,
+      lastToken: s.lastToken,
+      printStalled: s.printStalled,
+      savedAt: Date.now(),
+    })
+    window.location.reload()
   }
 
   const handleReset = () => {
-    setState({...initialState, mealType: state.mealType, mealInfo: state.mealInfo})
+    // printStalled survives Clear: the printer is still stalled, and hiding the warning here
+    // would leave the operator issuing unprinted tokens again. mealLoaded survives too --
+    // resetting it would re-close the scan field even though the meal is already known.
+    setState({
+      ...initialState,
+      mealType: state.mealType,
+      mealInfo: state.mealInfo,
+      mealLoaded: state.mealLoaded,
+      printStalled: state.printStalled,
+    })
     refocus()
   }
 
