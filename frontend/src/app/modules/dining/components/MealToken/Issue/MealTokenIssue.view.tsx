@@ -82,6 +82,7 @@ const MealTokenIssueView: FC<any> = (props) => {
     handleAssignSelect,
     printStalled,
     mealLoaded,
+    agentReady,
   } = props
 
   const MEAL_LABEL: any = {BREAKFAST: 'Breakfast', LUNCH: 'Lunch', DINNER: 'Dinner'}
@@ -96,6 +97,18 @@ const MealTokenIssueView: FC<any> = (props) => {
     <div className='card'>
       <div className='p-6'>
         <h3 className='mb-6'>Issue Meal Token</h3>
+
+        {/* The browser fallback is slower and reloads the page after every scan, so it is worth
+            the operator knowing the print agent is not running before a rush starts. */}
+        {agentReady === false && (
+          <Alert
+            className='mb-4'
+            type='info'
+            showIcon
+            message='Print agent not running — using browser printing'
+            description='Receipts still print, but more slowly, and the page reloads after each scan. Start the print agent on this PC to speed it up.'
+          />
+        )}
 
         {/* Tokens are still recorded when printing fails, so a silent failure would otherwise
             go unnoticed until someone turns up without a token. */}
