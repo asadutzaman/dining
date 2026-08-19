@@ -12,4 +12,12 @@ return [
     'timeout'          => env('AUTH_TIMEOUT', 180),
     'read_timeout'     => env('AUTH_READ_TIMEOUT', 180),
     'verify'           => env('AUTH_VERIFY', false),
+
+    // NCMS: source of truth for the staff/student roster the dining members are drawn from
+    'ncms' => [
+        'url'            => env('NCMS_API_URL', 'http://192.168.98.153:8085/ncms/api/'),
+        'users_endpoint' => env('NCMS_USERS_ENDPOINT', 'dining/users'),
+        'image_base_url' => env('NCMS_IMAGE_BASE_URL', 'http://192.168.100.252:8081/'),
+        'timeout'        => env('NCMS_TIMEOUT', 60),
+    ],
 ];

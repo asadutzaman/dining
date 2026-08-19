@@ -102,6 +102,28 @@ class FileController extends Controller
         }
     }
 
+    // Serve the raw file inline (for <img> tags / previews) by file_id.
+    public function view($fileId)
+    {
+        try {
+            $fileInfo = $this->repository->findWhereFirst('file_id', $fileId);
+            if (!$fileInfo) {
+                abort(404);
+            }
+
+            $filePath = storage_path('app/public/' . $fileInfo->file_path);
+            if (!File::exists($filePath)) {
+                abort(404);
+            }
+
+            return response()->file($filePath, [
+                'Content-Type' => $fileInfo->mime_type ?: 'application/octet-stream',
+            ]);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
     public function download($fileId)
     {
         try {

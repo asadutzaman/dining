@@ -28,7 +28,10 @@ class Kernel extends ConsoleKernel
         Commands\Scaffold\HelperMakeCommand::class,
         Commands\Scaffold\TraitMakeCommand::class,
         Commands\Scaffold\TestMakeCommand::class,
-        Commands\ClearLogFile::class
+        Commands\ClearLogFile::class,
+        Commands\Dining\SyncNcmsRoster::class,
+        Commands\Dining\SettleMissedBookingsCommand::class,
+        Commands\Dining\SendBookingNudgesCommand::class,
     ];
 
     /**
@@ -39,7 +42,33 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Refresh the NCMS roster overnight, well clear of meal service.
+        $schedule->command('dining:sync-roster')
+            ->dailyAt('02:00')
+            ->withoutOverlapping();
+
+        /*
+         * Charge no-shows after the last serving window has closed. At 23:30 every
+         * meal of the day is unambiguously over, so nothing in service is charged.
+         */
+        $schedule->command('dining:settle-missed-bookings')
+            ->dailyAt('23:30')
+            ->withoutOverlapping();
+
+        /*
+         * Cutoff warnings. Checked every 15 minutes against a 45-minute lead, so a
+         * given cutoff falls inside the window for exactly a few runs; the members'
+         * own preference gates delivery.
+         */
+        $schedule->command('dining:send-booking-nudges --type=cutoff')
+            ->everyFifteenMinutes()
+            ->between('06:00', '22:00')
+            ->withoutOverlapping();
+
+        // "Tomorrow is empty" nudge, at the 8:00 PM the profile screen advertises.
+        $schedule->command('dining:send-booking-nudges --type=reminder')
+            ->dailyAt('20:00')
+            ->withoutOverlapping();
     }
 
     /**

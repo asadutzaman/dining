@@ -63,13 +63,19 @@ class _HttpService {
   }
 
   private request(req: Request): AxiosPromise<any> {
+    const headers: any = {...this.headers, ...req.headers};
+    // For multipart uploads, drop the default JSON Content-Type so the browser
+    // sets multipart/form-data with the correct boundary (otherwise the file is dropped).
+    if (typeof FormData !== 'undefined' && req.body instanceof FormData) {
+      delete headers['Content-Type'];
+    }
     const axiosConfig: AxiosRequestConfig = {
       url: this.baseURL + req.url,
       method: req.method,
       responseType: req.responseType ? req.responseType : 'json',
       params: req.params,
       data: req.body,
-      headers: { ...this.headers, ...req.headers },
+      headers: headers,
       timeout: this.timeout,
     };
     return this.httpClient.request(axiosConfig);

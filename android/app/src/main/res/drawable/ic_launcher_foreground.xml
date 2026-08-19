@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A plate between fork and knife: a dining mark that stays legible at launcher size. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,32 m-21,0 a21,21 0 1,0 42,0 a21,21 0 1,0 -42,0"
+        android:fillType="evenOdd" />
+    <path
+        android:fillColor="#17355F"
+        android:pathData="M54,32 m-13,0 a13,13 0 1,0 26,0 a13,13 0 1,0 -26,0"
+        android:fillType="evenOdd" />
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M32,26 h4 v56 h-4 z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M72,26 h4 v56 h-4 z" />
+</vector>

@@ -4,7 +4,6 @@ import { KTIcon, toAbsoluteUrl } from '../../../helpers';
 import { useLayout } from '../../core';
 import { MutableRefObject, useEffect, useRef } from 'react';
 import { ToggleComponent } from '../../../assets/ts/components';
-import { useLang } from 'src/app/hooks/useLang';
 
 type PropsType = {
   sidebarRef: MutableRefObject<HTMLDivElement | null>;
@@ -13,7 +12,6 @@ type PropsType = {
 const SidebarLogo = (props: PropsType) => {
   const { config } = useLayout();
   const toggleRef = useRef<HTMLDivElement>(null);
-  const { t, isBangla } = useLang();
 
   const appSidebarDefaultMinimizeDesktopEnabled =
     config?.app?.sidebar?.default?.minimize?.desktop?.enabled;
@@ -58,29 +56,18 @@ const SidebarLogo = (props: PropsType) => {
         {config.layoutType === 'light-sidebar' ? (
           <img
             alt="Logo"
-            src={toAbsoluteUrl('/media/logos/default-dark.svg')}
-            // src={toAbsoluteUrl('/media/logos/dmp_logo.png')}
-            // className="h-70px app-sidebar-logo-default"
+            src={toAbsoluteUrl('/media/logos/dining-logo.svg')}
           />
-          // <img
-          //   alt={t('Logo')}
-          //   src={toAbsoluteUrl(
-          //     isBangla
-          //       ? '/media/logos/dmp_logo_bn.png'
-          //       : '/media/logos/dmp_logo.png'
-          //   )}
-          //   className="h-70px app-sidebar-logo-default"
-          // />
         ) : (
           <>
             <img
               alt="Logo"
-              src={toAbsoluteUrl('/media/logos/default.svg')}
+              src={toAbsoluteUrl('/media/logos/dining-logo.svg')}
               className="h-25px app-sidebar-logo-default theme-light-show"
             />
             <img
               alt="Logo"
-              src={toAbsoluteUrl('/media/logos/default-dark.svg')}
+              src={toAbsoluteUrl('/media/logos/dining-logo-dark.svg')}
               className="h-25px app-sidebar-logo-default theme-dark-show"
             />
           </>
@@ -88,7 +75,7 @@ const SidebarLogo = (props: PropsType) => {
 
         <img
           alt="Logo"
-          src={toAbsoluteUrl('/media/logos/default-small.svg')}
+          src={toAbsoluteUrl('/media/logos/dining-icon.svg')}
           className="h-20px app-sidebar-logo-minimize"
         />
       </Link>
