@@ -1,11 +1,12 @@
 import React, {FC, useEffect, useRef, useState} from 'react'
 import {MemberApi, MealTokenApi, MealSettingApi} from 'src/app/api'
-import {Message, StorageUtils, ThermalPrintUtils} from 'src/app/utils'
+import {Message, ReceiptAgentUtils, StorageUtils, ThermalPrintUtils} from 'src/app/utils'
 import MealTokenIssueView from './MealTokenIssue.view'
 
-// The page reloads itself after issuing a token, so a wedged Chrome print pipeline can never
-// accumulate across scans. Raise this if the reload cost hurts throughput during a rush --
-// anything below the ~5-6 mark where printing historically died still gives the same protection.
+// Applies to the browser-printing fallback only. When the local ESC/POS agent is running,
+// Chrome's print pipeline is never touched and the page never reloads. On the fallback path the
+// reload keeps a wedged pipeline from accumulating across scans; raise this if the reload cost
+// hurts throughput, anything below the ~5-6 mark where printing historically died still works.
 const RELOAD_AFTER_N_PRINTS = 1
 
 // Hand-off across that reload: the operator should still see who was just served.
@@ -46,6 +47,10 @@ const initialState = {
   // Print jobs are completing without the printer ever reporting back. Tokens are still being
   // recorded, so without a visible warning the operator would keep issuing unprinted tokens.
   printStalled: false,
+
+  // null while probing. false means the local print agent is not running, so receipts go through
+  // the slower browser path -- which is also the only path that reloads the page after a scan.
+  agentReady: null as boolean | null,
 }
 
 const MEAL_LABEL: any = {BREAKFAST: 'Breakfast', LUNCH: 'Lunch', DINNER: 'Dinner'}
@@ -84,6 +89,13 @@ const MealTokenIssueController: FC = () => {
   useEffect(() => {
     ThermalPrintUtils.setStallHandler(() => setPartial({printStalled: true}))
     return () => ThermalPrintUtils.setStallHandler(null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Find out up front whether the local print agent is available, so the view can tell the
+  // operator which path is in use -- browser printing is noticeably slower and reloads the page.
+  useEffect(() => {
+    ReceiptAgentUtils.probe().then((ok: boolean) => setPartial({agentReady: ok}))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -287,7 +299,41 @@ const MealTokenIssueController: FC = () => {
       })
   }
 
+  // Preferred path: hand the receipt to the local ESC/POS agent, which talks to the printer
+  // directly. Chrome's print pipeline -- the thing that wedges after a handful of kiosk jobs --
+  // is never involved, so no page reload is needed either.
   const printReceipt = (token: any, member: any) => {
+    ReceiptAgentUtils.print({
+      token_number: token.token_number,
+      meal_type: token.meal_type,
+      meal_date: token.meal_date,
+      amount: token.amount,
+      created_at: token.created_at,
+      member_name: member.name ?? token.member_name ?? '',
+      member_code: member.member_code ?? token.member_code ?? '',
+    })
+      .then((res: any) => {
+        if (!res?.ok) {
+          // The printer itself is the problem (no paper, cover open). Falling back to browser
+          // printing would not help, so tell the operator instead of silently issuing nothing.
+          setPartial({printStalled: true})
+          Message.error(`Not printed — ${res?.blocking || res?.error || 'printer unavailable'}.`)
+          return
+        }
+        if (res.advisory) {
+          Message.warning(`Printer: ${res.advisory}`)
+        }
+        setPartial({printStalled: false})
+      })
+      .catch(() => {
+        // The agent is not running or not reachable. Degrade to browser printing rather than
+        // leaving the counter unable to print at all.
+        printViaBrowser(token, member)
+      })
+  }
+
+  // Fallback only. This is the old path, and the one that needs the post-print page reload.
+  const printViaBrowser = (token: any, member: any) => {
     const meal = MEAL_LABEL[token.meal_type] || token.meal_type
     const html = `
       <html>
@@ -369,6 +415,7 @@ const MealTokenIssueController: FC = () => {
       mealInfo: state.mealInfo,
       mealLoaded: state.mealLoaded,
       printStalled: state.printStalled,
+      agentReady: state.agentReady,
     })
     refocus()
   }

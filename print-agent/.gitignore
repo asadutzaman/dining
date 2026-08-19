@@ -1,0 +1,7 @@
+# Runtime + build artifacts, all generated beside the exe on the kiosk
+print-agent.log*
+agent.ini
+__pycache__/
+build/
+dist/
+*.spec
