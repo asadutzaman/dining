@@ -80,11 +80,15 @@ const MealTokenIssueView: FC<any> = (props) => {
     handleAssignClose,
     handleAssignSearch,
     handleAssignSelect,
+    printStalled,
+    mealLoaded,
   } = props
 
   const MEAL_LABEL: any = {BREAKFAST: 'Breakfast', LUNCH: 'Lunch', DINNER: 'Dinner'}
   const windowsConfigured = !!mealInfo?.windows_configured
-  const scanDisabled = !activeMeal
+  // Until the meal is known a scan would be issued against the 'BREAKFAST' default, so the
+  // field stays closed rather than silently recording the wrong meal.
+  const scanDisabled = !mealLoaded || !activeMeal
 
   const photoUrl = memberInfo?.photo_id ? `${CONSTANT_CONFIG.MEDIA_SOURCE}${memberInfo.photo_id}` : ''
 
@@ -93,8 +97,28 @@ const MealTokenIssueView: FC<any> = (props) => {
       <div className='p-6'>
         <h3 className='mb-6'>Issue Meal Token</h3>
 
-        {/* Current meal: auto-detected by time window, or a manual picker if no windows are set */}
-        {windowsConfigured ? (
+        {/* Tokens are still recorded when printing fails, so a silent failure would otherwise
+            go unnoticed until someone turns up without a token. */}
+        {printStalled && (
+          <Alert
+            className='mb-4'
+            type='warning'
+            showIcon
+            message='Printing has stalled'
+            description='Tokens are still being issued and recorded, but the printer has stopped responding. Check the printer, then reload this page before continuing.'
+          />
+        )}
+
+        {/* Current meal: auto-detected by time window, or a manual picker if no windows are set.
+            While it is still loading neither is shown -- the manual picker would otherwise flash
+            up defaulted to Breakfast and invite a scan against the wrong meal. */}
+        {!mealLoaded ? (
+          <div className='mb-4'>
+            <Tag color='default' style={{fontSize: 16, padding: '6px 14px'}}>
+              <Spin size='small' className='me-2' /> Checking which meal is being served…
+            </Tag>
+          </div>
+        ) : windowsConfigured ? (
           <div className='mb-4'>
             {activeMeal ? (
               <Tag color='green' style={{fontSize: 16, padding: '6px 14px'}}>
@@ -128,7 +152,9 @@ const MealTokenIssueView: FC<any> = (props) => {
               size='large'
               disabled={scanDisabled}
               placeholder={
-                scanDisabled
+                !mealLoaded
+                  ? 'Please wait — checking which meal is being served…'
+                  : scanDisabled
                   ? 'Scanning disabled — no meal is being served now'
                   : 'Scan card — token issues & prints automatically'
               }
@@ -206,6 +232,9 @@ const MealTokenIssueView: FC<any> = (props) => {
           </div>
         )}
 
+        {/* Survives the post-print reload, restored from sessionStorage, and deliberately looks
+            identical to a live scan: the operator hands the token over after printing and still
+            needs the face at full size to check who they are handing it to. */}
         {memberInfo && (
           <div className='mt-8 p-6' style={{background: '#f5f5f5', borderRadius: 8}}>
             <Row gutter={[24, 16]} align='middle'>

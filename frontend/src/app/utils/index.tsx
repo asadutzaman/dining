@@ -13,6 +13,8 @@ import _NumberInWord from './NumberInWord'
 import _ObjectUtils from './ObjectUtils'
 import _WorkflowUtils from './WorkflowUtils'
 import _ArrayUtils from './ArrayUtils'
+import _ThermalPrintUtils from './ThermalPrintUtils'
+import _StorageUtils from './StorageUtils'
 
 export const Message = new _Message()
 export const Notification = new _Notification()
@@ -27,3 +29,5 @@ export const MathUtils = new _MathUtils()
 export const AmountFormatUtils = new _AmountFormatUtils()
 export const WorkflowUtils = new _WorkflowUtils()
 export const ArrayUtils = new _ArrayUtils()
+export const ThermalPrintUtils = new _ThermalPrintUtils()
+export const StorageUtils = new _StorageUtils()
