@@ -1,0 +1,40 @@
+; Dining counter configuration.
+;
+; Copy this to config.ini beside the exe (or beside main.py when running from source).
+; Every key has a working default, so you only need the ones you want to change.
+
+[database]
+host = 127.0.0.1
+port = 3306
+database = dining
+user = root
+password =
+; Every table in this database carries a prefix. It comes from DB_PREFIX in backend/.env,
+; NOT from the default in config/database.php.
+prefix = auth_aq4nl4ag_
+
+[printer]
+enabled = true
+; Blank uses the Windows default printer.
+name = RONGTA 80mm Series Printer
+copies = 1
+
+[photos]
+; Folder holding Laravel's storage/app/public tree -- a local copy or a UNC share.
+; files.file_path is resolved relative to this.
+root =
+; Used when the file is not in that folder. Same URL the web counter screen uses.
+http_fallback = http://127.0.0.1:8000/api/file/view/
+; Nirmala ships with Windows and covers Bengali. Change only if you have a better face.
+font = C:\Windows\Fonts\Nirmala.ttc
+
+[app]
+title = COLLEGE DINING
+; The users.id recorded as issued_by. Blank leaves it NULL, which is right for a counter
+; with no login.
+issued_by =
+fullscreen = true
+; How long a result stays on screen before returning to "Punch your card".
+result_seconds = 8
+; How often the current meal is re-checked, so the screen rolls sittings unattended.
+meal_poll_seconds = 60
