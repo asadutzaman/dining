@@ -10,6 +10,10 @@ Chrome-kiosk-plus-print-agent setup needed before anyone could eat.
 **Scope is the scan screen only.** Collecting tokens, voiding them, payments, reports and member
 enrolment all stay in the existing web admin.
 
+> Deploying this to the counter PC? Follow **[../docs/counter-pc-deployment.md](../docs/counter-pc-deployment.md)** —
+> it covers a bare Windows 11 machine end to end, plus the daily routine for the operator.
+> This README is for working on the app itself.
+
 ---
 
 ## Running it
