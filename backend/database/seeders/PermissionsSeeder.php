@@ -25,8 +25,22 @@ class PermissionsSeeder extends Seeder
      */
     public function run()
     {
-        $this->command->info('Seeder File Path (Example): common/auth/employeePermission.json');
-        $seederFilepath = $this->command->ask('Seeder File Path');
+        /*
+         * Answering this prompt with an empty line seeds every permission json, which is what
+         * a full install wants; naming one file re-seeds just that module. But ask() on a
+         * non-interactive run (an unattended installer, CI, anything without a TTY) reads EOF
+         * and Symfony aborts the whole seeder -- so permissions silently never get seeded and
+         * the admin ends up with no scopes at all. Skip the question in that case and take the
+         * seed-everything branch, which is the only sensible unattended default.
+         */
+        $seederFilepath = null;
+        if ($this->canPrompt()) {
+            $this->command->info('Seeder File Path (Example): common/auth/employeePermission.json');
+            $seederFilepath = $this->command->ask('Seeder File Path');
+        } else {
+            $this->command->info('Non-interactive run: seeding every permission json.');
+        }
+
         if (!empty($seederFilepath)) {
             $jsonFile = 'database/seeders/json/permission/' . $seederFilepath;
             $fileData = file_get_contents($jsonFile);
@@ -61,6 +75,18 @@ class PermissionsSeeder extends Seeder
         }
 
         $this->command->info('Resource, Scope and Permission table seeded!');
+    }
+
+    /**
+     * Whether this run can put a question to a human and get an answer back.
+     */
+    protected function canPrompt(): bool
+    {
+        if ($this->command->option('no-interaction')) {
+            return false;
+        }
+
+        return (bool) $this->command->getOutput()->isInteractive();
     }
 
     protected function getAllJsonFiles()

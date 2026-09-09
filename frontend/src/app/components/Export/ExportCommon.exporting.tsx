@@ -24,20 +24,20 @@ const ExportCommonExporting: FC<any> = props => {
 
                                 {exportType == 'csv' && (
                                     <Button type="primary" style={{ marginTop: 15 }}>
-                                        <a href={`${CONSTANT_CONFIG.BASE_URL}file/download-file?path=export/csv/${fileName}`} target={'_blank'}>Download Export (CSV)</a>
+                                        <a href={`${CONSTANT_CONFIG.BASE_URL}/api/file/download-file?path=export/csv/${fileName}`} target={'_blank'}>Download Export (CSV)</a>
                                     </Button>
                                 )}
 
                                 {exportType == 'xlsx' && (
                                     <Button type="primary" style={{ marginTop: 15 }}>
-                                        <a href={`${CONSTANT_CONFIG.BASE_URL}file/download-file?path=export/excel/${fileName}`} target={'_blank'}>Download Export (Excel)</a>
+                                        <a href={`${CONSTANT_CONFIG.BASE_URL}/api/file/download-file?path=export/excel/${fileName}`} target={'_blank'}>Download Export (Excel)</a>
                                     </Button>
                                 )}
 
                                 {exportType == 'pdf' && (
                                     <div>
                                         <Button type="primary" style={{ marginTop: 15 }}>
-                                            <a href={`${CONSTANT_CONFIG.BASE_URL}file/download-file?path=export/pdf/${fileName}`} target={'_blank'}>Download Export (PDF)</a>
+                                            <a href={`${CONSTANT_CONFIG.BASE_URL}/api/file/download-file?path=export/pdf/${fileName}`} target={'_blank'}>Download Export (PDF)</a>
                                         </Button>
 
                                         <Button type="primary" style={{ marginTop: 15, marginLeft: 15 }}>

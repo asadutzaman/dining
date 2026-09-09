@@ -2,7 +2,7 @@
   "name": "demo1",
   "version": "1.0.0",
   "private": true,
-  "homepage": "http://47.128.188.194/",
+  "homepage": "/",
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
     "@formatjs/intl-pluralrules": "4.3.3",
@@ -78,7 +78,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && echo '/* /index.html  200' | cat >build/_redirects ",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "prettier --check .",

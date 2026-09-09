@@ -102,7 +102,10 @@ reconfiguration.
 
 - [ ] `dining-counter\` folder (from `python\dist\`)
 - [ ] `dining-full.sql`
-- [ ] the whole `backend\` folder — `vendor\` is already committed, so no `composer install` needed
+- [ ] the whole `backend\` folder, **including `vendor\`** — `vendor\` is gitignored and NOT in
+      the repo, so it only exists on a machine where `composer install` has been run. Copy the one
+      from your dev machine, or run `composer install --no-dev --optimize-autoloader` before copying.
+      There is no PHP or Composer on the counter PC to fix this with later.
 - [ ] `frontend\build\` (with `index.html` in it)
 - [ ] `uploads\Member\` photos, if you got them
 - [ ] Laragon Full installer — <https://laragon.org/download/>

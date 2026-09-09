@@ -14,9 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return 'app-version-' . app()->version();
-});
+/*
+ * "/" belongs to the web admin SPA now (see the fallback at the bottom of this file), so the
+ * version probe moved to its own path. Controller actions, not closures: route:cache refuses
+ * to cache closure-backed routes.
+ */
+Route::get('/app-version', [App\Http\Controllers\SpaController::class, 'version']);
 
 Route::prefix('api')->group(function () {
 
@@ -1006,3 +1009,14 @@ Route::prefix('api')->group(function () {
     });
 
 });
+
+/*
+ * SPA catch-all. MUST stay the last route registered: Route::fallback only fires when nothing
+ * else matched, so any route declared after it would still win, but keeping it last is what
+ * makes that obvious to the next reader.
+ *
+ * A deep link such as /admin/dining/meal-token/issue is not a file and matches no route, so it
+ * lands here and gets index.html back; React Router then resolves it client-side. Requests for
+ * /static/... never reach PHP at all -- Apache serves them off disk.
+ */
+Route::fallback([App\Http\Controllers\SpaController::class, 'index']);
