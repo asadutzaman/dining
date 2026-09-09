@@ -37,6 +37,8 @@ DEFAULTS = {
         'fullscreen': 'true',
         'result_seconds': '8',
         'meal_poll_seconds': '60',
+        # Testing only. See the printer_test property below.
+        'printer_test': 'false',
     },
 }
 
@@ -153,6 +155,22 @@ class Config:
     def meal_poll_seconds(self):
         return max(10, self.getint('app', 'meal_poll_seconds'))
 
+    @property
+    def printer_test(self):
+        """
+        Printer-testing mode, equivalent to passing --printer-test.
+
+        It exists as a config key and not only as a command-line flag because the counter is
+        normally started by double-clicking a shortcut, where there is nowhere to put a flag --
+        which is exactly how a tester ends up in live mode wondering why the same card is
+        refused a second time.
+
+        Every scan prints a real receipt and writes NOTHING: no token, no sequence advance, no
+        balance change, and the "one per member per meal per day" rule is not applied. Set it
+        back to false before the counter serves anyone.
+        """
+        return self.getbool('app', 'printer_test')
+
 
 def load(path=None):
     parser = configparser.ConfigParser()
@@ -163,5 +181,10 @@ def load(path=None):
         # of it. The example file uses ';' comments, so honour them.
         parser = configparser.ConfigParser(inline_comment_prefixes=(';',))
         parser.read_dict(DEFAULTS)
-        parser.read(path, encoding='utf-8')
+        # utf-8-sig, not utf-8: Notepad -- which the deployment runbook tells the operator to
+        # edit this file with -- writes a UTF-8 BOM, and configparser reads that BOM as part of
+        # the first line, so the opening [database] header stops being a header and the whole
+        # file is rejected with "File contains no section headers". Stripping it costs nothing
+        # for files that do not have one.
+        parser.read(path, encoding='utf-8-sig')
     return Config(parser, path)

@@ -49,6 +49,9 @@ def parse_args():
     parser.add_argument('--config', help='path to config.ini')
     parser.add_argument('--dry-run', action='store_true',
                         help='run the full screen but roll back every token')
+    parser.add_argument('--printer-test', action='store_true',
+                        help='like --dry-run but DOES print: scan a real card repeatedly to '
+                             'test the printer without issuing anything')
     parser.add_argument('--self-test', action='store_true', help='run preflight checks and exit')
     parser.add_argument('--test-print', action='store_true',
                         help='print one sample receipt and exit')
@@ -96,7 +99,27 @@ def main():
 
     app = QApplication(sys.argv)
     app.setApplicationName('Dining Counter')
-    window = MainWindow(db, repo, config, printer, dry_run=args.dry_run)
+    # --printer-test prints a real receipt but writes nothing at all -- no token, no sequence
+    # advance, no balance change -- and skips the one-per-member-per-meal rule, so the same card
+    # can be punched as many times as the paper lasts. Also settable as [app] printer_test in
+    # config.ini, because the counter is usually launched from a shortcut with nowhere to put a
+    # flag.
+    printer_test = args.printer_test or config.printer_test
+    dry_run = args.dry_run or printer_test
+
+    # Say the mode out loud at startup. Without this line the only way to tell a live run from a
+    # test run after the fact is to infer it from what the journal did or did not record.
+    logging.getLogger('dining-counter').info(
+        'starting: mode=%s config=%s',
+        'PRINTER TEST (prints, saves nothing)' if printer_test
+        else 'DRY RUN (saves nothing)' if dry_run else 'LIVE',
+        config.path)
+
+    window = MainWindow(
+        db, repo, config, printer,
+        dry_run=dry_run,
+        print_in_dry_run=printer_test,
+    )
     if config.fullscreen and not args.windowed:
         window.showFullScreen()
     else:

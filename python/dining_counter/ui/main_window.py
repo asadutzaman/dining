@@ -27,13 +27,18 @@ REFOCUS_INTERVAL_MS = 750
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, db, repo, config, printer, dry_run=False):
+    def __init__(self, db, repo, config, printer, dry_run=False, print_in_dry_run=False):
         super().__init__()
         self.db = db
         self.repo = repo
         self.config = config
         self.printer = printer
         self.dry_run = dry_run
+        # --printer-test. A dry run normally suppresses printing so screen testing does not burn
+        # paper, but that also makes it useless for testing the printer itself. This re-enables
+        # the print while keeping the rollback, so the same card prints over and over: the token
+        # never commits, so the "one per member per meal per day" guard never trips.
+        self.print_in_dry_run = print_in_dry_run
 
         self.photos = PhotoResolver(config)
         self.pool = QThreadPool.globalInstance()
@@ -239,7 +244,12 @@ class MainWindow(QMainWindow):
         self.card_input.returnPressed.connect(self.handle_scan)
         quit_shortcut = QShortcut(QKeySequence('Ctrl+Shift+Q'), self)
         quit_shortcut.activated.connect(self.confirm_exit)
-        mode = 'DRY RUN - nothing is saved' if self.dry_run else ''
+        if self.print_in_dry_run:
+            mode = 'PRINTER TEST - printing, nothing is saved'
+        elif self.dry_run:
+            mode = 'DRY RUN - nothing is saved'
+        else:
+            mode = ''
         self.footer_left.setText(
             '%s@%s  |  %s' % (self.config.db['database'], self.config.db['host'],
                               mode or 'live'))
@@ -402,7 +412,8 @@ class MainWindow(QMainWindow):
         self.prompt_hint.hide()
         self.banner.hide()
 
-        worker = ScanWorker(self.db, self.repo, self.config, card, meal, dry_run=self.dry_run)
+        worker = ScanWorker(self.db, self.repo, self.config, card, meal,
+                            dry_run=self.dry_run, printer_test=self.print_in_dry_run)
         worker.signals.memberFound.connect(self._member_found)
         worker.signals.memberMissing.connect(self._member_missing)
         worker.signals.issued.connect(self._issued)
@@ -469,7 +480,10 @@ class MainWindow(QMainWindow):
         self.banner.show()
         self.result_timer.start(self.config.result_seconds * 1000)
 
-        if self.config.printer_enabled and not receipt.get('dry_run'):
+        should_print = self.config.printer_enabled and (
+            not receipt.get('dry_run') or self.print_in_dry_run)
+
+        if should_print:
             worker = PrintWorker(self.printer, receipt)
             worker.signals.done.connect(self._print_done)
             self.pool.start(worker)

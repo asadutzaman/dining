@@ -29,12 +29,29 @@ class IssueError(Exception):
     """A rejection with a message meant for the operator's eyes."""
 
 
-def issue_token(db, repo, config, member_id, meal_type, meal_date=None, dry_run=False):
+def issue_token(db, repo, config, member_id, meal_type, meal_date=None, dry_run=False,
+                printer_test=False):
     """
     Issue one meal token and return everything the receipt and the screen need.
 
     Always a DUE token: cash-at-counter goes through the payments flow in the admin app, not here.
+
+    `printer_test` is for testing the printer against a real card. It runs every read and every
+    validation, builds a real receipt from real member data, and writes NOTHING: no token row, no
+    sequence advance, no balance change, no booking settlement.
+
+    It has to skip the duplicate guard as well as the write. A dry run alone is not enough --
+    rollback stops a NEW token persisting, but the guard reads rows that are already committed, so
+    the second test scan of a card that has eaten today is rejected before it ever reaches the
+    printer. And skipping only the guard would not help either: the INSERT would then collide with
+    the same composite unique index the guard exists to explain. Not writing at all is what makes
+    one card printable over and over.
     """
+    if printer_test and not dry_run:
+        # The caller wires these together; refuse rather than trust it. Skipping the duplicate
+        # guard on a run that COMMITS is exactly the double-charge this check exists to prevent.
+        raise ValueError('printer_test requires dry_run')
+
     meal_date = meal_date or dt.date.today()
     now = dt.datetime.now()
 
@@ -47,9 +64,10 @@ def issue_token(db, repo, config, member_id, meal_type, meal_date=None, dry_run=
         # 2. Duplicate guard. Looks at soft-deleted rows too: the composite unique index does not
         #    exclude them, so without this a re-issue after a void would die on the constraint
         #    instead of explaining itself.
-        existing = repo.existing_token(cur, member_id, meal_type, meal_date)
-        if existing:
-            raise IssueError(VOIDED_MESSAGE if existing['deleted_at'] else DUPLICATE_MESSAGE)
+        if not printer_test:
+            existing = repo.existing_token(cur, member_id, meal_type, meal_date)
+            if existing:
+                raise IssueError(VOIDED_MESSAGE if existing['deleted_at'] else DUPLICATE_MESSAGE)
 
         # 3. The rate in force on the meal date.
         setting = repo.effective_setting(cur, meal_type, meal_date)
@@ -82,7 +100,30 @@ def issue_token(db, repo, config, member_id, meal_type, meal_date=None, dry_run=
         amount = decimal.Decimal(str(booking['unit_price'])) if booked \
             else decimal.Decimal(str(setting['cost']))
 
-        # 8. The token itself.
+        # 8. The token itself -- skipped entirely for a printer test, which is what keeps the
+        #    same card printable: no INSERT means no collision with the composite unique index.
+        if printer_test:
+            created_at = now.strftime('%Y-%m-%d %H:%M:%S')
+            due_before = decimal.Decimal(str(member['due_balance']))
+            return {
+                'token_id': None,
+                'token_number': token_number,
+                'member_id': member_id,
+                'member_name': member['name'],
+                'member_code': member['member_code'],
+                'meal_type': meal_type,
+                'meal_date': meal_date.strftime('%Y-%m-%d'),
+                'amount': '%.2f' % amount,
+                'created_at': created_at,
+                'from_booking': booked,
+                'due_before': '%.2f' % due_before,
+                # Nothing was charged. Report the balance unchanged rather than the total this
+                # meal would have produced -- the screen must not imply a debt that is not there.
+                'due_after': '%.2f' % due_before,
+                'dry_run': True,
+                'printer_test': True,
+            }
+
         try:
             token_id = repo.insert_token(
                 cur,

@@ -3,7 +3,6 @@ __pycache__/
 .pytest_cache/
 build/
 dist/
-*.spec
 config.ini
 counter-journal.jsonl
 dining-counter.log

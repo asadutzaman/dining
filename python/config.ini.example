@@ -38,3 +38,9 @@ fullscreen = true
 result_seconds = 8
 ; How often the current meal is re-checked, so the screen rolls sittings unattended.
 meal_poll_seconds = 60
+
+; TESTING ONLY -- set back to false before the counter serves anyone.
+; true prints a real receipt for every scan and writes NOTHING: no token row, no token-number
+; advance, no balance change. The "one token per member per meal per day" rule is not applied,
+; so the same card can be punched over and over to test the printer. Same as --printer-test.
+printer_test = false

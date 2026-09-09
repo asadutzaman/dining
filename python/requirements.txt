@@ -2,3 +2,8 @@ PySide6>=6.6
 PyMySQL>=1.1
 pywin32>=306
 requests>=2.31
+# PyMySQL needs this for MySQL's caching_sha2_password. The counter runs against
+# mysql_native_password by default, so it is not exercised on a blank-password install --
+# but the moment anyone sets a root password without it, every scan fails with
+# "cryptography is required for sha256_password".
+cryptography>=42.0

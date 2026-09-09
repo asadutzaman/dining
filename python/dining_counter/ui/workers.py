@@ -33,7 +33,7 @@ class ScanWorker(QRunnable):
     "already issued for this meal today", and the operator has to tell that specific person.
     """
 
-    def __init__(self, db, repo, config, card, meal_type, dry_run=False):
+    def __init__(self, db, repo, config, card, meal_type, dry_run=False, printer_test=False):
         super().__init__()
         self.db = db
         self.repo = repo
@@ -41,6 +41,7 @@ class ScanWorker(QRunnable):
         self.card = card
         self.meal_type = meal_type
         self.dry_run = dry_run
+        self.printer_test = printer_test
         self.signals = ScanSignals()
 
     @Slot()
@@ -69,7 +70,8 @@ class ScanWorker(QRunnable):
 
         try:
             receipt = issue_token(self.db, self.repo, self.config, member['id'],
-                                  self.meal_type, dry_run=self.dry_run)
+                                  self.meal_type, dry_run=self.dry_run,
+                                  printer_test=self.printer_test)
         except IssueError as exc:
             journal.rejected(self.card, member.get('id'), self.meal_type, str(exc))
             self.signals.failed.emit(member, str(exc))
