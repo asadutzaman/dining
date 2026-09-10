@@ -115,6 +115,24 @@ Assert-That 'no runtime journal or log staged' `
     { -not (Test-Path (Join-Path $counter 'counter-journal.jsonl')) } `
     'That is the build machine audit trail; it must not ship.'
 
+Write-Step 'Web admin: off by default, local only'
+
+Assert-That 'Apache listens on 127.0.0.1 only' `
+    { (Get-Content (Join-Path $PSScriptRoot 'templates\httpd-dining.conf.tpl') -Raw) -match '(?m)^Listen\s+127\.0\.0\.1:\{\{WEB_PORT\}\}\s*$' } `
+    'A bare "Listen {{WEB_PORT}}" would make the web admin reachable from the whole network, which this build is not meant to do - it is meant to be reachable only from this PC.'
+
+Assert-That 'DiningWeb is registered start= demand, not delayed-auto' `
+    { (Get-Content (Join-Path $StagePath 'tools\Install-Services.ps1') -Raw) -match "start=',\s*'demand'" } `
+    'delayed-auto means the web admin comes up on every boot whether anyone asked for it or not - the opposite of "desktop app by default, web panel on request".'
+
+Assert-That 'the on-demand web admin launcher is staged' `
+    { Test-Path (Join-Path $StagePath 'tools\Start-WebAdmin.ps1') } `
+    'Without it the desktop shortcut has nothing to start the stopped service and wait for it before opening the browser.'
+
+Assert-That 'the stop-web-admin script is staged' `
+    { Test-Path (Join-Path $StagePath 'tools\Stop-WebAdmin.ps1') } `
+    'The Start Menu "Stop Web Admin" shortcut needs this.'
+
 Write-Step 'Runtimes'
 
 $lock = Get-Content (Join-Path $PSScriptRoot 'runtimes.lock.json') -Raw | ConvertFrom-Json

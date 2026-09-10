@@ -46,6 +46,10 @@ Write-Ok 'Config, route and view caches built'
 # --------------------------------------------------------------- Apache service
 if (Get-Service -Name 'DiningWeb' -ErrorAction SilentlyContinue) {
     Write-Step 'DiningWeb service already exists - restarting it'
+    # Re-applied on every run, not just at first install: an upgrade from an older version of
+    # this installer (which ran the web admin delayed-auto, on the LAN) must not leave that
+    # service configuration behind just because the service object already existed.
+    Invoke-Native -FilePath 'sc.exe' -Arguments @('config', 'DiningWeb', 'start=', 'demand', 'depend=', 'DiningMySQL')
     # opcache.validate_timestamps=0 means changed PHP files are NOT picked up until a restart.
     Restart-Service 'DiningWeb'
 } else {
@@ -60,9 +64,12 @@ if (Get-Service -Name 'DiningWeb' -ErrorAction SilentlyContinue) {
 
     Write-Step 'Registering the DiningWeb service'
     Invoke-Native -FilePath $httpd -Arguments @('-k', 'install', '-n', 'DiningWeb', '-f', $conf)
-    # delayed-auto plus a dependency on the database: Apache starting before MySQL is ready
-    # produces a wall of connection errors on every boot.
-    Invoke-Native -FilePath 'sc.exe' -Arguments @('config', 'DiningWeb', 'start=', 'delayed-auto', 'depend=', 'DiningMySQL')
+    # start= demand: the web admin does not run unless someone asks for it, via the
+    # "Dining Web Admin" shortcut. The counter app talks straight to MySQL and never needs
+    # Apache, so nothing on the scanning critical path depends on this service being up.
+    # depend= DiningMySQL is kept so that starting it on demand still brings the database up
+    # first if it is somehow not running.
+    Invoke-Native -FilePath 'sc.exe' -Arguments @('config', 'DiningWeb', 'start=', 'demand', 'depend=', 'DiningMySQL')
     Invoke-Native -FilePath 'sc.exe' -Arguments @('description', 'DiningWeb', 'Dining Hall web admin (Apache + PHP).')
     Invoke-Native -FilePath 'sc.exe' -Arguments @(
         'failure', 'DiningWeb', 'reset=', '86400',
@@ -72,6 +79,8 @@ if (Get-Service -Name 'DiningWeb' -ErrorAction SilentlyContinue) {
 }
 
 # --------------------------------------------------------------- smoke test
+# Prove Apache actually serves the app while the installer is still on screen, then put it back
+# to sleep. Two seconds here is worth far more than discovering a broken vhost at 7am on a Monday.
 Write-Step 'Checking the web admin responds'
 $ok = $false
 foreach ($attempt in 1..10) {
@@ -86,12 +95,16 @@ if (-not $ok) {
     Write-Warn "The web admin did not answer on port $WebPort. Check C:\ProgramData\Dining\logs\apache-error.log."
 }
 
+Write-Step 'Stopping the web admin (it starts on demand from now on)'
+Stop-Service 'DiningWeb' -Force -ErrorAction SilentlyContinue
+Write-Ok 'Web admin is installed but not running'
+
 # --------------------------------------------------------------- firewall
-# The web admin only. Deliberately no rule for MySQL: it is bound to 127.0.0.1 and must stay
-# unreachable from the network.
-Write-Step 'Allowing the web admin through the firewall (local subnet only)'
-Get-NetFirewallRule -Group 'Dining' -ErrorAction SilentlyContinue | Remove-NetFirewallRule -ErrorAction SilentlyContinue
-New-NetFirewallRule -DisplayName "Dining Web ($WebPort)" -Group 'Dining' `
-    -Direction Inbound -Action Allow -Protocol TCP -LocalPort $WebPort `
-    -Profile Domain,Private -RemoteAddress LocalSubnet | Out-Null
-Write-Ok "Admin reachable at http://$(Get-LanAddress):$WebPort"
+# No inbound rule is created, for either service. Apache listens on 127.0.0.1 and MySQL on
+# 127.0.0.1, so there is nothing to allow - and a rule opening a port that nothing serves
+# publicly is worse than no rule, since it reads as if the port is meant to be reachable. Any
+# rule left over from an older LAN-enabled install is removed here.
+Get-NetFirewallRule -Group 'Dining' -ErrorAction SilentlyContinue |
+    Remove-NetFirewallRule -ErrorAction SilentlyContinue
+
+Write-Ok "Web admin will be available at http://localhost:$WebPort when started from the shortcut"

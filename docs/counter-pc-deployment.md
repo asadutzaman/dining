@@ -1,10 +1,19 @@
 # Counter PC — deployment and daily operation
 
+> **A packaged installer now exists — see [../installer/README.md](../installer/README.md).**
+> `dining-setup.exe` automates everything in Part 1 and Part 2 below, and defaults to a different
+> shape than this manual procedure describes: the counter app starts automatically and the web
+> admin is installed **stopped**, starting only when opened from its own shortcut, and answering
+> only on `127.0.0.1` — never reachable from another PC. Part 1 and Part 2 here remain accurate
+> for a **manual** install (no installer, or troubleshooting one that already ran), and that path
+> still serves the admin on the network as written below. Part 3 applies either way.
+
 Everything needed to take a **bare Windows 11 PC** (no Python, no Laragon, nothing) and turn it
 into the dining counter.
 
-This PC is the whole system: it holds the database, serves the web admin to other machines on the
-network, and runs the counter app that scans cards and prints tokens.
+This PC is the whole system: it holds the database, and runs the counter app that scans cards and
+prints tokens. Whether the web admin also serves other machines on the network depends on which
+path was used to set it up — see the note above.
 
 > **Part 1 and Part 2 are for whoever sets the machine up.**
 > **Part 3 is for the counter operator** — print it and keep it by the printer.
@@ -73,7 +82,7 @@ Output lands in `frontend\build\`.
 C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysqldump.exe -u root --single-transaction --routines --events dining > D:\dining-deploy\dining-full.sql
 ```
 
-### 1.4 Collect the member photos — read this, it is the one real gap
+### 1.4 Collect the member photos — read this, it matters more than it used to
 
 The database has photo records for **147 of 163 members**, but **the image files are not on the
 development machine.** `backend\storage\app\public\uploads\Member\` holds only empty stub folders;
@@ -83,6 +92,17 @@ that NCMS syncs into.
 The counter screen works fine without them — it shows the member's initials on a tile instead —
 but the photo is the operator's main check that the right person is at the counter, so it is worth
 getting.
+
+**If you deployed with `dining-setup.exe`, this step is no longer optional in practice.** The
+counter's photo lookup falls back to the web admin's `/api/file/view/` endpoint when a photo is
+not found locally — but the installer leaves the web admin **stopped** by default, so that
+fallback normally has nothing behind it, and a member's own `image_url` (the original NCMS
+address) is unreachable on a fully offline machine either way. The counter still works with none
+of this — a short-lived circuit breaker means an unreachable source costs a few seconds once
+rather than on every scan, then it is skipped — but every member without a local photo file will
+show as initials for the rest of that run. `dining-counter-cli.exe --self-test` reports this
+plainly (`folder is empty, every member will show initials`), so check it after copying the
+photos onto the machine, not before.
 
 **Copy `storage\app\public\uploads\Member\` from the API server** onto the USB stick. You can see
 exactly which files are expected:
@@ -107,7 +127,7 @@ reconfiguration.
       from your dev machine, or run `composer install --no-dev --optimize-autoloader` before copying.
       There is no PHP or Composer on the counter PC to fix this with later.
 - [ ] `frontend\build\` (with `index.html` in it)
-- [ ] `uploads\Member\` photos, if you got them
+- [ ] `uploads\Member\` photos — see §1.4; worth the extra trip if you did not already get them
 - [ ] Laragon Full installer — <https://laragon.org/download/>
 - [ ] Rongta 80mm printer driver — <https://www.rongtatech.com/> (Support → Downloads)
 - [ ] this document
@@ -349,6 +369,10 @@ Run it once by hand and confirm a `.sql` file appears that is more than a few KB
 > backup.
 
 ### Step 12 — The web admin (for enrolment and prices)
+
+> This manual path serves the admin to the whole network, on purpose — that is what
+> `--host=0.0.0.0` does. If you meant to keep it counter-PC-only, as `dining-setup.exe` does by
+> default, use the installer instead of this section.
 
 Open **Laragon → Terminal**:
 

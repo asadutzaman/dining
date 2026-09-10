@@ -60,11 +60,31 @@ Name: "{app}\config"
 
 [Icons]
 Name: "{commondesktop}\Dining Counter"; Filename: "{app}\counter\dining-counter.exe"; WorkingDir: "{app}\counter"
+
 Name: "{group}\Dining Counter";         Filename: "{app}\counter\dining-counter.exe"; WorkingDir: "{app}\counter"
-Name: "{group}\Dining Admin";           Filename: "http://localhost:8000/"
+
+; The web admin is off by default (see Install-Services.ps1: the DiningWeb service is
+; start= demand, stopped at the end of install) and reachable only from this machine
+; (httpd-dining.conf.tpl binds to 127.0.0.1). A plain "http://localhost:8000/" shortcut would
+; show a connection-refused page whenever the service is stopped, which is most of the time --
+; this shortcut starts the service, waits for it to answer, and only then opens the browser.
+; It lives on the desktop too, since it is now the only way in to enrolment, prices, payments
+; and reports.
+Name: "{commondesktop}\Dining Web Admin"; Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; \
+  Parameters: "-WindowStyle Hidden -ExecutionPolicy Bypass -NoProfile -File ""{app}\tools\Start-WebAdmin.ps1"" -InstallRoot ""{app}"""; \
+  WorkingDir: "{app}\tools"; IconFilename: "{app}\counter\dining-counter.exe"
+Name: "{group}\Dining Web Admin"; Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; \
+  Parameters: "-WindowStyle Hidden -ExecutionPolicy Bypass -NoProfile -File ""{app}\tools\Start-WebAdmin.ps1"" -InstallRoot ""{app}"""; \
+  WorkingDir: "{app}\tools"; IconFilename: "{app}\counter\dining-counter.exe"
+Name: "{group}\Stop Web Admin"; Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; \
+  Parameters: "-WindowStyle Hidden -ExecutionPolicy Bypass -NoProfile -File ""{app}\tools\Stop-WebAdmin.ps1"""; \
+  WorkingDir: "{app}\tools"
+
 Name: "{group}\Dining Self-Test";       Filename: "{app}\counter\dining-counter-cli.exe"; Parameters: "--self-test"; WorkingDir: "{app}\counter"
 Name: "{group}\Dining Test Print";      Filename: "{app}\counter\dining-counter-cli.exe"; Parameters: "--test-print"; WorkingDir: "{app}\counter"
 Name: "{group}\Backup Now";             Filename: "{app}\tools\backup.cmd"
+
+; Only the counter autostarts. The web admin stays off until someone explicitly opens it.
 Name: "{commonstartup}\Dining Counter"; Filename: "{app}\counter\dining-counter.exe"; WorkingDir: "{app}\counter"; Tasks: autostart
 
 [Tasks]
@@ -83,7 +103,7 @@ Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; \
 
 Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; \
   Parameters: "-ExecutionPolicy Bypass -NonInteractive -NoProfile -File ""{app}\tools\Install-Services.ps1"" -InstallRoot ""{app}"" -WebPort {code:GetWebPort}"; \
-  StatusMsg: "Starting the web admin..."; Flags: runhidden waituntilterminated
+  StatusMsg: "Checking the web admin (it will not stay running)..."; Flags: runhidden waituntilterminated
 
 Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; \
   Parameters: "-ExecutionPolicy Bypass -NonInteractive -NoProfile -File ""{app}\tools\Register-BackupTask.ps1"" -InstallRoot ""{app}"" -DataRoot ""{#DataRoot}"""; \
@@ -157,9 +177,10 @@ procedure InitializeWizard;
 begin
   PortsPage := CreateInputQueryPage(wpSelectTasks,
     'Ports and database', 'Where the system listens',
-    'The web admin is reachable from other PCs on this network. The database is not - it only ' +
-    'ever accepts connections from this machine.');
-  PortsPage.Add('Web admin port:', False);
+    'The counter starts automatically and works on its own. The web admin, for enrolling ' +
+    'members and setting prices, only runs when opened from its own shortcut, and only on ' +
+    'this PC - it is not reachable from the network, and neither is the database.');
+  PortsPage.Add('Web admin port (used only when the web admin is opened):', False);
   PortsPage.Add('Database port:', False);
   PortsPage.Add('Database password (leave blank unless this PC is shared):', True);
   PortsPage.Values[0] := '8000';

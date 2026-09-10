@@ -133,14 +133,34 @@ def run(config=None):
     import os
     if not config.photo_root:
         _line(WARN, 'no photo folder configured - the HTTP fallback will be used')
-    elif os.path.isdir(config.photo_root):
-        _line(PASS, 'folder: %s' % config.photo_root)
-    else:
+    elif not os.path.isdir(config.photo_root):
         _line(WARN, 'folder not found: %s' % config.photo_root)
-    if config.photo_http:
-        _line(PASS, 'http fallback: %s' % config.photo_http)
     else:
+        # A folder existing is not the same as it holding anything. On a fresh install, or one
+        # where the member photo copy step was skipped, this resolves to an empty tree silently
+        # -- the counter still runs, it just shows initials for every single member, which is
+        # easy to mistake for a bug rather than for missing data.
+        has_files = any(
+            files for _root, _dirs, files in os.walk(config.photo_root))
+        if has_files:
+            _line(PASS, 'folder: %s' % config.photo_root)
+        else:
+            _line(WARN, 'folder is empty, every member will show initials: %s' % config.photo_root)
+
+    if not config.photo_http:
         _line(WARN, 'no http fallback configured')
+    else:
+        # Reachability, not just configuration. On a fully local install the web admin is off by
+        # default (see docs/counter-pc-deployment.md), so this URL normally has nothing behind
+        # it at all -- that is fine and expected, but it should read as a WARN the operator can
+        # recognise, not a PASS that turns out to mean nothing at counter time.
+        try:
+            import requests
+            requests.head(config.photo_http, timeout=2.0)
+            _line(PASS, 'http fallback reachable: %s' % config.photo_http)
+        except Exception:
+            _line(WARN, 'http fallback configured but not reachable right now (normal if the '
+                        'web admin is not open): %s' % config.photo_http)
 
     print('-' * 68)
     if failures:
