@@ -44,8 +44,30 @@ Invoke-Native -FilePath $php -Arguments @('artisan', 'view:cache')   -WorkingDir
 Write-Ok 'Config, route and view caches built'
 
 # --------------------------------------------------------------- Apache service
-if (Get-Service -Name 'DiningWeb' -ErrorAction SilentlyContinue) {
-    Write-Step 'DiningWeb service already exists - restarting it'
+#
+# Same reasoning as the DiningMySQL check in Install-Database.ps1: a service literally named
+# "DiningWeb" is not proof it is ours. Confirm its binary path is the httpd this installer just
+# extracted before touching it - otherwise this would silently reconfigure and restart someone
+# else's web server.
+$expectedHttpd = (Resolve-Path $httpd).Path
+$existingWebSvc = Get-CimInstance -ClassName Win32_Service -Filter "Name='DiningWeb'" -ErrorAction SilentlyContinue
+
+if ($existingWebSvc -and $existingWebSvc.PathName -notlike "*$expectedHttpd*") {
+    throw @"
+A Windows service named 'DiningWeb' already exists, but it does not belong to this installer:
+
+  $($existingWebSvc.PathName)
+
+This installer expected:
+
+  $expectedHttpd
+
+Rename or remove that other service before installing.
+"@
+}
+
+if ($existingWebSvc) {
+    Write-Step 'DiningWeb service already exists (confirmed ours) - restarting it'
     # Re-applied on every run, not just at first install: an upgrade from an older version of
     # this installer (which ran the web admin delayed-auto, on the LAN) must not leave that
     # service configuration behind just because the service object already existed.

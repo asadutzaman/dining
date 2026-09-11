@@ -16,20 +16,33 @@
     "laragon_path": "bin/php/php-8.2.21-Win32-vs16-x64",
     "thread_safe": true,
     "why": "Thread-safe (ZTS) is required for mod_php; it is the build that ships php8apache2_4.dll. An NTS build cannot be used with mod_php.",
-    "required_files": ["php.exe", "php8ts.dll", "php8apache2_4.dll", "ext/php_pdo_mysql.dll"]
+    "required_files": [
+      "php.exe",
+      "php8ts.dll",
+      "php8apache2_4.dll",
+      "ext/php_pdo_mysql.dll"
+    ]
   },
   "apache": {
     "version": "2.4.54",
     "folder": "httpd-2.4.54-win64-VS16",
     "laragon_path": "bin/apache/httpd-2.4.54-win64-VS16",
     "why": "VS16 build, matching the PHP toolset. Registers itself as a Windows service via 'httpd -k install', so no third-party service wrapper is needed.",
-    "required_files": ["bin/httpd.exe", "modules/mod_rewrite.so", "modules/mod_mpm_winnt.so"]
+    "required_files": [
+      "bin/httpd.exe",
+      "modules/mod_rewrite.so"
+    ]
   },
   "mysql": {
     "version": "8.0.30",
     "folder": "mysql-8.0.30-winx64",
     "laragon_path": "bin/mysql/mysql-8.0.30-winx64",
     "why": "Pinned to 8.0.x. MySQL 8.4 REMOVED mysql_native_password, which the counter app's PyMySQL needs unless the cryptography package is present. dining-full.sql is also produced by this mysqldump.",
-    "required_files": ["bin/mysqld.exe", "bin/mysql.exe", "bin/mysqldump.exe", "bin/mysqladmin.exe"]
+    "required_files": [
+      "bin/mysqld.exe",
+      "bin/mysql.exe",
+      "bin/mysqldump.exe",
+      "bin/mysqladmin.exe"
+    ]
   }
 }

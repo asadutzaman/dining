@@ -51,8 +51,34 @@ function Invoke-Sql {
 }
 
 # --------------------------------------------------------------- service
-if (Get-Service -Name 'DiningMySQL' -ErrorAction SilentlyContinue) {
-    Write-Step 'DiningMySQL service already exists - reusing it'
+#
+# A service literally named "DiningMySQL" existing is not by itself proof that it is OURS.
+# Anyone can register any mysqld under that name - a Laragon MySQL instance registered as a
+# Windows service under this exact name was hit for real while testing this installer, on a
+# machine where Dining Counter had never actually been installed. Blindly "reusing" it would mean
+# running CREATE DATABASE, migrate and the seeders against a completely unrelated database (in
+# that case, a developer's live working database), silently. Ownership is checked by confirming
+# the service's own binary path is the mysqld this installer just extracted.
+$expectedMysqld = (Resolve-Path $mysqld).Path
+$existingSvc = Get-CimInstance -ClassName Win32_Service -Filter "Name='DiningMySQL'" -ErrorAction SilentlyContinue
+
+if ($existingSvc -and $existingSvc.PathName -notlike "*$expectedMysqld*") {
+    throw @"
+A Windows service named 'DiningMySQL' already exists, but it does not belong to this installer:
+
+  $($existingSvc.PathName)
+
+This installer expected:
+
+  $expectedMysqld
+
+Reusing a service under a false assumption risks running this installer's migrations and seeders
+against the WRONG database. Rename or remove that other service before installing.
+"@
+}
+
+if ($existingSvc) {
+    Write-Step 'DiningMySQL service already exists (confirmed ours) - reusing it'
     if ((Get-Service 'DiningMySQL').Status -ne 'Running') { Start-Service 'DiningMySQL' }
 } else {
     if (-not (Test-PortFree $MysqlPort)) {

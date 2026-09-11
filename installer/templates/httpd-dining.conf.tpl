@@ -15,7 +15,11 @@ Listen 127.0.0.1:{{WEB_PORT}}
 ServerName dining-counter:{{WEB_PORT}}
 PidFile "C:/ProgramData/Dining/logs/httpd.pid"
 
-LoadModule mpm_winnt_module   modules/mod_mpm_winnt.so
+# mpm_winnt is NOT loaded here: this Apache build compiles it statically into httpd.exe
+# (confirmed with `httpd.exe -l`), so there is no modules/mod_mpm_winnt.so on disk and a
+# LoadModule line for it fails at startup with "module not built in". The <IfModule mpm_winnt_module>
+# block below still works without it -- Apache registers a compiled-in module under its module
+# name the same as it would a loaded one, so the check still evaluates true.
 LoadModule authz_core_module  modules/mod_authz_core.so
 LoadModule dir_module         modules/mod_dir.so
 LoadModule mime_module        modules/mod_mime.so
@@ -25,6 +29,8 @@ LoadModule expires_module     modules/mod_expires.so
 LoadModule log_config_module  modules/mod_log_config.so
 LoadModule deflate_module     modules/mod_deflate.so
 LoadModule setenvif_module    modules/mod_setenvif.so
+# AddOutputFilterByType below needs this loaded explicitly on this build; it is not part of core.
+LoadModule filter_module      modules/mod_filter.so
 
 # mod_php, not FastCGI. One Windows service, one process, real threading from mpm_winnt, and no
 # third-party service wrapper anywhere. The DLL and the PHP build must come from the same VS

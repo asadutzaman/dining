@@ -134,7 +134,17 @@ function Wait-ForMySql {
         if ($Password) { $args += "-p$Password" }
         $args += 'ping'
 
-        & $MysqlAdmin @args 2>$null | Out-Null
+        # No "2>$null" here. In Windows PowerShell 5.1, redirecting a native command's stderr --
+        # even to $null -- wraps it in a NativeCommandError, and under the caller's
+        # $ErrorActionPreference = 'Stop' that is TERMINATING. mysqladmin writes to stderr on
+        # every failed ping, which is the expected state on essentially every real install
+        # (MySQL is not instantly ready right after --initialize-insecure and service start), so
+        # this loop would throw on its very first iteration instead of polling and retrying --
+        # breaking the installer at the one step every install depends on. Caught directly:
+        # calling mysqladmin against a closed port under Stop threw immediately with the old
+        # redirect and did not with this version. stderr is left to print to the (hidden,
+        # runhidden-flagged) console; only the exit code is checked.
+        $null = & $MysqlAdmin @args
         if ($LASTEXITCODE -eq 0) {
             Write-Ok 'MySQL is accepting connections'
             return $true

@@ -3,3 +3,8 @@ payload-src/*
 !payload-src/.gitkeep
 stage/
 out/
+
+# Real customer data (member names, phones, balances). Never committed, regardless of how it
+# got here.
+dumps/
+*.sql

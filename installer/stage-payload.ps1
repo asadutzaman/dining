@@ -21,6 +21,13 @@ param(
 
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
+
+# Log to a build-local file, not the real install-time path. Dining-Common.ps1 defaults
+# DINING_LOG to C:\ProgramData\Dining\logs\install.log, which is correct for the scripts an
+# actual install runs -- but this script runs on a DEV machine, and writing build output there
+# is exactly what created a misleading "install.log" on a machine where Dining Counter had
+# never been installed, confusing later diagnosis of an unrelated service-name collision.
+if (-not $env:DINING_LOG) { $env:DINING_LOG = Join-Path $PSScriptRoot 'out\build.log' }
 . "$PSScriptRoot\scripts\Dining-Common.ps1"
 
 if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path }
@@ -165,7 +172,12 @@ if (-not $SkipMigrationCheck) {
             Invoke-Native -FilePath 'php' -WorkingDirectory $backendDst -Arguments @('artisan', 'db:seed', '--force', '--no-interaction', '--class=Database\Seeders\DiningBaselineSeeder')
             Write-Ok 'Fresh migrate + seed succeeded'
         } finally {
-            & $mysql -u root -e "DROP DATABASE IF EXISTS $tmpDb;" 2>&1 | Out-Null
+            # No stderr redirect: under $ErrorActionPreference = 'Stop', PowerShell 5.1 wraps a
+            # native command's stderr in a terminating NativeCommandError even when only
+            # discarding it - and a throw inside `finally` masks whatever the try block was
+            # actually doing. See the identical fix (and its reproduction) in
+            # scripts/Dining-Common.ps1's Wait-ForMySql.
+            $null = & $mysql -u root -e "DROP DATABASE IF EXISTS $tmpDb;"
             # The staged tree must never carry a .env - the installer generates it.
             Remove-Item $envFile -Force -ErrorAction SilentlyContinue
             Get-ChildItem (Join-Path $backendDst 'bootstrap\cache\*.php') -ErrorAction SilentlyContinue | Remove-Item -Force

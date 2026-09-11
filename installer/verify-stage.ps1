@@ -16,6 +16,13 @@ param(
 
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
+
+# Log to a build-local file, not the real install-time path. Dining-Common.ps1 defaults
+# DINING_LOG to C:\ProgramData\Dining\logs\install.log, which is correct for the scripts an
+# actual install runs -- but this script runs on a DEV machine, and writing build output there
+# is exactly what created a misleading "install.log" on a machine where Dining Counter had
+# never been installed, confusing later diagnosis of an unrelated service-name collision.
+if (-not $env:DINING_LOG) { $env:DINING_LOG = Join-Path $PSScriptRoot 'out\build.log' }
 . "$PSScriptRoot\scripts\Dining-Common.ps1"
 
 if (-not $StagePath) { $StagePath = Join-Path $PSScriptRoot 'stage' }

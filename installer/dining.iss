@@ -263,21 +263,51 @@ begin
   end;
 end;
 
+{ Whether THIS product, as installed by an earlier run of THIS installer, is present.
+  Deliberately NOT a check for a service literally named DiningMySQL/DiningWeb: a service with
+  either name can exist for a reason that has nothing to do with this installer at all - a
+  Laragon MySQL instance registered as a Windows service under that same name is exactly such a
+  case, and was hit for real while testing this build (Installed Apps showed nothing, yet the
+  old check still refused to proceed). The uninstall registry key Inno writes for our own AppId
+  is the one signal that unambiguously means "this exact product completed an install here". }
+function IsAlreadyInstalled(): Boolean;
+begin
+  Result := RegKeyExists(HKLM,
+    'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#SetupSetting("AppId")}_is1');
+end;
+
 function InitializeSetup(): Boolean;
 var
   ResultCode: Integer;
 begin
   Result := True;
-  { A previous install must be removed first: two Apache services on one port, or a second mysqld
-    pointed at the same data directory, is not something to discover at a meal service. }
-  if RegKeyExists(HKLM, 'SYSTEM\CurrentControlSet\Services\DiningMySQL') or
-     RegKeyExists(HKLM, 'SYSTEM\CurrentControlSet\Services\DiningWeb') then
+
+  if IsAlreadyInstalled() then
   begin
     if MsgBox('The dining system is already installed on this PC.' + #13#10 + #13#10 +
               'Uninstall it first (your database, backups and photos are always kept), then run ' +
               'this installer again.' + #13#10 + #13#10 +
               'Open Apps & features now?', mbConfirmation, MB_YESNO) = IDYES then
       ShellExec('open', 'ms-settings:appsfeatures', '', '', SW_SHOW, ewNoWait, ResultCode);
+    Result := False;
+    Exit;
+  end;
+
+  { Not our product, but something is already using the service names this installer needs.
+    Letting the install proceed silently here is how Install-Database.ps1 or Install-Services.ps1
+    would end up "reusing" someone else's MySQL or Apache instance - both scripts now refuse
+    loudly rather than do that (see the ownership check in each), but it is kinder to say so
+    here, before 130MB has even been extracted. }
+  if RegKeyExists(HKLM, 'SYSTEM\CurrentControlSet\Services\DiningMySQL') or
+     RegKeyExists(HKLM, 'SYSTEM\CurrentControlSet\Services\DiningWeb') then
+  begin
+    MsgBox('A Windows service named "DiningMySQL" or "DiningWeb" already exists on this PC, but ' +
+           'Dining Counter is not listed in Installed apps - so it was not this installer that ' +
+           'put it there.' + #13#10 + #13#10 +
+           'This is usually an unrelated MySQL or web server that happens to use the same ' +
+           'service name. Rename or remove that service first: installing over it risks this ' +
+           'setup operating on the wrong database.',
+           mbError, MB_OK);
     Result := False;
   end;
 end;
