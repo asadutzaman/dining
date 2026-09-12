@@ -19,7 +19,18 @@ $ErrorActionPreference = 'Stop'
 $httpd    = Join-Path $InstallRoot 'runtime\apache\bin\httpd.exe'
 $conf     = Join-Path $InstallRoot 'config\httpd.conf'
 $php      = Join-Path $InstallRoot 'runtime\php\php.exe'
+$phpIni   = Join-Path $InstallRoot 'config\php.ini'
 $backend  = Join-Path $InstallRoot 'backend'
+
+# php.exe with no -c uses whatever php.ini ships bundled NEXT TO IT in the raw runtime zip -
+# not the one this installer generated at config\php.ini. That default carries none of the
+# extensions composer.json actually needs (pdo_mysql, zip, ...), so every artisan call here
+# must be explicit about which ini to load. Apache/mod_php does not have this problem: it is
+# told via PHPIniDir in httpd.conf, which has no CLI equivalent.
+function Invoke-Artisan {
+    param([Parameter(Mandatory)] [string[]] $Arguments)
+    Invoke-Native -FilePath $php -Arguments (@('-c', $phpIni, 'artisan') + $Arguments) -WorkingDirectory $backend
+}
 
 # --------------------------------------------------------------- Laravel caches
 # All of these run with the working directory set to the backend; artisan resolves paths from it.
@@ -29,7 +40,7 @@ Write-Step 'Preparing the application'
 # elevated so it normally succeeds, but photos are served through /api/file/view/{id} anyway, so
 # a failure here is cosmetic - warn and carry on rather than failing the whole install.
 try {
-    Invoke-Native -FilePath $php -Arguments @('artisan', 'storage:link', '--no-interaction') -WorkingDirectory $backend
+    Invoke-Artisan -Arguments @('storage:link', '--no-interaction')
 } catch {
     Write-Warn "storage:link failed (harmless - images are served through /api/file/view): $($_.Exception.Message.Split([Environment]::NewLine)[0])"
 }
@@ -38,9 +49,9 @@ try {
 # env(); verify-stage.ps1 re-checks that at build time so a regression fails the build instead of
 # the deployment. route:cache only works because the SPA routes are controller actions, not
 # closures - route:cache refuses to cache a closure-backed route.
-Invoke-Native -FilePath $php -Arguments @('artisan', 'config:cache') -WorkingDirectory $backend
-Invoke-Native -FilePath $php -Arguments @('artisan', 'route:cache')  -WorkingDirectory $backend
-Invoke-Native -FilePath $php -Arguments @('artisan', 'view:cache')   -WorkingDirectory $backend
+Invoke-Artisan -Arguments @('config:cache')
+Invoke-Artisan -Arguments @('route:cache')
+Invoke-Artisan -Arguments @('view:cache')
 Write-Ok 'Config, route and view caches built'
 
 # --------------------------------------------------------------- Apache service

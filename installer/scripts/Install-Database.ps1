@@ -34,7 +34,18 @@ $myIni      = Join-Path $InstallRoot 'config\my.ini'
 $dataDir    = Join-Path $DataRoot 'mysql'
 $errorLog   = Join-Path $DataRoot 'logs\mysql-error.log'
 $php        = Join-Path $InstallRoot 'runtime\php\php.exe'
+$phpIni     = Join-Path $InstallRoot 'config\php.ini'
 $backend    = Join-Path $InstallRoot 'backend'
+
+# php.exe with no -c uses whatever php.ini ships bundled NEXT TO IT in the raw runtime zip -
+# not the one this installer generated at config\php.ini. That default carries none of the
+# extensions composer.json actually needs (pdo_mysql, zip, ...), so every artisan call here
+# must be explicit about which ini to load. Apache/mod_php does not have this problem: it is
+# told via PHPIniDir in httpd.conf, which has no CLI equivalent.
+function Invoke-Artisan {
+    param([Parameter(Mandatory)] [string[]] $Arguments)
+    Invoke-Native -FilePath $php -Arguments (@('-c', $phpIni, 'artisan') + $Arguments) -WorkingDirectory $backend
+}
 
 function Get-RootArgs {
     $a = @("--defaults-file=$myIni", '-u', 'root')
@@ -77,6 +88,10 @@ against the WRONG database. Rename or remove that other service before installin
 "@
 }
 
+# Whether root's password was just set to blank by --initialize-insecure a moment ago (true),
+# or should already carry whatever $DbPassword an earlier run applied (false, the default).
+$freshlyInitialized = $false
+
 if ($existingSvc) {
     Write-Step 'DiningMySQL service already exists (confirmed ours) - reusing it'
     if ((Get-Service 'DiningMySQL').Status -ne 'Running') { Start-Service 'DiningMySQL' }
@@ -97,6 +112,9 @@ if ($existingSvc) {
         Invoke-Native -FilePath $mysqld -Arguments @(
             "--defaults-file=$myIni", '--initialize-insecure',
             '--lower_case_table_names=1', '--console')
+        # --initialize-insecure always creates root with a BLANK password, regardless of
+        # $DbPassword - it is applied for real a few lines down, once the server is reachable.
+        $freshlyInitialized = $true
     }
 
     Write-Step 'Registering the DiningMySQL service'
@@ -112,7 +130,41 @@ if ($existingSvc) {
     Start-Service 'DiningMySQL'
 }
 
-Wait-ForMySql -MysqlAdmin $mysqladmin -DefaultsFile $myIni -Password $DbPassword -ErrorLog $errorLog
+# A freshly initialized server's root account ALWAYS has a blank password right now
+# (--initialize-insecure guarantees it), regardless of what password the operator chose in the
+# wizard - that choice has not been applied to the account yet. An existing (reused) service is
+# assumed to already carry $DbPassword from an earlier run of this same installer.
+$currentPassword = if ($freshlyInitialized) { '' } else { $DbPassword }
+Wait-ForMySql -MysqlAdmin $mysqladmin -DefaultsFile $myIni -Password $currentPassword -ErrorLog $errorLog
+
+# --------------------------------------------------------------- root account grants
+#
+# MySQL's grant table treats 'root'@'localhost' and 'root'@'127.0.0.1' as two entirely
+# different accounts. --initialize-insecure only ever creates 'root'@'localhost', and this
+# server's skip-name-resolve setting (my.ini) means a TCP/IP connection to 127.0.0.1 is matched
+# against the grant table by literal IP, not mapped to the 'localhost' pattern the way it would
+# be without skip-name-resolve. This server has no named pipe enabled, so EVERY real client -
+# the counter app's PyMySQL chief among them, which only ever speaks TCP/IP - connects via
+# 127.0.0.1 and hits exactly this gap. Left unfixed, the counter's very first scan fails with:
+#   (1130, "Host '127.0.0.1' is not allowed to connect to this MySQL server")
+# This also applies whatever password the operator chose (or none) to BOTH accounts, since
+# nothing else in this installer ever sets one - the wizard's password box previously had no
+# effect on the actual MySQL account at all. Idempotent: safe to re-run against an existing,
+# already-fixed install.
+Write-Step 'Granting root access from 127.0.0.1 (the only address the counter app ever uses)'
+$escapedPwd = $DbPassword -replace "'", "''"
+$grantSql = @"
+CREATE USER IF NOT EXISTS 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY '$escapedPwd';
+ALTER USER 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY '$escapedPwd';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' WITH GRANT OPTION;
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$escapedPwd';
+FLUSH PRIVILEGES;
+"@
+$a = @("--defaults-file=$myIni", '-u', 'root')
+if ($currentPassword) { $a += "-p$currentPassword" }
+$a += @('--default-character-set=utf8mb4', '-e', $grantSql)
+Invoke-Native -FilePath $mysql -Arguments $a
+Write-Ok 'root@127.0.0.1 and root@localhost both usable'
 
 # --------------------------------------------------------------- database
 Write-Step "Creating the '$DbName' database if it does not exist"
@@ -133,22 +185,20 @@ if ($restoring) {
     # explicitly). Migrating forward is what the admin's booking and mobile features need, and
     # it is safe for the counter because every added column has a default.
     Write-Step 'Applying any migrations the dump predates'
-    Invoke-Native -FilePath $php -Arguments @('artisan', 'migrate', '--force', '--no-interaction') -WorkingDirectory $backend
+    Invoke-Artisan -Arguments @('migrate', '--force', '--no-interaction')
 } else {
     Write-Step 'No dump supplied - building a fresh database'
-    Invoke-Native -FilePath $php -Arguments @('artisan', 'migrate', '--force', '--no-interaction') -WorkingDirectory $backend
+    Invoke-Artisan -Arguments @('migrate', '--force', '--no-interaction')
 
     Write-Step 'Seeding users, roles and permissions'
-    Invoke-Native -FilePath $php -Arguments @(
-        'artisan', 'db:seed', '--force', '--no-interaction',
-        '--class=Database\Seeders\AuthSeeder') -WorkingDirectory $backend
+    Invoke-Artisan -Arguments @(
+        'db:seed', '--force', '--no-interaction', '--class=Database\Seeders\AuthSeeder')
 
     # Without this the system comes up with no rate for any meal, refuses every scan with
     # "No active cost setting found", and the counter self-test fails on all three meals.
     Write-Step 'Seeding baseline meal rates'
-    Invoke-Native -FilePath $php -Arguments @(
-        'artisan', 'db:seed', '--force', '--no-interaction',
-        '--class=Database\Seeders\DiningBaselineSeeder') -WorkingDirectory $backend
+    Invoke-Artisan -Arguments @(
+        'db:seed', '--force', '--no-interaction', '--class=Database\Seeders\DiningBaselineSeeder')
 }
 
 # --------------------------------------------------------------- report
