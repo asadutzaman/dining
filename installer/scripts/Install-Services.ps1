@@ -77,12 +77,32 @@ Rename or remove that other service before installing.
 "@
 }
 
+# The default Windows service security descriptor grants Interactive Users (IU) - anyone
+# logged on at this PC's console - query rights (LC) but NOT SERVICE_START (RP) or
+# SERVICE_STOP (WP). That is exactly why the "Dining Web Admin" / "Stop Web Admin" shortcuts,
+# launched normally by whoever is sitting at the counter with no elevation, cannot start or
+# stop this service at all: the whole point of those shortcuts is to avoid needing an admin
+# account (or a UAC prompt) just to open the admin panel, and without this they fail outright
+# with "Cannot open DiningWeb service on computer '.'". Only the IU ACE is touched here - SY
+# (LocalSystem) and BA (Administrators) keep whatever rights Windows already granted them.
+function Grant-DiningWebStartStop {
+    $before = (sc.exe sdshow DiningWeb) -join ''
+    $after = $before -replace '\(A;;CCLCSWLOCRRC;;;IU\)', '(A;;CCLCSWRPWPLOCRRC;;;IU)'
+    if ($after -eq $before) {
+        Write-Warn 'Could not find the expected Interactive Users ACE on DiningWeb - leaving its permissions as Windows set them. The web admin shortcuts may require an admin account.'
+        return
+    }
+    sc.exe sdset DiningWeb $after | Out-Null
+}
+
 if ($existingWebSvc) {
     Write-Step 'DiningWeb service already exists (confirmed ours) - restarting it'
     # Re-applied on every run, not just at first install: an upgrade from an older version of
-    # this installer (which ran the web admin delayed-auto, on the LAN) must not leave that
-    # service configuration behind just because the service object already existed.
+    # this installer (which ran the web admin delayed-auto, on the LAN, or without this ACL
+    # grant) must not leave that configuration behind just because the service object already
+    # existed.
     Invoke-Native -FilePath 'sc.exe' -Arguments @('config', 'DiningWeb', 'start=', 'demand', 'depend=', 'DiningMySQL')
+    Grant-DiningWebStartStop
     # opcache.validate_timestamps=0 means changed PHP files are NOT picked up until a restart.
     Restart-Service 'DiningWeb'
 } else {
@@ -107,6 +127,7 @@ if ($existingWebSvc) {
     Invoke-Native -FilePath 'sc.exe' -Arguments @(
         'failure', 'DiningWeb', 'reset=', '86400',
         'actions=', 'restart/5000/restart/10000/restart/30000')
+    Grant-DiningWebStartStop
 
     Start-Service 'DiningWeb'
 }
