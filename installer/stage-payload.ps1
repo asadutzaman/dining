@@ -54,6 +54,21 @@ $backendSrc = Join-Path $RepoRoot 'backend'
 $bundledPhp = Join-Path $payloadSrc "$($lock.php.folder)\php.exe"
 if (-not (Test-Path $bundledPhp)) { throw "Bundled PHP not found at $bundledPhp - run fetch-runtimes.ps1 first." }
 
+# The bundled php.exe with no -c uses whatever php.ini ships bundled NEXT TO IT in the raw
+# runtime zip - not this installer's templates\php.ini.tpl - and that default has every
+# extension (zip included) switched off. That bit composer install here exactly as it bit
+# every artisan call in the installer scripts (see Install-Database.ps1/Install-Services.ps1):
+# without ext-zip, resolving phpoffice/phpspreadsheet fails outright. extension_dir is
+# overridden on the command line rather than baked into the copied template, since
+# php.ini.tpl hardcodes C:/dining/runtime/php/ext - correct for a real install, not for this
+# bundled-but-not-yet-installed copy in payload-src. Reused below for the fresh-migration
+# check too, so both build-time PHP invocations are consistent with each other and with what
+# actually ships.
+$buildPhpIni = Join-Path $env:TEMP "dining-build-php-$PID.ini"
+Copy-Item (Join-Path $PSScriptRoot 'templates\php.ini.tpl') $buildPhpIni -Force
+$buildPhpExtDir = Join-Path (Split-Path $bundledPhp -Parent) 'ext'
+$buildPhpArgs = @('-c', $buildPhpIni, '-d', "extension_dir=$buildPhpExtDir")
+
 $composerPhar = $null
 foreach ($candidate in @(
     'C:\ProgramData\ComposerSetup\bin\composer.phar',
@@ -73,8 +88,8 @@ if (-not $composerPhar) { throw 'composer.phar not found. Install Composer for W
 # then removes, and Laravel fatals on boot trying to load them. Must go before composer runs.
 Get-ChildItem (Join-Path $backendSrc 'bootstrap\cache\*.php') -ErrorAction SilentlyContinue |
     Remove-Item -Force
-Invoke-Native -FilePath $bundledPhp -WorkingDirectory $backendSrc -Arguments @(
-    $composerPhar, 'install', '--no-dev', '--optimize-autoloader', '--no-interaction', '--no-progress')
+Invoke-Native -FilePath $bundledPhp -WorkingDirectory $backendSrc -Arguments (
+    $buildPhpArgs + @($composerPhar, 'install', '--no-dev', '--optimize-autoloader', '--no-interaction', '--no-progress'))
 
 Write-Step 'Copying the backend'
 $backendDst = Join-Path $stage 'app\backend'
@@ -182,20 +197,14 @@ if (-not $SkipMigrationCheck) {
         $tmpDb = "dining_stagecheck_$(Get-Random -Maximum 99999)"
         $envFile = Join-Path $backendDst '.env'
 
-        # The same bundled PHP + generated php.ini that will actually run this on the counter
-        # PC, not whatever 'php' resolves to on the build machine's PATH. That distinction is
-        # exactly what let a build-machine-only PHP version reach this check undetected: it
-        # proved migrations worked under a PHP nothing ships with. extension_dir is overridden
-        # on the command line rather than baked into the copied template, since php.ini.tpl
-        # hardcodes C:/dining/runtime/php/ext - correct for a real install, not for this
-        # bundled-but-not-yet-installed copy in payload-src.
-        $stageCheckIni = Join-Path $env:TEMP "dining-stagecheck-php-$(Get-Random).ini"
-        Copy-Item (Join-Path $PSScriptRoot 'templates\php.ini.tpl') $stageCheckIni -Force
-        $phpExtDir = Join-Path (Split-Path $bundledPhp -Parent) 'ext'
+        # Same bundled PHP + ini as the composer install above (see $buildPhpArgs), not
+        # whatever 'php' resolves to on the build machine's PATH. That distinction is exactly
+        # what let a build-machine-only PHP version reach this check undetected before: it
+        # proved migrations worked under a PHP nothing ships with.
         function Invoke-StageCheckArtisan {
             param([Parameter(Mandatory)] [string[]] $Arguments)
             Invoke-Native -FilePath $bundledPhp -WorkingDirectory $backendDst -Arguments (
-                @('-c', $stageCheckIni, '-d', "extension_dir=$phpExtDir", 'artisan') + $Arguments)
+                $buildPhpArgs + @('artisan') + $Arguments)
         }
 
         try {
@@ -224,10 +233,11 @@ if (-not $SkipMigrationCheck) {
             # The staged tree must never carry a .env - the installer generates it.
             Remove-Item $envFile -Force -ErrorAction SilentlyContinue
             Get-ChildItem (Join-Path $backendDst 'bootstrap\cache\*.php') -ErrorAction SilentlyContinue | Remove-Item -Force
-            Remove-Item $stageCheckIni -Force -ErrorAction SilentlyContinue
         }
     }
 }
+
+Remove-Item $buildPhpIni -Force -ErrorAction SilentlyContinue
 
 $mb = [math]::Round((Get-ChildItem $stage -Recurse -File | Measure-Object Length -Sum).Sum / 1MB)
 Write-Ok "Stage complete: $mb MB"
