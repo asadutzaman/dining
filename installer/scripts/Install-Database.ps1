@@ -88,9 +88,65 @@ against the WRONG database. Rename or remove that other service before installin
 "@
 }
 
-# Whether root's password was just set to blank by --initialize-insecure a moment ago (true),
-# or should already carry whatever $DbPassword an earlier run applied (false, the default).
-$freshlyInitialized = $false
+# --------------------------------------------------------------- root account grants
+#
+# MySQL's grant table treats 'root'@'localhost' and 'root'@'127.0.0.1' as two entirely
+# different accounts, and --initialize-insecure only ever creates 'root'@'localhost'. This
+# server has no named pipe enabled, so on Windows EVERY client connection is TCP - and that
+# holds no matter what host string the client asks for. Reproduced directly against this exact
+# staged mysqld: "no --host", "--host=127.0.0.1" and "--host=localhost" all fail IDENTICALLY
+# with error 1130 against a server that only has 'root'@'localhost', because the server matches
+# purely on the connecting socket's peer address, which is 127.0.0.1 regardless.
+#
+# That means the OLD version of this fix - connect with the mysql.exe client, then run
+# CREATE USER 'root'@'127.0.0.1' - could never actually work on a genuinely fresh install: it
+# needs the very account it is trying to create in order to authenticate and create it. It only
+# ever appeared to work in testing because the dev machine's data directory already carried a
+# manually-added root@127.0.0.1 grant from earlier troubleshooting - invisible right up until a
+# real clean PC hit it, exactly like the missing VC++ Redistributable before it.
+#
+# The actual fix is --init-file: mysqld runs that SQL itself while starting up, with no client
+# authentication involved at all. Bring the server up standalone here (not yet the Windows
+# service - that gets registered afterward), let --init-file apply the grant, confirm it by
+# actually connecting, then shut it down cleanly so the service registration below attaches to
+# a clean data directory. This also sets root's real password (whatever the operator chose, or
+# none) on both accounts - nothing else in this installer ever sets one.
+$escapedPwd = $DbPassword -replace "'", "''"
+$grantSql = @"
+CREATE USER IF NOT EXISTS 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY '$escapedPwd';
+ALTER USER 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY '$escapedPwd';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' WITH GRANT OPTION;
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$escapedPwd';
+FLUSH PRIVILEGES;
+"@
+
+function Invoke-GrantBootstrap {
+    Write-Step 'Granting root access from 127.0.0.1 (the only address any real client here ever uses)'
+    $bootstrapSql = Join-Path $env:TEMP "dining-bootstrap-grants-$([guid]::NewGuid()).sql"
+    $bootstrapLog = Join-Path $DataRoot 'logs\mysql-bootstrap.log'
+    try {
+        Set-Content -Path $bootstrapSql -Value $grantSql -Encoding ascii
+        $bootstrapProc = Start-Process -FilePath $mysqld -ArgumentList @(
+            "--defaults-file=$myIni", "--init-file=$($bootstrapSql -replace '\\','/')", '--console'
+        ) -PassThru -WindowStyle Hidden `
+          -RedirectStandardOutput $bootstrapLog -RedirectStandardError "$bootstrapLog.err"
+        try {
+            Wait-ForMySql -MysqlAdmin $mysqladmin -DefaultsFile $myIni -Password $DbPassword -ErrorLog $errorLog
+            Write-Ok 'root@127.0.0.1 and root@localhost both usable'
+        } finally {
+            if (-not $bootstrapProc.HasExited) {
+                $a = @("--defaults-file=$myIni", '-u', 'root')
+                if ($DbPassword) { $a += "-p$DbPassword" }
+                $a += 'shutdown'
+                Invoke-Native -FilePath $mysqladmin -Arguments $a
+                $bootstrapProc.WaitForExit(30000) | Out-Null
+                if (-not $bootstrapProc.HasExited) { Stop-Process -Id $bootstrapProc.Id -Force }
+            }
+        }
+    } finally {
+        Remove-Item $bootstrapSql -Force -ErrorAction SilentlyContinue
+    }
+}
 
 if ($existingSvc) {
     Write-Step 'DiningMySQL service already exists (confirmed ours) - reusing it'
@@ -112,10 +168,13 @@ if ($existingSvc) {
         Invoke-Native -FilePath $mysqld -Arguments @(
             "--defaults-file=$myIni", '--initialize-insecure',
             '--lower_case_table_names=1', '--console')
-        # --initialize-insecure always creates root with a BLANK password, regardless of
-        # $DbPassword - it is applied for real a few lines down, once the server is reachable.
-        $freshlyInitialized = $true
     }
+
+    # Whether this just ran --initialize-insecure or found an existing-but-orphaned data
+    # directory (e.g. from an install interrupted earlier), the Windows service for it does not
+    # exist yet either way, so it is always safe - and always necessary - to bootstrap the
+    # grant here, before anything tries to connect to it as a client.
+    Invoke-GrantBootstrap
 
     Write-Step 'Registering the DiningMySQL service'
     Invoke-Native -FilePath $mysqld -Arguments @('--install', 'DiningMySQL', "--defaults-file=$myIni")
@@ -130,41 +189,20 @@ if ($existingSvc) {
     Start-Service 'DiningMySQL'
 }
 
-# A freshly initialized server's root account ALWAYS has a blank password right now
-# (--initialize-insecure guarantees it), regardless of what password the operator chose in the
-# wizard - that choice has not been applied to the account yet. An existing (reused) service is
-# assumed to already carry $DbPassword from an earlier run of this same installer.
-$currentPassword = if ($freshlyInitialized) { '' } else { $DbPassword }
+# By this point root@127.0.0.1 is always on $DbPassword: either just bootstrapped above via
+# --init-file, or carried over from an earlier successful run of this same installer against an
+# existing service.
+$currentPassword = $DbPassword
 Wait-ForMySql -MysqlAdmin $mysqladmin -DefaultsFile $myIni -Password $currentPassword -ErrorLog $errorLog
 
-# --------------------------------------------------------------- root account grants
-#
-# MySQL's grant table treats 'root'@'localhost' and 'root'@'127.0.0.1' as two entirely
-# different accounts. --initialize-insecure only ever creates 'root'@'localhost', and this
-# server's skip-name-resolve setting (my.ini) means a TCP/IP connection to 127.0.0.1 is matched
-# against the grant table by literal IP, not mapped to the 'localhost' pattern the way it would
-# be without skip-name-resolve. This server has no named pipe enabled, so EVERY real client -
-# the counter app's PyMySQL chief among them, which only ever speaks TCP/IP - connects via
-# 127.0.0.1 and hits exactly this gap. Left unfixed, the counter's very first scan fails with:
-#   (1130, "Host '127.0.0.1' is not allowed to connect to this MySQL server")
-# This also applies whatever password the operator chose (or none) to BOTH accounts, since
-# nothing else in this installer ever sets one - the wizard's password box previously had no
-# effect on the actual MySQL account at all. Idempotent: safe to re-run against an existing,
-# already-fixed install.
-Write-Step 'Granting root access from 127.0.0.1 (the only address the counter app ever uses)'
-$escapedPwd = $DbPassword -replace "'", "''"
-$grantSql = @"
-CREATE USER IF NOT EXISTS 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY '$escapedPwd';
-ALTER USER 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY '$escapedPwd';
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' WITH GRANT OPTION;
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$escapedPwd';
-FLUSH PRIVILEGES;
-"@
-$a = @("--defaults-file=$myIni", '-u', 'root')
-if ($currentPassword) { $a += "-p$currentPassword" }
-$a += @('--default-character-set=utf8mb4', '-e', $grantSql)
-Invoke-Native -FilePath $mysql -Arguments $a
-Write-Ok 'root@127.0.0.1 and root@localhost both usable'
+# Idempotent safety net for the reused-service path above, where Invoke-GrantBootstrap never
+# ran: cheap insurance in case an earlier run of this installer did not finish applying it.
+if ($existingSvc) {
+    $a = @("--defaults-file=$myIni", '-u', 'root')
+    if ($currentPassword) { $a += "-p$currentPassword" }
+    $a += @('--default-character-set=utf8mb4', '-e', $grantSql)
+    Invoke-Native -FilePath $mysql -Arguments $a
+}
 
 # --------------------------------------------------------------- database
 Write-Step "Creating the '$DbName' database if it does not exist"
