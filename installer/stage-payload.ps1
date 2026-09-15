@@ -183,6 +183,12 @@ foreach ($name in 'php', 'apache', 'mysql') {
 }
 Copy-Item (Join-Path $PSScriptRoot 'scripts')   (Join-Path $stage 'tools') -Recurse -Force
 Copy-Item (Join-Path $PSScriptRoot 'templates') (Join-Path $stage 'templates') -Recurse -Force
+
+$vcSrc = Join-Path $payloadSrc $lock.vcredist.file
+if (-not (Test-Path $vcSrc)) { throw "VC++ Redistributable missing: $vcSrc`nRun fetch-runtimes.ps1 first." }
+New-Item -ItemType Directory -Force -Path (Join-Path $stage 'vcredist') | Out-Null
+Copy-Item $vcSrc (Join-Path $stage 'vcredist' $lock.vcredist.file) -Force
+
 Write-Ok 'Runtimes and scripts staged'
 
 # ============================================================ fresh-migration gate

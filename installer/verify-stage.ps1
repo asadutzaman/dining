@@ -154,6 +154,17 @@ Assert-That 'PHP is the thread-safe build' `
     { Test-Path (Join-Path $StagePath 'runtime\php\php8ts.dll') } `
     'mod_php requires a ZTS build. An NTS PHP cannot be loaded by Apache.'
 
+Assert-That 'VC++ Redistributable is staged and matches the pinned hash' `
+    {
+        $vcPath = Join-Path $StagePath 'vcredist\vc_redist.x64.exe'
+        (Test-Path $vcPath) -and (Get-FileHash $vcPath -Algorithm SHA256).Hash -eq $lock.vcredist.sha256
+    } `
+    'Without this, mysqld.exe/httpd.exe/php.exe crash with exit -1073741515 (0xC0000135, STATUS_DLL_NOT_FOUND) on any PC that does not already have the runtime from other software - invisible on a build/dev machine, fatal on a genuinely clean install.'
+
+Assert-That 'Install-VCRedist.ps1 runs before anything that needs it' `
+    { (Get-Content (Join-Path $PSScriptRoot 'dining.iss') -Raw) -match '(?s)Install-VCRedist\.ps1.*?Render-Config\.ps1' } `
+    'It must be the first [Run] entry, or the very binaries it installs runtime DLLs for will already have been launched (and crashed) by the time it runs.'
+
 Write-Step 'Install-time assets'
 
 foreach ($t in 'my.ini.tpl', 'php.ini.tpl', 'httpd-dining.conf.tpl', 'env.production.tpl',
@@ -161,7 +172,8 @@ foreach ($t in 'my.ini.tpl', 'php.ini.tpl', 'httpd-dining.conf.tpl', 'env.produc
     Assert-That "template $t" { Test-Path (Join-Path $StagePath "templates\$t") } 'Missing template; the matching install step cannot run.'
 }
 foreach ($s in 'Dining-Common.ps1', 'Install-Database.ps1', 'Install-Services.ps1',
-                'Configure-System.ps1', 'Register-BackupTask.ps1', 'Uninstall-Cleanup.ps1') {
+                'Install-VCRedist.ps1', 'Configure-System.ps1', 'Register-BackupTask.ps1',
+                'Uninstall-Cleanup.ps1') {
     Assert-That "script $s" { Test-Path (Join-Path $StagePath "tools\$s") } 'Missing install script.'
 }
 

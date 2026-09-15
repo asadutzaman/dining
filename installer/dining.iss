@@ -42,6 +42,7 @@ UninstallDisplayIcon={app}\counter\dining-counter.exe
 ExtraDiskSpaceRequired=52428800
 
 [Files]
+Source: "{#StageDir}\vcredist\vc_redist.x64.exe"; DestDir: "{app}\vcredist"; Flags: ignoreversion
 Source: "{#StageDir}\app\backend\*";  DestDir: "{app}\backend";        Flags: recursesubdirs createallsubdirs ignoreversion
 Source: "{#StageDir}\app\counter\*";  DestDir: "{app}\counter";        Flags: recursesubdirs createallsubdirs ignoreversion
 Source: "{#StageDir}\runtime\php\*";    DestDir: "{app}\runtime\php";    Flags: recursesubdirs createallsubdirs ignoreversion
@@ -93,6 +94,16 @@ Name: "powertweaks"; Description: "Apply counter-PC power and Windows Update set
 
 [Run]
 ; Ordered. Each is a PowerShell script; failures surface through Inno's error dialog.
+;
+; VC++ Redistributable FIRST, before anything that launches a bundled binary. Every one of
+; mysqld.exe/httpd.exe/php.exe is a VS16/VS17-toolset build and needs these runtime DLLs -
+; without them mysqld.exe crashes at --initialize-insecure with exit -1073741515
+; (0xC0000135, STATUS_DLL_NOT_FOUND), invisible on any machine that already has the redist
+; from other software, fatal on a genuinely clean Windows 10/11 PC.
+Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; \
+  Parameters: "-ExecutionPolicy Bypass -NonInteractive -NoProfile -File ""{app}\tools\Install-VCRedist.ps1"" -InstallRoot ""{app}"""; \
+  StatusMsg: "Installing prerequisites..."; Flags: runhidden waituntilterminated
+
 Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; \
   Parameters: "-ExecutionPolicy Bypass -NonInteractive -NoProfile -File ""{app}\tools\Render-Config.ps1"" -InstallRoot ""{app}"" -DataRoot ""{#DataRoot}"" -WebPort {code:GetWebPort} -MysqlPort {code:GetMysqlPort} -DbPassword ""{code:GetDbPassword}"" -PrinterName ""{code:GetPrinterName}"" -NcmsUrl ""{code:GetNcmsUrl}"""; \
   StatusMsg: "Writing configuration..."; Flags: runhidden waituntilterminated

@@ -105,6 +105,38 @@ Get-ChildItem (Join-Path $mysql 'share') -Directory -ErrorAction SilentlyContinu
     Where-Object { $_.Name -ne 'english' } |
     ForEach-Object { Remove-Item $_.FullName -Recurse -Force -ErrorAction SilentlyContinue }
 
+# ---------------------------------------------------------------- VC++ Redistributable
+#
+# mysqld.exe, httpd.exe and php.exe are all VS16/VS17-toolset binaries built against the
+# Visual C++ runtime. This is the one dependency that is NOT sourced from Laragon, because it
+# is downloaded from Microsoft (a real "vendor" download, not a local copy) and verified by
+# hash on every fetch rather than trusted blindly once cached - it is going to run elevated,
+# unattended, on every counter PC this installer ever touches.
+$vc = $lock.vcredist
+$vcPath = Join-Path $payloadSrc $vc.file
+
+$needsFetch = $true
+if ((Test-Path $vcPath) -and -not $Force) {
+    $existingHash = (Get-FileHash $vcPath -Algorithm SHA256).Hash
+    if ($existingHash -eq $vc.sha256) {
+        Write-Step "VC++ Redistributable already staged and verified - skipping (use -Force to refresh)"
+        $needsFetch = $false
+    } else {
+        Write-Warn "Cached vc_redist.x64.exe does not match the pinned hash - re-downloading"
+    }
+}
+
+if ($needsFetch) {
+    Write-Step 'Downloading the Visual C++ Redistributable'
+    Invoke-WebRequest -Uri $vc.url -OutFile $vcPath -UseBasicParsing
+    $downloadedHash = (Get-FileHash $vcPath -Algorithm SHA256).Hash
+    if ($downloadedHash -ne $vc.sha256) {
+        Remove-Item $vcPath -Force -ErrorAction SilentlyContinue
+        throw "vc_redist.x64.exe hash mismatch after download.`n  expected: $($vc.sha256)`n  got:      $downloadedHash`nMicrosoft may have rotated the build behind that URL - update runtimes.lock.json's sha256 only after confirming the new file's signature is still Microsoft's."
+    }
+    Write-Ok "Downloaded and verified vc_redist.x64.exe ($([math]::Round((Get-Item $vcPath).Length / 1MB, 1)) MB)"
+}
+
 # ---------------------------------------------------------------- Verify
 Write-Step 'Verifying required files survived the trim'
 $missing = @()
@@ -116,6 +148,7 @@ foreach ($name in 'php', 'apache', 'mysql') {
         if (-not (Test-Path $full)) { $missing += "$($spec.folder)\$rel" }
     }
 }
+if (-not (Test-Path $vcPath)) { $missing += $vc.file }
 if ($missing) { throw "Trim removed files that are required:`n  " + ($missing -join "`n  ") }
 
 $mb = [math]::Round((Get-ChildItem $payloadSrc -Recurse -File |

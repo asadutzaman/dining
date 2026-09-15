@@ -44,5 +44,13 @@
       "bin/mysqldump.exe",
       "bin/mysqladmin.exe"
     ]
+  },
+  "vcredist": {
+    "file": "vc_redist.x64.exe",
+    "url": "https://aka.ms/vs/17/release/vc_redist.x64.exe",
+    "sha256": "CC0FF0EB1DC3F5188AE6300FAEF32BF5BEEBA4BDD6E8E445A9184072096B713B",
+    "why": "mysqld.exe, httpd.exe and php.exe are all VS16/VS17-toolset binaries and depend on the Visual C++ runtime DLLs. This dev machine already has them from years of other installs, which is exactly why this was missing undetected for so long: mysqld.exe crashed with exit -1073741515 (0xC0000135, STATUS_DLL_NOT_FOUND) on the first real install to a genuinely clean Windows 10/11 PC, and every artisan call after it cascaded from there. Microsoft's own aka.ms redirect always serves the latest VS 2015-2022 redistributable; the sha256 above is pinned to what fetch-runtimes.ps1 last verified, and it re-verifies on every fetch rather than trusting a cached file blindly.",
+    "run_args": ["/install", "/quiet", "/norestart"],
+    "allowed_exit_codes": [0, 1638, 3010]
   }
 }
