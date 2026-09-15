@@ -92,6 +92,11 @@ Assert-That 'no stale hostname baked into the bundle' `
             Select-String -Pattern '47\.128\.188\.194' -List | Select-Object -First 1) } `
     'The old public IP is compiled in. The admin would call a server that is not there.'
 
+Assert-That 'no hardcoded absolute API host baked into the bundle' `
+    { -not (Get-ChildItem $public -Recurse -Include *.js -ErrorAction SilentlyContinue |
+            Select-String -Pattern 'localhost:3000|127\.0\.0\.1:8000' -List | Select-Object -First 1) } `
+    'config.constant.ts must use relative URLs (API_SERVER_URL = "/", not "http://127.0.0.1:8000/"). The installer lets the operator pick any web admin port, and a hardcoded absolute host:port - or a "localhost" vs "127.0.0.1" mismatch against whatever the browser is pointed at - breaks login on any install where the port differs or the two are not byte-identical, even though both origins reach the same server.'
+
 Assert-That 'no Netlify _redirects artifact' `
     { -not (Test-Path (Join-Path $public '_redirects')) } `
     'Harmless but meaningless here; its presence means the old build script ran.'
