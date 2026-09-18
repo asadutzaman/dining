@@ -5,6 +5,7 @@ import OrganogramListController from './components/Organogram/List/OrganogramLis
 import UserListController from './components/Users/List/UserList.controller'
 import ApplicationSettingsController from './components/ApplicationSetting/View/ApplicationSettingsView.controller'
 import GovtHolidayListController from './components/GovtHollday/List/GovtHolidayList.controller'
+import DatabaseBackupViewController from './components/DatabaseBackup/View/DatabaseBackupView.controller'
 
 const CompanyRoutes = () => {
   return (
@@ -14,6 +15,7 @@ const CompanyRoutes = () => {
       <Route path={'/users'} element={<UserListController />} />
       <Route path={'/application-settings'} element={<ApplicationSettingsController />} />
       <Route path={'/govt-holiday'} element={<GovtHolidayListController />} />
+      <Route path={'/database-backup'} element={<DatabaseBackupViewController />} />
     </Routes>
   )
 }

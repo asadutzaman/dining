@@ -202,6 +202,17 @@ export const LeftSidebarMenu = [
               openInNewTab: false,
             },
           },
+          {
+            type: 'item',
+            title: 'Database Backup',
+            permission: 'auth:databaseBackup:menuAccess',
+            link: {
+              to: '/admin/setting/company/database-backup',
+              exactMatch: true,
+              externalUrl: false,
+              openInNewTab: false,
+            },
+          },
         ],
       },
       // PROFILE

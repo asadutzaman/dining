@@ -1,4 +1,5 @@
 import _ApplicationSettingApi from './ApplicationSetting.api'
+import _DatabaseBackupApi from './DatabaseBackup.api'
 import _FackApi from './Fack.api'
 import _OauthApi from './Oauth.api'
 // SETTING
@@ -48,6 +49,7 @@ import _DiningReportApi from './Dining/DiningReport.api'
 export const FackApi = new _FackApi()
 export const OauthApi = new _OauthApi()
 export const ApplicationSettingApi = new _ApplicationSettingApi()
+export const DatabaseBackupApi = new _DatabaseBackupApi()
 // SETTING
 export const ResourceApi = new _ResourceApi()
 export const ScopeApi = new _ScopeApi()
