@@ -155,8 +155,11 @@ class DatabaseBackupService
      */
     private function resolveBinary(string $tool): string
     {
-        $envVar = $tool === 'mysqldump' ? 'MYSQLDUMP_PATH' : 'MYSQL_CLIENT_PATH';
-        if ($configured = env($envVar)) {
+        // The config() helper, not the raw environment-variable helper - reading the
+        // environment directly outside config/ silently returns null once config caching has
+        // run, which the installer always does after install.
+        $configKey = $tool === 'mysqldump' ? 'services.database_backup.mysqldump_path' : 'services.database_backup.mysql_client_path';
+        if ($configured = config($configKey)) {
             return $configured;
         }
 

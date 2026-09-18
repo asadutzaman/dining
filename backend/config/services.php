@@ -31,4 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // Overrides for DatabaseBackupService's mysqldump/mysql binary lookup. Leave unset to
+    // auto-detect the counter-PC installer's bundled runtime/mysql/bin, falling back to PATH.
+    'database_backup' => [
+        'mysqldump_path'    => env('MYSQLDUMP_PATH'),
+        'mysql_client_path' => env('MYSQL_CLIENT_PATH'),
+    ],
+
 ];
