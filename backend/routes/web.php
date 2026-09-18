@@ -423,6 +423,12 @@ Route::prefix('api')->group(function () {
         Route::get('/{id}', [App\Http\Controllers\ApplicationSettingController::class, 'show']);
     });
 
+    Route::group(['prefix' => 'database-backup', 'middleware' => ['restrictIp', 'authVerify']], function () {
+        Route::get('/', [App\Http\Controllers\DatabaseBackupController::class, 'index']);
+        Route::get('/download', [App\Http\Controllers\DatabaseBackupController::class, 'download']);
+        Route::post('/email', [App\Http\Controllers\DatabaseBackupController::class, 'email']);
+    });
+
     Route::group(['prefix' => 'unit', 'middleware' => ['restrictIp', 'authVerify']], function () {
         // Drop Down List
         Route::get('/dropdown', [App\Http\Controllers\UnitController::class, 'dropdown']);

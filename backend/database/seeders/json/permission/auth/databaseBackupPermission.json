@@ -1,0 +1,46 @@
+{
+    "resource": {
+        "permission_type": "RESOURCE",
+        "name": "databaseBackup",
+        "display_name": "Database Backup",
+        "resource_uri": "database-backup",
+        "controller_name": "DatabaseBackupController",
+        "server_url_prefix": "auth",
+        "component": "COMMON"
+    },
+    "scopes": [
+        {
+            "scope": "auth:databaseBackup:menuAccess",
+            "display_name": "Menu Access",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "index",
+                    "uri": "/database-backup"
+                }
+            ]
+        },
+        {
+            "scope": "auth:databaseBackup:download",
+            "display_name": "Download",
+            "actions": [
+                {
+                    "http_method": "GET",
+                    "action_name": "download",
+                    "uri": "/database-backup/download"
+                }
+            ]
+        },
+        {
+            "scope": "auth:databaseBackup:sendEmail",
+            "display_name": "Send By Email",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "email",
+                    "uri": "/database-backup/email"
+                }
+            ]
+        }
+    ]
+}
