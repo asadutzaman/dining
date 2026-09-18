@@ -8,6 +8,9 @@ import DatabaseBackupView from './DatabaseBackupView.view'
 const DatabaseBackupViewController: FC<any> = () => {
   const [downloading, setDownloading] = useState(false)
   const [sending, setSending] = useState(false)
+  const [restoreFile, setRestoreFile] = useState<any>(null)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [restoring, setRestoring] = useState(false)
   const {formRef, handleChange, handleSubmitFailed} = useForm({})
 
   const handleDownload = (): void => {
@@ -42,15 +45,65 @@ const DatabaseBackupViewController: FC<any> = () => {
       })
   }
 
+  const handleRestoreFileSelect = (selectedFile: any): boolean => {
+    setRestoreFile(selectedFile)
+    return false
+  }
+
+  const handleRestoreFileRemove = (): void => {
+    setRestoreFile(null)
+  }
+
+  const openConfirm = (): void => {
+    if (!restoreFile) {
+      Message.error('Please choose a .sql file first.')
+      return
+    }
+    setConfirmOpen(true)
+  }
+
+  const closeConfirm = (): void => {
+    setConfirmOpen(false)
+  }
+
+  const handleConfirmRestore = (): void => {
+    setConfirmOpen(false)
+    setRestoring(true)
+    DatabaseBackupApi.restore(restoreFile)
+      .then((res: any) => {
+        setRestoring(false)
+        setRestoreFile(null)
+        Message.success(
+          `Database restored successfully. A safety backup of the previous data was saved on the server as ${res.data.safety_backup}.`
+        )
+      })
+      .catch((err: any) => {
+        setRestoring(false)
+        const errMessage =
+          (err?.status === 422 || err?.status === 500) && typeof err.data === 'string'
+            ? err.data
+            : 'Could not restore the database. Please try again later.'
+        Message.error(errMessage)
+      })
+  }
+
   return (
     <DatabaseBackupView
       formRef={formRef}
       downloading={downloading}
       sending={sending}
+      restoreFile={restoreFile}
+      confirmOpen={confirmOpen}
+      restoring={restoring}
       handleChange={handleChange}
       handleDownload={handleDownload}
       handleSendEmail={handleSendEmail}
       handleSubmitFailed={handleSubmitFailed}
+      handleRestoreFileSelect={handleRestoreFileSelect}
+      handleRestoreFileRemove={handleRestoreFileRemove}
+      openConfirm={openConfirm}
+      closeConfirm={closeConfirm}
+      handleConfirmRestore={handleConfirmRestore}
     />
   )
 }

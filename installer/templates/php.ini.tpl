@@ -28,8 +28,10 @@ opcache.validate_timestamps = 0
 
 date.timezone = Asia/Dhaka
 memory_limit = 512M
-upload_max_filesize = 32M
-post_max_size = 40M
+; Sized for the admin panel's database restore upload, not just member-photo/report uploads -
+; a real dining database's .sql dump only grows over the life of the install.
+upload_max_filesize = 200M
+post_max_size = 220M
 
 ; The monthly and individual statement exports are genuinely slow on a full year of tokens.
 max_execution_time = 300

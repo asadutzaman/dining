@@ -41,6 +41,17 @@
                     "uri": "/database-backup/email"
                 }
             ]
+        },
+        {
+            "scope": "auth:databaseBackup:restore",
+            "display_name": "Restore",
+            "actions": [
+                {
+                    "http_method": "POST",
+                    "action_name": "restore",
+                    "uri": "/database-backup/restore"
+                }
+            ]
         }
     ]
 }

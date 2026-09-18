@@ -427,6 +427,7 @@ Route::prefix('api')->group(function () {
         Route::get('/', [App\Http\Controllers\DatabaseBackupController::class, 'index']);
         Route::get('/download', [App\Http\Controllers\DatabaseBackupController::class, 'download']);
         Route::post('/email', [App\Http\Controllers\DatabaseBackupController::class, 'email']);
+        Route::post('/restore', [App\Http\Controllers\DatabaseBackupController::class, 'restore']);
     });
 
     Route::group(['prefix' => 'unit', 'middleware' => ['restrictIp', 'authVerify']], function () {
