@@ -94,6 +94,12 @@ const MemberListController: FC<any> = (props) => {
     handleUrl()
   }, [entityId, isShowView, isShowForm])
 
+  useEffect(() => {
+    if (bulkAction.action !== '') {
+      executeBulkAction()
+    }
+  }, [bulkAction])
+
   const initData = async () => {
     await handleUrl()
     await handlePayload()
@@ -102,6 +108,10 @@ const MemberListController: FC<any> = (props) => {
 
   const loadData = (): Promise<any> => {
     return BaseCrudListService.loadData()
+  }
+
+  const executeBulkAction = (): Promise<any> => {
+    return BaseCrudListService.executeBulkAction()
   }
 
   const handleUrl = (): void => {

@@ -30,8 +30,17 @@ QUEUE_CONNECTION=sync
 SESSION_DRIVER=file
 SESSION_LIFETIME=120
 
-MAIL_MAILER=log
-MAIL_FROM_ADDRESS="dining@localhost"
+# Gmail SMTP with an app password, hardcoded like APP_KEY/DB_PREFIX above rather than a wizard
+# question - this is a fixed value for this specific deployment, not a per-install setting.
+# The app password is scoped to SMTP only and individually revocable, but it does ship in
+# plaintext inside dining-setup.exe: treat this installer file itself as sensitive.
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=mdasadutzaman@gmail.com
+MAIL_PASSWORD="zsak plta qykm xrrg"
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="mdasadutzaman@gmail.com"
 MAIL_FROM_NAME="${APP_NAME}"
 
 UTIL_SERVER_URL='http://localhost:{{WEB_PORT}}/'

@@ -10,6 +10,7 @@ const endpoints = {
     update: (id: Number) => `${RESOURCE_ENDPOINT}/${id}`,
     updatePartial: (id: Number) => `${RESOURCE_ENDPOINT}/${id}`,
     delete: (id: Number) => `${RESOURCE_ENDPOINT}/${id}`,
+    bulk: () => `${RESOURCE_ENDPOINT}/bulk`,
     dropdown: () => `${RESOURCE_ENDPOINT}/dropdown`,
     findByCard: () => `${RESOURCE_ENDPOINT}/find-by-card`,
     bulkImport: () => `${RESOURCE_ENDPOINT}/bulk-import`,
@@ -50,6 +51,11 @@ export default class MemberApi {
     public delete = (id: any, params = {}, headers = {}): AxiosPromise<any> => {
         const url = endpoints.delete(id);
         return HttpService.delete(url, params, headers);
+    }
+
+    public bulk = (payload = {}, params = {}, headers = {}): AxiosPromise<any> => {
+        const url = endpoints.bulk();
+        return HttpService.post(url, payload, params, headers);
     }
 
     public dropdown = (params = {}, headers = {}): AxiosPromise<any> => {

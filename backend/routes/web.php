@@ -955,6 +955,7 @@ Route::prefix('api')->group(function () {
     Route::group(['prefix' => 'member', 'middleware' => ['restrictIp', 'authVerify']], function () {
         Route::get('/find-by-card', [App\Http\Controllers\Dining\MemberController::class, 'findByCard']);
         Route::post('/bulk-import', [App\Http\Controllers\Dining\MemberController::class, 'bulkImport']);
+        Route::post('/bulk', [App\Http\Controllers\Dining\MemberController::class, 'bulk']);
         Route::get('/dropdown', [App\Http\Controllers\Dining\MemberController::class, 'dropdown']);
 
         // NCMS roster ("candidates"): everyone the dining members are drawn from
